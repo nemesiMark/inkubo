@@ -466,3 +466,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Tasto «Scopri di più»: al passaggio del mouse diventa color carta con
                    bordo e testo rossi e si alza di qualche pixel (proposta 18).
                    Aggiornati style.css?v=29 e fumo.js?v=10.
+4.8  (13/11/2026)  Neon del nome un po' meno veloce: sfarfalla ogni 1,8-4,2 s, con
+                   sfarfallii leggermente più lunghi e respiro intermedio; il logo
+                   fermo di riserva lampeggia ogni 3,5 s. Aggiornati style.css?v=30 e
+                   fumo.js?v=11.

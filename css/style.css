@@ -324,7 +324,7 @@ nav .logo, nav .logo:hover { padding: 0; border: 0; color: inherit; }
 .smoke-still { display: none; position: absolute; left: 50%; top: var(--ly); width: var(--lw); height: auto; transform: translate(-50%, -50%); }
 .smoke-off .smoke-still, html:not(.js) .smoke-still { display: block; }
 /* senza WebGL il logo fermo ha comunque l'alone rosso al neon che sfarfalla */
-.smoke-off .smoke-still, html:not(.js) .smoke-still { filter: drop-shadow(0 0 1.5px #ff2a1a) drop-shadow(0 0 10px rgba(255, 42, 26, .55)); animation: neonImg 2s linear infinite; }
+.smoke-off .smoke-still, html:not(.js) .smoke-still { filter: drop-shadow(0 0 1.5px #ff2a1a) drop-shadow(0 0 10px rgba(255, 42, 26, .55)); animation: neonImg 3.5s linear infinite; }
 @keyframes neonImg { 0%, 7%, 9%, 15%, 17%, 100% { opacity: 1; } 8%, 16% { opacity: .55; } }
 /* tasto grande sotto il nome: compare quando il nome è uscito e porta alla presentazione */
 .hero-go { position: absolute; left: 50%; top: calc(var(--ly) + var(--lw) * .127 + clamp(2rem, 6vh, 4rem));
