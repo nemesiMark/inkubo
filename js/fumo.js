@@ -72,7 +72,7 @@ var FS = {
     'float r=max(texture2D(uPrev,vUv).r,smoothstep(.06,.4,d));gl_FragColor=vec4(max(r,fill),0.,0.,1.);}',
   /* neon: uRing = filo sottile intorno a ogni lettera e al logo, uGlow = alone sfumato */
   display: H + 'uniform sampler2D uDye,uReveal,uLogo,uRing,uGlow;uniform float neon,topFade,logoOn;void main(){float d=texture2D(uDye,vUv).r;float r=texture2D(uReveal,vUv).r;vec4 lg=texture2D(uLogo,vUv);' +
-    'vec3 col=mix(vec3(1.),lg.rgb,lg.a*max(r,logoOn));float ink=(1.-exp(-d*2.4))*(1.-smoothstep(1.-topFade*1.8,1.-topFade*.8,vUv.y));' +
+    'vec3 col=mix(vec3(.925,.886,.8),lg.rgb,lg.a*max(r,logoOn));float ink=(1.-exp(-d*2.4))*(1.-smoothstep(1.-topFade*1.8,1.-topFade*.8,vUv.y));' +
     'vec3 inkCol=mix(vec3(.36,.36,.38),vec3(.035,.03,.028),smoothstep(.12,.85,ink));' +
     'vec3 c=mix(col,inkCol,smoothstep(0.,1.,ink));' +
     'float rg=texture2D(uRing,vUv).a,gw=texture2D(uGlow,vUv).a,n=neon;vec3 red=vec3(1.,.12,.07);' +

@@ -4,9 +4,8 @@
    nel rosso del sito con il loro nome (stile «neon»: satellite scurito e contorni luminosi);
    all'arrivo il segnaposto «Rain Ink».
    La mappa usa servizi esterni (foto Esri, caratteri OpenFreeMap): parte solo dopo che il visitatore
-   ha premuto «Mostra la mappa» (la scelta resta salvata nel browser) e solo quando la sezione si avvicina. */
+   ha accettato i cookie (barra di js/cookie.js) o ha premuto «Mostra la mappa», e solo quando la sezione si avvicina. */
 (function(){
-  var KEY='rainink_mappa_ok';
   var LIB_JS='js/vendor/maplibre/maplibre-gl-5.6.0.js', LIB_CSS='js/vendor/maplibre/maplibre-gl-5.6.0.css';
   var ROSSO='#c4372a';
 
@@ -33,8 +32,8 @@
 
   var box, started=false, map=null, pin=null, visible=false, loaded=false;
 
-  function consent(){try{return localStorage.getItem(KEY)==='1'}catch(e){return false}}
-  function saveConsent(){try{localStorage.setItem(KEY,'1')}catch(e){}}
+  // il consenso lo gestisce js/cookie.js; qui resta solo il controllo di riserva
+  function consent(){var c=window.raininkCookie&&window.raininkCookie.get();return !!(c&&c.maps)}
 
   function loadLib(cb){
     if(window.maplibregl){cb();return}
@@ -193,6 +192,7 @@
   }
 
   function go(){
+    if(box.classList.contains('is-ok'))return;
     box.classList.add('is-ok');
     var replay=box.querySelector('.map-replay');
     if(replay)replay.addEventListener('click',play);
@@ -213,10 +213,12 @@
     if(!box||box.getAttribute('data-ready'))return;
     box.setAttribute('data-ready','1');
     if(consent()){go();return}
-    // Riquadro «Mostra la mappa»: la mappa (servizi esterni) parte solo dopo il clic
+    // Riquadro «Mostra la mappa» (per chi ha rifiutato o non ha ancora scelto): vale come «Accetta»
     var ok=box.querySelector('.map-ok-btn');
-    if(ok)ok.addEventListener('click',function(){saveConsent();go()});
+    if(ok)ok.addEventListener('click',function(){if(window.raininkCookie)window.raininkCookie.accept();else go()});
   }
+  // js/cookie.js la chiama quando i cookie risultano accettati
+  window.raininkMappa=function(){start();if(box&&box.getAttribute('data-ready'))go()};
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();

@@ -418,17 +418,3 @@ bookingForm();
 runScroll();
 var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
 })();
-
-// Gestione cookie (footer): il sito non usa cookie di profilazione; l'unico consenso salvato
-// è quello della mappa animata (servizi esterni). Il pulsante permette di ritirarlo.
-document.querySelectorAll('.ck-open').forEach(function (b) {
-  b.addEventListener('click', function () {
-    var on = false;
-    try { on = localStorage.getItem('rainink_mappa_ok') === '1'; } catch (e) {}
-    if (!on) { alert('Questo sito non usa cookie di profilazione. Non hai dato consensi da ritirare.'); return; }
-    if (confirm('Hai acconsentito alla mappa animata (servizi esterni Esri e OpenFreeMap). Vuoi ritirare il consenso?')) {
-      try { localStorage.removeItem('rainink_mappa_ok'); } catch (e) {}
-      location.reload();
-    }
-  });
-});

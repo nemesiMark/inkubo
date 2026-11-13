@@ -449,3 +449,14 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    marchio, con la sfumatura giallo-arancio-rosa-viola-blu sull'icona e
                    sulla scritta; bordo rosa Instagram al passaggio del mouse.
                    Aggiornato style.css?v=26.
+4.6  (13/11/2026)  Gestione cookie come Olimp (nuovo js/cookie.js, in tutte le pagine):
+                   alla prima visita compare in fondo una barra nero inchiostro con
+                   linea rossa, «Rifiuta» e «Accetta». Se si accetta, la mappa animata
+                   di «Dove siamo» parte da sola senza premere «Mostra la mappa»; se si
+                   rifiuta resta il riquadro, e premerlo vale come «Accetta». «Gestione
+                   cookie» nel footer riapre la barra per cambiare scelta. Chi aveva già
+                   premuto «Mostra la mappa» risulta come «Accetta». Aggiornata la
+                   pagina Privacy.
+                   Prima schermata: il fondo bianco diventa pergamena #ece2cc con grana
+                   sottile (proposta 03), anche dentro l'animazione dell'inchiostro.
+                   Aggiornati style.css?v=27, script.js?v=12, mappa.js?v=2, fumo.js?v=9.
