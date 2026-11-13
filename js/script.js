@@ -236,6 +236,9 @@ function portfolio() {
   if (bar) {
     var btns = all('button', bar), thumb = document.createElement('span'), tok = 0;
     thumb.className = 'seg-thumb'; bar.insertBefore(thumb, bar.firstChild); bar.classList.add('has-thumb');
+    // su telefono la sfumatura a destra sparisce quando il filtro è scorso fino in fondo
+    var atEnd = function () { bar.classList.toggle('at-end', bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 4); };
+    bar.addEventListener('scroll', atEnd, { passive: true }); window.addEventListener('resize', atEnd); atEnd();
     var moveThumb = function (bt, instant) {
       if (instant) thumb.style.transition = 'none';
       thumb.style.width = bt.offsetWidth + 'px';

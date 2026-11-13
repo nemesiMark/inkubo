@@ -72,7 +72,7 @@
     }
     function end(){if(!finished){finished=true;done()}}
     if(!window.fetch){end();return}
-    setTimeout(end,4000);
+    setTimeout(end,2000);   // non aspetta più di 2 secondi le foto
     var i=0,active=0;
     function next(){
       if(finished&&active===0)return;
@@ -188,7 +188,7 @@
     setTimeout(function(){
       map.flyTo({center:SEDE,zoom:zoomArrivo(),duration:12000,curve:1.6,essential:true,easing:andatura});
       map.once('moveend',arrive);
-    },1200);
+    },250);
   }
 
   function go(){
@@ -196,15 +196,17 @@
     box.classList.add('is-ok');
     var replay=box.querySelector('.map-replay');
     if(replay)replay.addEventListener('click',play);
-    // Prepara la mappa quando la sezione si avvicina, la fa partire quando è ben visibile
-    if(!('IntersectionObserver' in window)){loadLib(build);visible=true;return}
-    var near=new IntersectionObserver(function(es){
-      if(es[0].isIntersecting){near.disconnect();loadLib(build)}
-    },{rootMargin:'600px 0px'});
-    near.observe(box);
+    // Prepara la mappa subito dopo il caricamento della pagina (non più solo quando ci si avvicina),
+    // così cliccando «Dove siamo» il mondo è già pronto; parte quando la sezione è visibile
+    var prepared=false;
+    function prepare(){if(!prepared){prepared=true;loadLib(build)}}
+    if(document.readyState==='complete')setTimeout(prepare,300);else window.addEventListener('load',function(){setTimeout(prepare,300)});
+    // un clic su un collegamento a #dove la prepara all'istante
+    document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href$="#dove"]');if(a)prepare()},true);
+    if(!('IntersectionObserver' in window)){prepare();visible=true;return}
     var seen=new IntersectionObserver(function(es){
-      if(es[0].isIntersecting){visible=true;seen.disconnect();if(!started)play()}
-    },{threshold:0.5});
+      if(es[0].isIntersecting){visible=true;seen.disconnect();prepare();if(!started)play()}
+    },{threshold:0.3});
     seen.observe(box);
   }
 

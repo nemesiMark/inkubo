@@ -470,3 +470,14 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    sfarfallii leggermente più lunghi e respiro intermedio; il logo
                    fermo di riserva lampeggia ogni 3,5 s. Aggiornati style.css?v=30 e
                    fumo.js?v=11.
+4.9  (13/11/2026)  Mappa «Dove siamo» più pronta: la mappa si prepara subito dopo il
+                   caricamento della home (prima solo avvicinandosi alla sezione) e
+                   all'istante se si clicca «Dove siamo»; parte quando la sezione è
+                   visibile al 30% (prima 50%), aspetta le foto al massimo 2 s (prima
+                   4 s) e la discesa inizia dopo 0,25 s (prima 1,2 s).
+                   Schermi piccoli (sotto i 640 px): nella home le didascalie dei lavori
+                   vanno su due righe (nome sopra, stile sotto) invece di accavallarsi;
+                   nella pagina Servizi il testo sopra i disegni ha una sfumatura scura
+                   più alta e si legge meglio; nel Portfolio il filtro degli stili
+                   sfuma a destra per far capire che scorre di lato.
+                   Aggiornati style.css?v=31, script.js?v=13, mappa.js?v=3.
