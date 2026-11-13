@@ -104,6 +104,7 @@
       L.push({id:s+'-velo',type:'fill',source:s,paint:{'fill-color':ROSSO,'fill-opacity':finestra(a.zoom,0.14)}});
       L.push({id:s+'-alone',type:'line',source:s,paint:{'line-color':ROSSO,'line-width':14,'line-blur':10,'line-opacity':finestra(a.zoom,0.9)}});
       L.push({id:s+'-bordo',type:'line',source:s,paint:{'line-color':ROSSO,'line-width':2.5,'line-opacity':finestra(a.zoom,1)}});
+      if(stretto())return;   // su telefono i nomi sono scritte HTML tenute dentro il riquadro (nomiStretti)
       L.push({id:s+'-nome',type:'symbol',source:'nome-'+a.id,
         layout:{'text-field':['get','nome'],'text-font':['Noto Sans Bold'],'text-size':Math.round(a.testo*k),'text-letter-spacing':stretto()?0.12:0.25,
                 'text-max-width':stretto()?7:12,'text-line-height':1.15,'text-transform':'uppercase','text-allow-overlap':true},
@@ -138,6 +139,7 @@
            paint:{'line-color':ROSSO,'line-width':14,'line-blur':10,'line-opacity':['interpolate',['linear'],['zoom'],9.6,0,10.4,0.9]}},
           {id:'citta-bordo',type:'line',source:'citta',
            paint:{'line-color':ROSSO,'line-width':3,'line-opacity':['interpolate',['linear'],['zoom'],9.6,0,10.4,1]}},
+        ],stretto()?[]:[
           // scritta Montelupone: compare verso la fine e svanisce all'arrivo
           {id:'citta-nome',type:'symbol',source:'nome',
            layout:{'text-field':['get','nome'],'text-font':['Noto Sans Bold'],
@@ -169,11 +171,33 @@
     function lontano(){pin.classList.toggle('is-far',map.getZoom()<14)}
     map.on('zoom',lontano);lontano();
 
+    if(stretto())nomiStretti();
+
     map.on('load',function(){
       // Su schermi stretti i crediti restano chiusi (si aprono con la «i»)
       if(box.clientWidth<600){var a=box.querySelector('.maplibregl-ctrl-attrib');if(a)a.classList.remove('maplibregl-compact-show')}
       prefetch(function(){loaded=true;if(visible&&!started)play()});
     });
+  }
+
+  /* Telefono: i nomi delle aree sono scritte HTML sopra la mappa. Seguono il loro punto ma restano
+     sempre dentro il riquadro, così «Provincia di Macerata» e «Montelupone» non escono di lato. */
+  function nomiStretti(){
+    function op(z,w){if(z<=w[0]||z>=w[3])return 0;if(z<w[1])return (z-w[0])/(w[1]-w[0]);if(z>w[2])return (w[3]-z)/(w[3]-w[2]);return 1}
+    var lista=AREE.map(function(a){return {nome:a.nome,punto:a.punto,w:a.zoom,size:function(){return 17}}});
+    lista.push({nome:'Montelupone',punto:CENTRO_CITTA,w:[9.8,10.6,13.5,14.6],size:function(z){return 16+Math.max(0,Math.min(1,(z-10)/3))*4}});
+    lista.forEach(function(n){var e=document.createElement('div');e.className='map-nome';e.textContent=n.nome;e.setAttribute('aria-hidden','true');box.appendChild(e);n.el=e});
+    function aggiorna(){
+      var z=map.getZoom(),W=box.clientWidth,H=box.clientHeight,pad=14;
+      lista.forEach(function(n){
+        var o=op(z,n.w);n.el.style.opacity=o;if(o<=0)return;
+        n.el.style.fontSize=n.size(z)+'px';
+        var p=map.project(n.punto),hw=n.el.offsetWidth/2,hh=n.el.offsetHeight/2;
+        var x=Math.max(pad+hw,Math.min(W-pad-hw,p.x)),y=Math.max(pad+hh,Math.min(H-pad-hh,p.y));
+        n.el.style.transform='translate('+(x-hw)+'px,'+(y-hh)+'px)';
+      });
+    }
+    map.on('move',aggiorna);map.on('resize',aggiorna);aggiorna();
   }
 
   function arrive(){ pin.classList.add('is-on'); }

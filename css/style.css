@@ -517,6 +517,10 @@ html:not(.js) .hero-go { opacity: 1; transform: translate(-50%, 0); }
 .map-anim:not(.is-ok) .map-replay { display: none; }
 .map-replay:hover { background: #fff; }
 /* segnaposto «Rain Ink»: compare all'arrivo */
+/* nomi delle aree su telefono (js/mappa.js, nomiStretti): bianchi con contorno scuro, sempre dentro il riquadro */
+.map-nome { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; opacity: 0; max-width: 72%; will-change: transform, opacity;
+  font: 700 17px/1.15 var(--body); letter-spacing: .12em; text-transform: uppercase; text-align: center; color: #fff3f1;
+  text-shadow: 0 0 2px #1c0604, 0 0 3px #1c0604, 0 0 6px rgba(28, 6, 4, .9), 0 0 14px rgba(196, 55, 42, .55); }
 .map-pin { position: relative; width: 22px; height: 22px; }
 .map-pin-in { position: absolute; inset: 0; opacity: 0; transition: opacity .5s; }
 .map-pin.is-on .map-pin-in { opacity: 1; }

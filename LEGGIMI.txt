@@ -487,3 +487,10 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    schermi stretti sono più piccole, meno spaziate e «Provincia di
                    Macerata» va su due righe, così non escono dal riquadro.
                    I contorni rossi delle aree non cambiano. Aggiornato mappa.js?v=4.
+5.1  (13/11/2026)  Mappa «Dove siamo» su telefono (riquadro sotto i 600 px): «Provincia
+                   di Macerata» e «Montelupone» uscivano in parte dal riquadro perché il
+                   loro punto sulla mappa è spostato rispetto allo studio, verso cui
+                   punta la discesa. Ora su telefono tutti i nomi delle aree sono
+                   scritte sopra la mappa che seguono il loro punto ma restano sempre
+                   dentro il riquadro (bianche, contorno scuro e leggero alone rosso).
+                   Su computer non cambia nulla. Aggiornati style.css?v=32, mappa.js?v=5.
