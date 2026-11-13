@@ -1,8 +1,11 @@
-INKUBO TATTOO STUDIO — SITO WEB
-===============================
+RAIN INK TATTOO — SITO WEB
+==========================
 
 Sito statico (solo HTML, CSS e JavaScript, nessun programma da installare).
-Nome, logo, testi e disegni sono stati inventati da zero per il cliente tatuatore.
+Sito di Rain Ink Tattoo, lo studio del tatuatore Matteo Quattrini
+(Facebook: https://www.facebook.com/raininktattoo.matteoquattrini).
+Logo, testi e disegni sono stati creati da zero; nato col nome provvisorio INKUBO
+(per questo cartella e repository si chiamano ancora «inkubo»).
 
 
 COME APRIRLO
@@ -13,37 +16,58 @@ Per provarlo come sul sito pubblicato, dalla cartella del sito nel Terminale:
   python3 -m http.server 8000
 
 poi aprire http://localhost:8000/ (Ctrl+C per fermare).
-Servono Internet i caratteri (Google Fonts) e l'invio del modulo di prenotazione.
+Servono Internet i caratteri (Google Fonts) e l'invio del modulo dei contatti.
+
+Online: https://nemesimark.github.io/inkubo/ (GitHub Pages, repository pubblico
+github.com/nemesiMark/inkubo, ramo main). Ogni push aggiorna il sito in circa un
+minuto.
 
 
 STRUTTURA
 ---------
-index.html               Home: prima schermata che si compone a pixel, frase manifesto,
-                         Stili (scorrono in orizzontale), Lo studio, Flash disponibili
-                         (carosello), Come funziona (schede impilate), fascia «Hai già
-                         un'idea?», Dove siamo
-stili.html               I sei stili (blackwork, fine line, dotwork, tradizionale,
+index.html               Home: prima schermata bianca con l'inchiostro che scopre il nome,
+                         Portfolio (sei lavori, il tasto «Scopri lo studio» porta qui),
+                         frase manifesto,
+                         Lo studio, Come funziona (schede impilate), fascia «Hai già
+                         un'idea?», Dove siamo (con la mappa animata)
+servizi.html             Servizi: due schede, Tatuaggi e Piercing
+piercing.html            Piercing: come lavoriamo, zone e tempi di guarigione, cura
+downloads/               guida-cura-del-tatuaggio.pdf (tasto in Cura del tatuaggio)
+tatuaggi.html            (ex stili.html, che ora rimanda qui) I sei stili (blackwork, fine line, dotwork, tradizionale,
                          giapponese, realistico), uno per riga con ancora
                          (es. stili.html#dotwork)
-portfolio.html           Lavori con filtri per stile e foto a schermo intero; sotto,
-                         i flash disponibili (portfolio.html#flash). Il filtro si può
+portfolio.html           Lavori con filtri per stile e foto a schermo intero. Il filtro si può
                          aprire già scelto: portfolio.html#tradizionale
 studio.html              L'artista (#artista), Lo spazio (#studio), Igiene e sicurezza (#igiene)
 cura-del-tatuaggio.html  Cura del tatuaggio giorno per giorno
 faq.html                 Domande frequenti
-prenota.html             Modulo di prenotazione della consulenza
+contattaci.html          Contattaci: modulo semplice (nome, email, progetto, privacy)
 privacy.html             Informativa privacy
 
 css/style.css            Tutti gli stili del sito
-js/script.js             Menu, effetto pixel della home, movimenti delle sezioni (vedi
+js/fumo.js               Inchiostro nero della prima schermata (simulazione in WebGL)
+js/mappa.js              Mappa animata di «Dove siamo» (vedi DOVE SIAMO)
+js/vendor/maplibre/      MapLibre 5.6.0 (licenza BSD), la libreria delle mappe, presa dal
+                         sito Olimp; si carica solo quando serve la mappa
+js/corpo3d.js            Figura umana in 3D con i tatuaggi: dalla versione 2.4 NON è più
+js/vendor/three.min.js   usata (la sezione è stata tolta); i file restano nel caso la si
+images/home/             voglia rimettere (vedi FIGURA 3D)
+js/vendor/gsap/          GSAP 3.15.0 con ScrollTrigger e SplitText (animazioni legate allo
+                         scorrimento, testi scomposti in lettere/parole); licenza gratuita
+                         GSAP «Standard», usabile anche su siti di clienti
+js/vendor/lenis/         Lenis 1.3.27 (licenza MIT): scorrimento morbido della pagina
+                         GSAP e Lenis sono installati ma non ancora collegati alle pagine
+js/script.js             Menu, movimenti delle sezioni (vedi
                          MOVIMENTI), filtri e foto a schermo intero del portfolio,
                          carosello, FAQ, invio del modulo
 
-images/comune/           logo-inkubo-scuro.svg (inchiostro nero, usato nella barra in alto),
-                         logo-inkubo-scuro.svg anche nel footer chiaro;
-                         logo-inkubo.svg (avorio, per fondi scuri, ora non usato), favicon.svg
-images/flash/            I disegni (flash) usati in home, stili, portfolio e menu
-images/home/             falena-hero.svg, il disegno grande della prima schermata
+images/comune/           logo-rainink-scuro.svg (nero, usato nella barra e nel footer),
+                         logo-rainink.svg (avorio, per fondi scuri, ora non usato),
+                         favicon.svg. Logo: «RAIN INK» con le I a goccia rossa, emblema
+                         a rombo con goccia d'inchiostro e pioggia
+images/flash/            I disegni usati in home, stili, portfolio e menu (la cartella ha
+                         ancora questo nome, ma nel sito i «flash» non ci sono più)
+                         falena-hero.svg: era la riserva della figura 3D, ora non usata
 images/studio/           macchinetta.svg
 
 
@@ -58,64 +82,140 @@ Sempre nella home la barra all'apertura non ha sfondo, sfocatura né ombra, e si
 riempie man mano che si scorre: piena dopo 160 px (il valore è in js/script.js,
 «scrollY / 160»). Col menu a panino aperto è subito piena. Nelle altre pagine la
 barra è sempre piena.
+Grandezze (dalla versione 2.4, più grandi): barra alta 92 px con logo di 56 px e voci
+a 1,14 rem; sotto i 1100 px barra di 72 px con logo di 46 px. L'altezza è in
+css/style.css, «--bar» in :root (le pagine la usano anche per gli spazi sotto la barra).
 Sotto i 1100 px di larghezza: menu a panino con + / − per i sottomenu.
 
 
-EFFETTO PIXEL DELLA PRIMA SCHERMATA
------------------------------------
-All'apertura della home la prima schermata è coperta da un velo a quadretti (8 px
-su computer, 4 px su telefono, allineati alla griglia di puntini dello sfondo).
-La grandezza si cambia in css/style.css con --cell (solo 2, 4, 8, 16…; il passo dei
-puntini, --dots, deve esserne un multiplo).
-I quadretti si aprono pian piano: prima lo sfondo, a onda partendo dal disegno, poi
-ogni scritta da sinistra a destra, con piccoli lampi neri e rossi. La falena compare
-a quadrettoni e diventa nitida passando a quadretti sempre più piccoli. L'effetto dura
-circa 2,8 secondi.
+PRIMA SCHERMATA: INCHIOSTRO CHE SCOPRE IL NOME
+----------------------------------------------
+Fondo bianco, nessuna scritta. All'apertura tre gocce d'inchiostro nero cadono
+dall'alto e si gonfiano come nell'acqua, poi due correnti attraversano il centro in
+versi opposti. Dove l'inchiostro passa compare, grande al centro, il logo «RAIN INK
+TATTOO»; tra 3,6 e 5 secondi il logo finisce comunque di comparire tutto, poi
+l'inchiostro si schiarisce e resta il logo sul bianco (circa 8 secondi in tutto).
+Muovendo il mouse (o il dito) sopra la prima schermata si smuove l'inchiostro.
+Sotto la barra del menu l'inchiostro sfuma nel bianco, così le voci restano sempre
+leggibili (l'altezza della fascia si prende da sola dall'altezza della barra).
+Neon: subito all'apertura (dopo un quarto di secondo, prima che arrivi l'inchiostro)
+i contorni di tutte le lettere e del logo (rombo e goccia) si accendono in rosso come
+un'insegna al neon, con lo sfarfallio dell'accensione; poi
+la luce respira piano e ogni tanto (ogni 2,5–6,5 secondi) sfarfalla. Dove l'inchiostro
+passa sopra il nome il neon brilla sul nero.
+Sbuffi automatici: se il mouse resta fermo per quasi 2 secondi (e sempre su telefono)
+ogni tanto entra da solo uno sbuffo d'inchiostro (a volte due insieme), da tutti e
+quattro i bordi a turno; quelli che partono al centro in alto o in basso sono più
+leggeri, per non coprire il nome.
+Quando il nome è uscito compare sotto un grande tasto rosso «Scopri lo studio» che
+porta alla sezione Portfolio subito sotto (index.html#portfolio).
+Grandezza e posizione del nome: in css/style.css --lw (larghezza: 44vw su schermi
+larghi, 60vw su quelli quasi quadrati, 74vw su telefono) e --ly (altezza del centro,
+44%); in js/fumo.js gli stessi valori sono nella funzione drawLogo e in LOGO_Y.
+Se si cambiano, vanno cambiati in tutti e due i file.
 
-I tempi si cambiano in index.html con gli attributi di ogni elemento della prima
-schermata: data-px = quando parte (millesimi di secondo dall'apertura), data-px-d =
-quanto dura. Esempio: <span ... data-px="580" data-px-d="580">Inchiostro</span>.
+È una vera simulazione di fluidi calcolata dalla scheda video (WebGL), non un video:
+non pesa, è nitida a ogni grandezza e ogni apertura è un po' diversa.
+Le regolazioni sono in cima a js/fumo.js:
+  CURL           quanti riccioli fa l'inchiostro (28)
+  VEL_FADE       quanto in fretta l'acqua si calma (.25)
+  INK_FADE       quanto in fretta l'inchiostro si schiarisce all'inizio (.5)
+  INK_FADE_END   quanto in fretta sparisce dopo che il nome è comparso (1.1)
+  NEON           forza del neon rosso sui contorni (1; 0 = spento)
+  NEON_W         spessore del filo del neon in pixel (2.2)
+  NEON_ON        secondi dopo cui si accende il neon (.25)
+  IDLE           secondi di mouse fermo prima degli sbuffi automatici (1.8)
+  PUFF_GAP       pausa tra uno sbuffo e l'altro, minimo e massimo (0.45 – 1.2 s)
+  START_FILL / END_FILL   secondi tra cui il nome finisce di comparire (3.6 / 5)
+  LOGO_Y         altezza del centro del nome (.44, uguale a --ly)
+Le gocce e le correnti sono nella funzione choreo (tempi in secondi, posizioni da 0 a 1).
+Senza WebGL o con l'impostazione «riduci movimento» si vede subito il logo fermo,
+con un alone rosso al neon.
+Si ferma quando la prima schermata non si vede (risparmio batteria).
+Per il titolo letto da Google e dai lettori di schermo c'è un titolo nascosto
+(«Rain Ink Tattoo – tatuaggi di Matteo Quattrini»).
 
-Con l'impostazione «riduci movimento» del dispositivo l'effetto non parte e la
-pagina compare subito. L'effetto pixel è solo nella prima schermata: le gallerie e
-le altre sezioni usano i movimenti descritti sotto.
+
+FIGURA 3D (NON PIÙ USATA)
+-------------------------
+Dalla versione 2.4 la sezione di presentazione con la figura è stata tolta dalla home.
+Il codice è rimasto in js/corpo3d.js e js/vendor/three.min.js; per rimetterla serve
+di nuovo una sezione con <canvas class="body3d"> e i due script in fondo a index.html.
+Com'era: un uomo in 3D (stile manichino) con tatuati:
+- un braccio: manica giapponese su fondo nero con barre del vento, sole rosso, fiori di
+  ciliegio, nuvole al gomito, onde a scaglie e carpa koi sull'avambraccio;
+- una gamba: blackwork con mandala sulla coscia, puntinato, fascia a denti sul
+  ginocchio, triangoli e catena di rombi sul polpaccio, anelli alla caviglia;
+- il collo: girocollo di triangoli, luna e rombo con cuore rosso sulla gola, simbolo
+  dietro.
+I tatuaggi sono disegnati nel codice (js/corpo3d.js, funzioni sleeve, legWork e
+neckWork), non sono immagini.
+Movimento: gira da sola. Col mouse sopra la figura si decide il verso: a sinistra gira
+verso sinistra, a destra verso destra, più si va verso il bordo più gira veloce, al
+centro si ferma; su e giù la inclina un poco. Togliendo il mouse riprende a girare da
+sola nell'ultimo verso scelto. Su telefono si gira trascinando col dito.
+Sta nella sezione di presentazione subito sotto la prima schermata, accanto a
+«Inchiostro che racconta chi sei». Si ferma quando la sezione non si vede (risparmio
+batteria).
+Con «riduci movimento» resta ferma finché non la si gira col mouse o col dito.
+La velocità da sola si cambia in js/corpo3d.js («var BASE = … .45», radianti al secondo).
 
 
 MOVIMENTI (STILE APPLE)
 -----------------------
 Caratteri Inter Tight (titoli) e Inter (testi). Ogni sezione ha un movimento suo:
-- Prima schermata: finiti i pixel, scorrendo il testo sale e sfuma, la falena scende
-  e rimpicciolisce.
+- Prima schermata: l'inchiostro (vedi sopra); scorrendo il logo si allontana e sfuma.
 - Frase manifesto: le parole si accendono una alla volta mentre si scorre.
 - Stili (home): la sezione si blocca e le schede scorrono di lato, con una barra
   di avanzamento. Solo su schermi larghi più di 860 px e alti almeno 680 px; sotto,
   le schede si scorrono col dito.
 - Lo studio e Stili (pagina): l'immagine si apre da un riquadro più stretto e si
   assesta; i testi salgono sfocati e si mettono a fuoco uno dopo l'altro.
-- Flash disponibili (home e portfolio): carosello con frecce tonde, pallini e
-  schede ai lati attenuate.
 - Come funziona: le schede si impilano; quella sotto rimpicciolisce un poco.
 - «Hai già un'idea?» (home) e «Trovato il tuo stile?» (stili): il rosso si apre a
   cerchio e il titolo cresce.
 - Portfolio: filtro a pillola con l'indicatore bianco che scivola, foto che si
   riordinano in movimento, foto a schermo intero che si ingrandisce dalla miniatura.
-- Igiene (studio): le schede si raddrizzano da inclinate. Dove siamo: i riquadri
-  crescono.
+- Igiene (studio): le schede si raddrizzano da inclinate.
+- Dove siamo: i dati salgono uno dopo l'altro; la mappa vola dallo spazio allo studio
+  (vedi DOVE SIAMO).
 - Cura del tatuaggio: la linea rossa si riempie e i punti si accendono scorrendo.
 - FAQ: le risposte si aprono e si chiudono morbide.
 Con «riduci movimento» del dispositivo tutto compare fermo.
 
 
+DOVE SIAMO (MAPPA ANIMATA, COME IN OLIMP)
+-----------------------------------------
+In fondo alla home: a sinistra il titolo e la frase su Montelupone, a destra indirizzo
+(con «Apri Google Maps» e «Ottieni indicazioni»), cellulare, orari e Facebook; sotto,
+la mappa animata ripresa dal sito Olimp (js/mappa.js). Si parte dalla Terra vista dallo
+spazio e si scende fino allo studio su foto satellitari scurite; scendendo si
+illuminano in rosso, col loro nome, Italia, Marche, provincia di Macerata e il comune
+di Montelupone; all'arrivo il segnaposto «RAIN INK» con l'indirizzo, che apre Google
+Maps. Pulsante «Rivedi» per ripartire. Alla fine la mappa si può muovere (Ctrl/⌘ +
+rotellina o due dita per ingrandire). Con «riduci movimento» si vede subito l'arrivo.
+Privacy: la mappa scarica foto da Esri e caratteri da OpenFreeMap (servizi esterni),
+quindi all'inizio c'è il riquadro «Dallo spazio fino allo studio» con il tasto «Mostra
+la mappa»; la scelta resta salvata nel browser del visitatore (chiave
+rainink_mappa_ok). È scritto anche nella pagina Privacy.
+Il segnaposto è al civico 16 di via San Martino (OpenStreetMap), cioè l'indirizzo della
+pagina Facebook «C.da San Martino n° 16»: da far confermare al cliente. Per spostarlo
+si cambia SEDE in js/mappa.js (longitudine, latitudine); confini semplificati da
+OpenStreetMap, salvati nello stesso file.
+
+
 DATI DA SOSTITUIRE PRIMA DI PUBBLICARE
 --------------------------------------
-Sono inventati e vanno chiesti al cliente (si trovano in tutte le pagine, nel footer,
-in Dove siamo, in Privacy e nei dati per Google in testa a index.html):
-- indirizzo (Via Atenea 1, 92100 Agrigento) e link a Google Maps
-- telefono (+39 0922 000 000), email (info@inkubotattoo.it), P.IVA (00000000000)
-- Instagram: il link porta alla home di Instagram, va messo quello dell'account vero
+Veri (dalla pagina Facebook, versione 2.4): Rain Ink Tattoo di Matteo Quattrini,
+C.da San Martino n° 16, 62010 Montelupone (MC), cellulare 339 260 5135, negozio di
+tatuaggi e piercing.
+Sono ancora inventati e vanno chiesti al cliente (si trovano in tutte le pagine, nel
+footer, in Dove siamo, in Privacy e nei dati per Google in testa a index.html):
+- email (info@example.com, segnaposto) e P.IVA (00000000000)
+- Facebook e Instagram (@matteoraininktattoo): sono quelli veri dello studio
 - orari (mar–sab 10–19)
 - DOMINIO-DEL-SITO nei meta, in robots.txt e in sitemap.xml
-- modulo di prenotazione: in prenota.html sostituire INSERIRE-CHIAVE-WEB3FORMS con
+- modulo dei contatti: in contattaci.html sostituire INSERIRE-CHIAVE-WEB3FORMS con
   la chiave Web3Forms del cliente. Finché c'è la chiave provvisoria l'invio è solo
   simulato (compare il messaggio di conferma ma non parte nessuna email)
 - da verificare col cliente: attestato regionale, ritocco incluso, consulenza
@@ -173,3 +273,179 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    solo nella prima schermata della home. Falena della home ridisegnata
                    sul nuovo fondo. Aggiornati style.css?v=6 e script.js?v=6 in tutte
                    le pagine.
+1.7  (13/11/2026)  Sito pubblicato con GitHub Pages: https://nemesimark.github.io/inkubo/
+                   (repository pubblico github.com/nemesiMark/inkubo, ramo main).
+1.8  (13/11/2026)  Home: al posto della falena un uomo in 3D che gira, con braccio,
+                   gamba e collo tatuati (vedi FIGURA 3D). Col mouse sopra si decide
+                   il verso, togliendolo riprende a girare; su telefono si trascina
+                   col dito. Si compone a pixel come prima. La falena resta solo per
+                   i dispositivi senza 3D. Nuovi file js/corpo3d.js e
+                   js/vendor/three.min.js. Aggiornati style.css?v=7 e script.js?v=7
+                   in tutte le pagine.
+1.9  (13/11/2026)  Nomi veri del cliente: lo studio si chiama Rain Ink Tattoo, il
+                   tatuatore Matteo Quattrini (citato in home, in Studio e nei dati per
+                   Google). Nuovo logo «RAIN INK» (images/comune/logo-rainink*.svg) e
+                   nuova favicon; tolti i loghi INKUBO. Contatti: al posto di
+                   Instagram il link alla pagina Facebook vera; l'email provvisoria è
+                   ora info@example.com. Aggiornati style.css?v=8, script.js?v=8 e
+                   corpo3d.js?v=2 in tutte le pagine.
+2.0  (13/11/2026)  Installate nel sito le librerie per la grafica in movimento: GSAP
+                   3.15.0 con ScrollTrigger e SplitText (js/vendor/gsap/) e Lenis
+                   1.3.27 per lo scorrimento morbido (js/vendor/lenis/). File scaricati
+                   da due fonti (jsDelivr e unpkg) e controllati identici. Non ancora
+                   caricati dalle pagine: il sito per ora non cambia.
+2.1  (13/11/2026)  Home, nuova prima schermata: fondo bianco senza scritte, inchiostro
+                   nero che cade e si spande come nell'acqua (simulazione di fluidi in
+                   WebGL, nuovo js/fumo.js); dove passa compare grande al centro il
+                   logo dello studio, poi l'inchiostro si schiarisce e resta il logo.
+                   Il mouse smuove l'inchiostro. Testo «Inchiostro che racconta chi
+                   sei», pulsanti, figura 3D e i tre punti spostati nella nuova sezione
+                   di presentazione subito sotto. Tolto l'effetto pixel. Aggiornati
+                   style.css?v=9, script.js?v=9, corpo3d.js?v=3, fumo.js?v=2.
+2.2  (13/11/2026)  Correzione: aprendo index.html col doppio clic (indirizzo file://)
+                   la prima schermata restava tutta nera, perché il browser non lascia
+                   usare l'immagine del logo nell'effetto. Ora il logo è incorporato
+                   nella pagina (attributo data-logo) e funziona in ogni caso; se per
+                   qualsiasi motivo il logo non si carica compare il logo fermo, mai lo
+                   schermo nero. Aggiornato fumo.js?v=3.
+2.3  (13/11/2026)  Prima schermata: nome più piccolo (44% della larghezza su
+                   computer, prima 62%) e un poco più in alto; sotto, centrato, un
+                   grande tasto rosso «Scopri lo studio» con freccia che compare
+                   insieme al nome e porta alla presentazione. Tolta la freccina in
+                   basso. Le correnti d'inchiostro passano più in alto, sul nome.
+                   Aggiornati style.css?v=10 e fumo.js?v=4.
+2.4  (13/11/2026)  Home: tolta la sezione di presentazione («Inchiostro che racconta chi
+                   sei», pulsanti, figura 3D e i tre punti); il tasto «Scopri lo
+                   studio» della prima schermata ora porta alla frase manifesto.
+                   Dati veri dalla pagina Facebook in tutte le pagine e nei dati per
+                   Google: C.da San Martino 16, 62010 Montelupone (MC), cellulare 339
+                   260 5135 (con coordinate dello studio). Nuova sezione «Dove siamo»
+                   come in Olimp, con la mappa animata dallo spazio fino allo studio
+                   (nuovo js/mappa.js, MapLibre in js/vendor/maplibre/) che parte dopo
+                   «Mostra la mappa»; aggiornata la pagina Privacy. Studio: tolto «nel
+                   centro storico». Navbar più grande: barra 92 px (prima 72), logo
+                   56 px (prima 42), voci 1,14 rem (prima 0,95), sottomenu più grandi;
+                   su tablet e telefono barra 72 px (prima 64) e logo 46 px (prima 36).
+                   Aggiornati style.css?v=11 in tutte le pagine e mappa.js?v=1.
+2.5  (13/11/2026)  Prima schermata: i contorni di tutte le lettere del nome e del logo
+                   si accendono in rosso come un'insegna al neon, che respira e ogni
+                   tanto sfarfalla (anche il logo fermo, quando manca il WebGL, ha
+                   l'alone rosso). Col mouse fermo partono da soli, ogni 0,7–1,8
+                   secondi, sbuffi d'inchiostro soprattutto dai lati, al posto delle
+                   rare gocce leggere di prima; l'inchiostro resta un po' di più
+                   (INK_FADE_END 1.1, prima 1.6). Aggiornati style.css?v=12 e
+                   fumo.js?v=5.
+2.6  (13/11/2026)  «Prenota» diventa «Contattaci»: nuova pagina contattaci.html (tolta
+                   prenota.html) con un modulo semplice come quello di Olimp: nome e
+                   cognome, email, il tuo progetto, consenso privacy (artt. 13-14 GDPR)
+                   e tasto scuro a tutta larghezza «Invia richiesta». Sotto il titolo
+                   il cellulare per chi preferisce chiamare. Aggiornati la voce del menu,
+                   il footer, tutti i link e i pulsanti («Contattaci», «Chiedi un
+                   flash»), la sitemap, la Privacy e i messaggi dopo l'invio.
+                   Aggiornati style.css?v=13 e script.js?v=10 in tutte le pagine.
+2.7  (13/11/2026)  Prima schermata: il tasto «Scopri lo studio» compare prima (dopo 1,8
+                   secondi, prima 4,6), è più grande (testo e freccia più grandi, più
+                   spazio interno) e ha gli angoli quasi vivi (4 px) invece della
+                   pillola. Aggiornato style.css?v=14 in tutte le pagine.
+2.8  (13/11/2026)  Tolte tutte le parti sui «flash» (disegni già pronti da tatuare):
+                   la sezione «Flash disponibili» col carosello in home e in
+                   Portfolio, il link «Tutti i flash» e il pulsante «Chiedi un flash»;
+                   in Stili, Tradizionale: «flash» tolto da «Ideale per» e dal testo.
+                   In home «Come funziona» ora ha il fondo grigio chiaro, così le
+                   sezioni continuano ad alternarsi. Il codice del carosello resta in
+                   js/script.js e css/style.css ma non è più usato.
+2.9  (13/11/2026)  Navbar: logo tutto a sinistra (non più al centro) e voci a destra;
+                   nuova voce «Dove siamo» (porta a index.html#dove). All'apertura della
+                   home il logo arriva da sinistra e le voci dal basso, da destra verso
+                   sinistra. «Stili» diventa «Servizi», con la banda del menu a due
+                   schede: Tatuaggi e Piercing.
+                   Nuove pagine: servizi.html (due schede grandi), tatuaggi.html (l'ex
+                   pagina Stili, con i sei stili) e piercing.html (con l'ago e non con
+                   la pistola, gioielli in titanio, zone di orecchio, viso e corpo con
+                   i tempi di guarigione indicativi, cura del piercing, minorenni).
+                   stili.html ora rimanda da sola a tatuaggi.html (anche con l'ancora,
+                   es. stili.html#dotwork). Nuovi disegni images/piercing/
+                   (orecchio con i piercing, gioielli).
+                   Cura del tatuaggio: tasto «Scarica la guida (PDF)» sotto il titolo e
+                   in fondo alla pagina; la guida è downloads/guida-cura-del-tatuaggio.pdf
+                   (A4, 2 pagine, con logo, indirizzo e cellulare), fatta con gli stessi
+                   testi della pagina. Se si cambiano i testi, la guida va rifatta.
+                   Footer: «Tatuaggi e piercing a Montelupone» e i nuovi link.
+                   DA VERIFICARE COL CLIENTE: piercing offerti, tempi di guarigione,
+                   gioielli in titanio ASTM F136, controllo incluso, regole per i
+                   minorenni. Aggiornato style.css?v=15 in tutte le pagine.
+3.0  (13/11/2026)  Navbar a tutta larghezza: logo al bordo sinistro e voci al bordo
+                   destro dello schermo. Nuovo ordine delle voci: Servizi, Studio,
+                   Portfolio, Cura del tatuaggio, Dove siamo, Contattaci, FAQ (stesso
+                   ordine nel footer). Prima schermata: un po' più di sbuffi
+                   d'inchiostro automatici, da tutti e quattro i lati (ogni 0,45–1,2
+                   secondi, a volte due insieme). Aggiornati style.css?v=16 e
+                   fumo.js?v=6.
+3.1  (13/11/2026)  Tasto «Scopri lo studio» della prima schermata meno alto e più lungo
+                   (spazio interno 1,05 rem sopra e sotto, prima 1,55; 5,2–5,5 rem ai
+                   lati, prima 3,1–3,4). Aggiornato style.css?v=17 in tutte le pagine.
+3.2  (13/11/2026)  Tasto «Scopri lo studio»: scritta e freccia più piccole (circa
+                   1,1 rem, prima 1,55) e tasto più largo (7,2–7,5 rem di spazio ai lati;
+                   su telefono 3,2–3,4 rem perché stia nello schermo). Aggiornato
+                   style.css?v=18 in tutte le pagine.
+3.3  (13/11/2026)  Prima schermata: il neon rosso sui contorni del nome si accende
+                   subito (dopo 0,25 secondi, con lo sfarfallio dell'accensione) e
+                   lampeggia già prima che arrivi l'inchiostro; il nome si riempie di
+                   nero dove passa l'inchiostro. In alto, sotto la barra del menu,
+                   l'inchiostro sfuma nel bianco: non copre più le voci della navbar.
+                   Aggiornato fumo.js?v=7.
+3.4  (13/11/2026)  Prima schermata: anche l'interno nero delle lettere e del logo si
+                   vede subito, insieme al neon (dopo 0,25 secondi), senza aspettare
+                   che passi l'inchiostro. Aggiornato fumo.js?v=8.
+3.5  (13/11/2026)  Home: nuova sezione «Portfolio – Lavori recenti» subito sotto la
+                   prima schermata, con sei lavori (uno per stile: ognuno apre il
+                   portfolio già filtrato su quello stile) e il pulsante «Tutto il
+                   portfolio». Il tasto «Scopri lo studio» ora porta qui
+                   (index.html#portfolio). Aggiornato style.css?v=19 in tutte le pagine.
+3.6  (13/11/2026)  Home: tolta la sezione «Stili – Sei linguaggi, un solo segno» con le
+                   schede che scorrevano di lato. Gli stili restano nella pagina
+                   Tatuaggi (Servizi). Il codice dello scorrimento laterale resta in
+                   js/script.js e css/style.css ma non è più usato.
+3.7  (13/11/2026)  Prima schermata: il tasto «Scopri lo studio» è più largo (circa tre
+                   quarti della scritta RAIN INK, minimo 240 px) e compare insieme al
+                   nome, dopo 0,25 secondi. Aggiornato style.css?v=20.
+3.8  (13/11/2026)  Navbar minimale come Olimp: barra più bassa (68 px, 64 px su tablet e
+                   telefono), vetro bianco più trasparente con ombra leggera, logo più
+                   piccolo (40 px), voci a 1rem in grassetto. Restano logo a sinistra,
+                   menu a tendina e sottolineatura rossa al passaggio.
+3.9  (13/11/2026)  Nuova palette «inchiostro e carta» (variabili --carta #f3ede3,
+                   --pietra #e7dfd2, --inchiostro #14110f, --rosso-neon #e0503f in
+                   css/style.css). Home, prima schermata esclusa: Portfolio su carta,
+                   frase «Ogni tatuaggio…» su nero inchiostro, Lo studio su pietra,
+                   Come funziona e banda «Hai già un'idea?» su carta, Dove siamo su
+                   nero inchiostro (testi chiari, rosso più acceso), piè di pagina su
+                   pietra. Le altre pagine non cambiano. Aggiornato style.css?v=21.
+4.0  (13/11/2026)  Footer minimale come Olimp, uguale in tutte le pagine: una sola
+                   striscia nero inchiostro con «© anno Rain Ink Tattoo – Tatuaggi e
+                   piercing» ed email, icone Facebook e WhatsApp (wa.me sul cellulare
+                   339 260 5135), «Privacy e cookie» e «Gestione cookie». Su telefono
+                   gli elementi vanno in colonna, centrati. Tolti logo, colonne Sito /
+                   Contatti / Orari e P.IVA. «Gestione cookie» permette di ritirare il
+                   consenso alla mappa animata (l'unico che il sito salva).
+                   Aggiornati style.css?v=22 e script.js?v=11 in tutte le pagine.
+4.1  (13/11/2026)  Home: nuova sezione «Contattaci – Scrivici.» subito dopo «Dove
+                   siamo» (index.html#contattaci), come in Olimp: a sinistra i recapiti
+                   (Referente Matteo Quattrini, Email, Cellulare, Indirizzo) e i
+                   riquadri Facebook e WhatsApp; a destra lo stesso modulo della pagina
+                   Contattaci (nome, email, progetto, consenso privacy, «Invia
+                   richiesta»). Sfondo carta; su telefono i recapiti vanno sopra il
+                   modulo. Aggiornato style.css?v=23 in tutte le pagine.
+4.2  (13/11/2026)  Aggiunto Instagram (https://www.instagram.com/matteoraininktattoo/):
+                   icona nel footer di tutte le pagine (tra Facebook e WhatsApp),
+                   riquadro rosa «Instagram» nella sezione Contattaci della home (ora
+                   tre riquadri: Facebook, Instagram, WhatsApp), riga Social di «Dove
+                   siamo» e dati per Google (sameAs). Aggiornato style.css?v=24.
+4.3  (13/11/2026)  Footer uniforme: al passaggio del mouse tutti gli elementi (email,
+                   icone social, Privacy e cookie, Gestione cookie) diventano bianchi;
+                   prima le icone social diventavano rosse. Aggiornato style.css?v=25.
+4.4  (13/11/2026)  Prima schermata: il tasto «Scopri lo studio» ora si chiama «Scopri
+                   di più» (porta sempre alla sezione Portfolio).
+4.5  (13/11/2026)  Contattaci (home): il riquadro Instagram usa i colori veri del
+                   marchio, con la sfumatura giallo-arancio-rosa-viola-blu sull'icona e
+                   sulla scritta; bordo rosa Instagram al passaggio del mouse.
+                   Aggiornato style.css?v=26.

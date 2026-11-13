@@ -1,9 +1,8 @@
-/* INKUBO Tattoo Studio — script del sito */
+/* Rain Ink Tattoo — script del sito */
 (function () {
 'use strict';
 var R = document.documentElement;
 var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-var canDraw = !!(window.requestAnimationFrame && document.createElement('canvas').getContext);
 var EASE = 'cubic-bezier(.16, 1, .3, 1)';
 var canAnimate = !reduce && !!Element.prototype.animate;
 function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
@@ -56,12 +55,11 @@ window.addEventListener('resize', function () { onResizeFns.forEach(function (f)
 window.addEventListener('pageshow', requestRun);
 window.addEventListener('load', function () { onResizeFns.forEach(function (f) { f(); }); requestRun(); });
 
-/* Prima schermata: scorrendo il testo sale e sfuma, il disegno scende e rimpicciolisce */
+/* Prima schermata: scorrendo l'inchiostro e il nome rimpiccioliscono e sfumano */
 function heroOut() {
   var hero = document.querySelector('.hero');
   if (!hero || reduce) return;
   onScrollFns.push(function () {
-    if (!hero.classList.contains('px-done')) return;
     hero.style.setProperty('--p', clamp(window.scrollY / (hero.offsetHeight * .85)).toFixed(3));
   });
 }
@@ -365,198 +363,6 @@ function faq() {
 }
 
 /* ======================================================
-   PIXEL: strumenti per l'apertura della home
-   ====================================================== */
-function cellOf(el) { var v = parseFloat(getComputedStyle(el).getPropertyValue('--cell')); return v > 0 ? v : 8; }
-function canvas(w, hh) { var c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(hh)); return c; }
-function loaded(img) {
-  return new Promise(function (ok) {
-    if (img.complete && img.naturalWidth) return ok(true);
-    if (img.loading === 'lazy') img.loading = 'eager';
-    img.addEventListener('load', function () { ok(true); }, { once: true });
-    img.addEventListener('error', function () { ok(false); }, { once: true });
-  });
-}
-
-/* Mosaico: il disegno viene ridotto a metà, a un quarto… (ogni quadretto è la media dei pixel
-   che copre) e poi ingrandito senza sfumature. */
-function Mosaic(img, area, dest, maxBlock) {
-  this.area = area;
-  this.levels = {};
-  var base = canvas(area.w, area.h), g = base.getContext('2d');
-  g.imageSmoothingEnabled = true;
-  try { g.drawImage(img, dest.x - area.x, dest.y - area.y, dest.w, dest.h); } catch (e) {}
-  var prev = base, bl = 1;
-  this.levels[1] = base;
-  while (bl < maxBlock) {
-    bl *= 2;
-    var c = canvas(prev.width / 2, prev.height / 2), cg = c.getContext('2d');
-    cg.imageSmoothingEnabled = true;
-    cg.imageSmoothingQuality = 'high';
-    cg.drawImage(prev, 0, 0, c.width, c.height);
-    this.levels[bl] = prev = c;
-  }
-}
-Mosaic.prototype.draw = function (ctx, block, k) {
-  var c = this.levels[block] || this.levels[1], a = this.area;
-  ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(c, 0, 0, c.width, c.height, Math.round(a.x * k), Math.round(a.y * k), Math.round(c.width * block * k), Math.round(c.height * block * k));
-};
-function blocksFor(cell) { var out = [], v = cell * 2; while (v >= 2) { out.push(v); v /= 2; } return out; }
-
-/* ======================================================
-   HOME: LA PRIMA SCHERMATA SI COMPONE A PIXEL
-   Un velo a celle copre la schermata; le celle si aprono una alla volta: prima il
-   fondo a onda dal disegno, poi ogni elemento da sinistra a destra all'ora scritta in
-   data-px (ms) per data-px-d ms; le celle appena aperte lampeggiano in nero o rosso.
-   Il disegno compare a quadrettoni e diventa nitido.
-   ====================================================== */
-function heroIntro() {
-  var hero = document.querySelector('.hero[data-pixel]');
-  var unpre = function () { R.classList.remove('px-pre'); if (hero) hero.classList.add('px-done'); };
-  if (!hero || reduce || !canDraw) return unpre();
-  var art = hero.querySelector('.hero-art img');
-  var waits = [];
-  /* i caratteri vanno chiesti esplicitamente: fonts.ready da solo può risolversi prima che inizino a caricarsi */
-  if (document.fonts && document.fonts.load) {
-    waits.push(Promise.all(['800 1em "Inter Tight"', '400 1em Inter', '500 1em Inter'].map(function (f) { return document.fonts.load(f).catch(function () {}); }))
-      .then(function () { return document.fonts.ready; }));
-  }
-  if (art) waits.push(loaded(art));
-  var started = false;
-  var start = function () { if (started) return; started = true; try { runHero(hero, art); } catch (e) { unpre(); } };
-  Promise.all(waits).then(start, start);
-  setTimeout(start, 1200);
-}
-
-function runHero(hero, art) {
-  var cell = cellOf(hero), k = Math.min(window.devicePixelRatio || 1, 2);
-  var W = hero.clientWidth, H = hero.clientHeight;
-  var cv = document.createElement('canvas');
-  cv.className = 'px-cover'; cv.setAttribute('aria-hidden', 'true');
-  cv.width = Math.round(W * k); cv.height = Math.round(H * k);
-  cv.style.width = W + 'px'; cv.style.height = H + 'px';
-  hero.appendChild(cv);
-  hero.classList.add('px-run');
-  var ctx = cv.getContext('2d');
-  var hs = getComputedStyle(hero), bg = hs.backgroundColor;
-  var ink = hs.getPropertyValue('--ink').trim() || '#1d1d1f', red = hs.getPropertyValue('--red').trim() || '#c4372a';
-  var cols = Math.ceil(W / cell), rows = Math.ceil(H / cell), N = cols * rows;
-  var T = new Float32Array(N), kind = new Uint8Array(N), tone = new Uint8Array(N);
-  var hr = hero.getBoundingClientRect();
-  var rel = function (el) { var r = el.getBoundingClientRect(); return { x: r.left - hr.left, y: r.top - hr.top, w: r.width, h: r.height }; };
-  var rnd = Math.random;
-
-  /* fondo: si apre a onda partendo dal disegno */
-  var ac = art ? rel(art) : { x: W * .7, y: H * .4, w: 0, h: 0 };
-  var ox = ac.x + ac.w / 2, oy = ac.y + ac.h / 2;
-  var md = Math.max(Math.hypot(ox, oy), Math.hypot(W - ox, oy), Math.hypot(ox, H - oy), Math.hypot(W - ox, H - oy));
-  for (var i = 0; i < N; i++) {
-    var cx = (i % cols + .5) * cell, cy = ((i / cols | 0) + .5) * cell;
-    T[i] = 70 + Math.hypot(cx - ox, cy - oy) / md * 1000 + rnd() * 330;
-    tone[i] = rnd() < .22 ? 2 : 1;
-  }
-
-  /* elementi di testo e pulsanti */
-  var end = 0;
-  all('[data-px]', hero).forEach(function (el) {
-    if (el === art) return;
-    var t0 = +el.getAttribute('data-px') || 0, d = +el.getAttribute('data-px-d') || 700, r = rel(el);
-    var pad = 6, x0 = Math.max(0, Math.floor((r.x - pad) / cell)), x1 = Math.min(cols - 1, Math.floor((r.x + r.w + pad) / cell));
-    var y0 = Math.max(0, Math.floor((r.y - pad) / cell)), y1 = Math.min(rows - 1, Math.floor((r.y + r.h + pad) / cell));
-    for (var y = y0; y <= y1; y++) for (var x = x0; x <= x1; x++) {
-      var j = y * cols + x, p = (x - x0) / Math.max(1, x1 - x0);
-      T[j] = t0 + p * d * .6 + rnd() * d * .4; kind[j] = 1;
-    }
-    end = Math.max(end, t0 + d);
-  });
-
-  /* disegno */
-  var mos = null, aStart = 0, aDur = 0, blocks = blocksFor(cell), area = null, artCells = [];
-  if (art) {
-    aStart = +art.getAttribute('data-px') || 130; aDur = +art.getAttribute('data-px-d') || 2100;
-    var ax0 = Math.max(0, Math.floor(ac.x / cell)), ay0 = Math.max(0, Math.floor(ac.y / cell));
-    var ax1 = Math.min(cols, Math.ceil((ac.x + ac.w) / cell)), ay1 = Math.min(rows, Math.ceil((ac.y + ac.h) / cell));
-    if ((ax1 - ax0) % 2) { if (ax1 < cols) ax1++; else ax0--; }
-    if ((ay1 - ay0) % 2) { if (ay1 < rows) ay1++; else ay0--; }
-    area = { x: ax0 * cell, y: ay0 * cell, w: (ax1 - ax0) * cell, h: (ay1 - ay0) * cell };
-    mos = new Mosaic(art, area, { x: ac.x, y: ac.y, w: ac.w, h: ac.h }, blocks[0]);
-    for (var yy = ay0; yy < ay1; yy++) for (var xx = ax0; xx < ax1; xx++) {
-      var q = yy * cols + xx;
-      kind[q] = 2; T[q] = aStart + rnd() * aDur * .4; artCells.push(q);
-    }
-    end = Math.max(end, aStart + aDur);
-  }
-  for (i = 0; i < N; i++) if (kind[i] === 0) end = Math.max(end, T[i]);
-  end += 150;
-
-  var FL = 150, t0 = null, dead = false, cd = cell * k;
-  var rx = function (c) { return Math.round((c % cols) * cd); }, ry = function (c) { return Math.round((c / cols | 0) * cd); };
-  var cw = function (c) { return Math.round((c % cols + 1) * cd) - rx(c); }, ch = function (c) { return Math.round(((c / cols | 0) + 1) * cd) - ry(c); };
-
-  function finish() {
-    if (dead) return; dead = true;
-    window.removeEventListener('resize', onResize);
-    hero.classList.remove('px-run');
-    hero.classList.add('px-done');
-    cv.remove();
-    R.classList.remove('px-pre');
-    requestRun();
-  }
-  var w0 = window.innerWidth;
-  function onResize() { if (Math.abs(window.innerWidth - w0) > 2) finish(); }
-  window.addEventListener('resize', onResize);
-  /* se la schermata cambia misura mentre si compone, si mostra tutto subito */
-  if (window.ResizeObserver) {
-    var ro = new ResizeObserver(function () { if (Math.abs(hero.clientHeight - H) > 2 || Math.abs(hero.clientWidth - W) > 2) { ro.disconnect(); finish(); } });
-    ro.observe(hero);
-  }
-
-  function frame(now) {
-    if (dead) return;
-    if (t0 === null) t0 = now;
-    var t = now - t0, j, fl1 = [], fl2 = [], fl0 = [];
-    ctx.clearRect(0, 0, cv.width, cv.height);
-    ctx.globalAlpha = 1; ctx.fillStyle = bg; ctx.beginPath();
-    for (j = 0; j < N; j++) {
-      var tj = T[j];
-      if (tj > t) ctx.rect(rx(j), ry(j), cw(j), ch(j));
-      else if (t - tj < FL && kind[j] !== 2) (kind[j] === 0 ? fl0 : tone[j] === 2 ? fl2 : fl1).push(j);
-    }
-    ctx.fill();
-    if (mos && t >= aStart && t < aStart + aDur) {
-      var p = (t - aStart) / aDur, bl;
-      if (p < .45) bl = blocks[0];
-      else bl = blocks[Math.min(blocks.length - 1, 1 + Math.floor((p - .45) / .55 * (blocks.length - 1)))];
-      ctx.save();
-      if (p < .42) {
-        ctx.beginPath();
-        for (var n = 0; n < artCells.length; n++) { j = artCells[n]; if (T[j] <= t) ctx.rect(rx(j), ry(j), cw(j), ch(j)); }
-        ctx.clip();
-      }
-      mos.draw(ctx, bl, k);
-      ctx.restore();
-    } else if (mos && t >= aStart + aDur && hero.classList.contains('px-run')) {
-      hero.classList.remove('px-run');
-    }
-    var flash = function (list, color, a) {
-      for (var m = 0; m < list.length; m++) {
-        j = list[m];
-        ctx.globalAlpha = a * (1 - (t - T[j]) / FL);
-        ctx.fillStyle = color;
-        ctx.fillRect(rx(j), ry(j), cw(j), ch(j));
-      }
-    };
-    flash(fl0, ink, .14); flash(fl1, ink, .85); flash(fl2, red, .95);
-    ctx.globalAlpha = 1;
-    if (R.classList.contains('px-pre')) R.classList.remove('px-pre');
-    if (t >= end) return finish();
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-}
-
-/* ======================================================
    MODULO DI PRENOTAZIONE
    Invio con Web3Forms senza lasciare la pagina. Finché nel modulo c'è la chiave
    provvisoria (INSERIRE-CHIAVE-WEB3FORMS) l'invio è solo simulato, per le prove.
@@ -580,7 +386,7 @@ function bookingForm() {
   var msg = document.createElement('p'); msg.className = 'form-msg'; msg.setAttribute('role', 'status'); msg.hidden = true; f.appendChild(msg);
   var done = function () {
     f.reset(); sb.disabled = false; sb.textContent = sbText; msg.hidden = true;
-    thanks('Richiesta inviata', 'Grazie! Leggeremo la tua idea e ti risponderemo entro due giorni lavorativi per fissare la consulenza.');
+    thanks('Richiesta inviata', 'Grazie! Abbiamo ricevuto il tuo messaggio e ti risponderemo il prima possibile.');
   };
   f.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -591,13 +397,12 @@ function bookingForm() {
       .then(function (r) { return r.json().then(function (d) { if (!r.ok || d.success === false) throw new Error('send'); }); })
       .then(done)
       .catch(function () {
-        msg.textContent = 'Non è stato possibile inviare la richiesta. Riprova tra poco oppure scrivici su Instagram o WhatsApp.';
+        msg.textContent = 'Non è stato possibile inviare la richiesta. Riprova tra poco oppure chiamaci al 339 260 5135.';
         msg.hidden = false; sb.disabled = false; sb.textContent = sbText;
       });
   });
 }
 
-heroIntro();
 heroOut();
 words();
 clipZoom();
@@ -613,3 +418,17 @@ bookingForm();
 runScroll();
 var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
 })();
+
+// Gestione cookie (footer): il sito non usa cookie di profilazione; l'unico consenso salvato
+// è quello della mappa animata (servizi esterni). Il pulsante permette di ritirarlo.
+document.querySelectorAll('.ck-open').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var on = false;
+    try { on = localStorage.getItem('rainink_mappa_ok') === '1'; } catch (e) {}
+    if (!on) { alert('Questo sito non usa cookie di profilazione. Non hai dato consensi da ritirare.'); return; }
+    if (confirm('Hai acconsentito alla mappa animata (servizi esterni Esri e OpenFreeMap). Vuoi ritirare il consenso?')) {
+      try { localStorage.removeItem('rainink_mappa_ok'); } catch (e) {}
+      location.reload();
+    }
+  });
+});
