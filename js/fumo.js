@@ -331,11 +331,11 @@ function newPuff(t) {
    poi respira piano e ogni tanto sfarfalla */
 var neonLevel = 0, logoOn = 0, flickAt = NEON_ON, nextFlick = NEON_ON;
 function neonAt(t) {
-  if (t >= nextFlick) { flickAt = t; nextFlick = t + rnd(2.5, 6.5); }
+  if (t >= nextFlick) { flickAt = t; nextFlick = t + rnd(1, 2.6); }   // sfarfallio più frequente (prima 2.5-6.5 s)
   var on = Math.min(1, Math.max(0, (t - NEON_ON) / .4));
   var f = t - flickAt, dip = 1;
-  if (f >= 0 && f < .42) dip = (f < .05 || (f > .11 && f < .15) || (f > .27 && f < .3)) ? .12 : (f < .2 ? .7 : 1);
-  return NEON * on * dip * (.8 + .2 * Math.sin(t * 2.4));
+  if (f >= 0 && f < .25) dip = (f < .03 || (f > .065 && f < .09) || (f > .16 && f < .18)) ? .12 : (f < .12 ? .7 : 1);
+  return NEON * on * dip * (.8 + .2 * Math.sin(t * 5.5));   // respiro più rapido (prima 2.4)
 }
 
 /* ---------- mouse e dito: si smuove l'inchiostro ---------- */
