@@ -494,3 +494,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    scritte sopra la mappa che seguono il loro punto ma restano sempre
                    dentro il riquadro (bianche, contorno scuro e leggero alone rosso).
                    Su computer non cambia nulla. Aggiornati style.css?v=32, mappa.js?v=5.
+5.2  (13/11/2026)  Nuova voce «Test» nella navbar di tutte le pagine (dopo FAQ): porta a
+                   test.html, la pagina con le 30 proposte di restyling da mostrare al
+                   cliente, con «← Torna al sito» in alto. test.html non viene
+                   indicizzata dai motori di ricerca (noindex) e non è nella sitemap.
