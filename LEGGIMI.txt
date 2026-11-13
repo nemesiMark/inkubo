@@ -1,0 +1,175 @@
+INKUBO TATTOO STUDIO — SITO WEB
+===============================
+
+Sito statico (solo HTML, CSS e JavaScript, nessun programma da installare).
+Nome, logo, testi e disegni sono stati inventati da zero per il cliente tatuatore.
+
+
+COME APRIRLO
+------------
+Aprire index.html mantenendo tutti i file e le cartelle insieme.
+Per provarlo come sul sito pubblicato, dalla cartella del sito nel Terminale:
+
+  python3 -m http.server 8000
+
+poi aprire http://localhost:8000/ (Ctrl+C per fermare).
+Servono Internet i caratteri (Google Fonts) e l'invio del modulo di prenotazione.
+
+
+STRUTTURA
+---------
+index.html               Home: prima schermata che si compone a pixel, frase manifesto,
+                         Stili (scorrono in orizzontale), Lo studio, Flash disponibili
+                         (carosello), Come funziona (schede impilate), fascia «Hai già
+                         un'idea?», Dove siamo
+stili.html               I sei stili (blackwork, fine line, dotwork, tradizionale,
+                         giapponese, realistico), uno per riga con ancora
+                         (es. stili.html#dotwork)
+portfolio.html           Lavori con filtri per stile e foto a schermo intero; sotto,
+                         i flash disponibili (portfolio.html#flash). Il filtro si può
+                         aprire già scelto: portfolio.html#tradizionale
+studio.html              L'artista (#artista), Lo spazio (#studio), Igiene e sicurezza (#igiene)
+cura-del-tatuaggio.html  Cura del tatuaggio giorno per giorno
+faq.html                 Domande frequenti
+prenota.html             Modulo di prenotazione della consulenza
+privacy.html             Informativa privacy
+
+css/style.css            Tutti gli stili del sito
+js/script.js             Menu, effetto pixel della home, movimenti delle sezioni (vedi
+                         MOVIMENTI), filtri e foto a schermo intero del portfolio,
+                         carosello, FAQ, invio del modulo
+
+images/comune/           logo-inkubo-scuro.svg (inchiostro nero, usato nella barra in alto),
+                         logo-inkubo-scuro.svg anche nel footer chiaro;
+                         logo-inkubo.svg (avorio, per fondi scuri, ora non usato), favicon.svg
+images/flash/            I disegni (flash) usati in home, stili, portfolio e menu
+images/home/             falena-hero.svg, il disegno grande della prima schermata
+images/studio/           macchinetta.svg
+
+
+NAVBAR
+------
+Stessi effetti della navbar di Olimp: barra fissa in vetro sfocato, logo al centro con
+le voci in spazi uguali, voce che si ingrandisce con sottolineatura rossa al passaggio,
+triangolino che si capovolge, bande in vetro a tutta larghezza con le immagini per
+«Stili» e «Studio». Nella home, all'apertura, le voci arrivano dal basso e dai lati,
+a coppie dall'esterno verso il centro, e il logo arriva per ultimo.
+Sempre nella home la barra all'apertura non ha sfondo, sfocatura né ombra, e si
+riempie man mano che si scorre: piena dopo 160 px (il valore è in js/script.js,
+«scrollY / 160»). Col menu a panino aperto è subito piena. Nelle altre pagine la
+barra è sempre piena.
+Sotto i 1100 px di larghezza: menu a panino con + / − per i sottomenu.
+
+
+EFFETTO PIXEL DELLA PRIMA SCHERMATA
+-----------------------------------
+All'apertura della home la prima schermata è coperta da un velo a quadretti (8 px
+su computer, 4 px su telefono, allineati alla griglia di puntini dello sfondo).
+La grandezza si cambia in css/style.css con --cell (solo 2, 4, 8, 16…; il passo dei
+puntini, --dots, deve esserne un multiplo).
+I quadretti si aprono pian piano: prima lo sfondo, a onda partendo dal disegno, poi
+ogni scritta da sinistra a destra, con piccoli lampi neri e rossi. La falena compare
+a quadrettoni e diventa nitida passando a quadretti sempre più piccoli. L'effetto dura
+circa 2,8 secondi.
+
+I tempi si cambiano in index.html con gli attributi di ogni elemento della prima
+schermata: data-px = quando parte (millesimi di secondo dall'apertura), data-px-d =
+quanto dura. Esempio: <span ... data-px="580" data-px-d="580">Inchiostro</span>.
+
+Con l'impostazione «riduci movimento» del dispositivo l'effetto non parte e la
+pagina compare subito. L'effetto pixel è solo nella prima schermata: le gallerie e
+le altre sezioni usano i movimenti descritti sotto.
+
+
+MOVIMENTI (STILE APPLE)
+-----------------------
+Caratteri Inter Tight (titoli) e Inter (testi). Ogni sezione ha un movimento suo:
+- Prima schermata: finiti i pixel, scorrendo il testo sale e sfuma, la falena scende
+  e rimpicciolisce.
+- Frase manifesto: le parole si accendono una alla volta mentre si scorre.
+- Stili (home): la sezione si blocca e le schede scorrono di lato, con una barra
+  di avanzamento. Solo su schermi larghi più di 860 px e alti almeno 680 px; sotto,
+  le schede si scorrono col dito.
+- Lo studio e Stili (pagina): l'immagine si apre da un riquadro più stretto e si
+  assesta; i testi salgono sfocati e si mettono a fuoco uno dopo l'altro.
+- Flash disponibili (home e portfolio): carosello con frecce tonde, pallini e
+  schede ai lati attenuate.
+- Come funziona: le schede si impilano; quella sotto rimpicciolisce un poco.
+- «Hai già un'idea?» (home) e «Trovato il tuo stile?» (stili): il rosso si apre a
+  cerchio e il titolo cresce.
+- Portfolio: filtro a pillola con l'indicatore bianco che scivola, foto che si
+  riordinano in movimento, foto a schermo intero che si ingrandisce dalla miniatura.
+- Igiene (studio): le schede si raddrizzano da inclinate. Dove siamo: i riquadri
+  crescono.
+- Cura del tatuaggio: la linea rossa si riempie e i punti si accendono scorrendo.
+- FAQ: le risposte si aprono e si chiudono morbide.
+Con «riduci movimento» del dispositivo tutto compare fermo.
+
+
+DATI DA SOSTITUIRE PRIMA DI PUBBLICARE
+--------------------------------------
+Sono inventati e vanno chiesti al cliente (si trovano in tutte le pagine, nel footer,
+in Dove siamo, in Privacy e nei dati per Google in testa a index.html):
+- indirizzo (Via Atenea 1, 92100 Agrigento) e link a Google Maps
+- telefono (+39 0922 000 000), email (info@inkubotattoo.it), P.IVA (00000000000)
+- Instagram: il link porta alla home di Instagram, va messo quello dell'account vero
+- orari (mar–sab 10–19)
+- DOMINIO-DEL-SITO nei meta, in robots.txt e in sitemap.xml
+- modulo di prenotazione: in prenota.html sostituire INSERIRE-CHIAVE-WEB3FORMS con
+  la chiave Web3Forms del cliente. Finché c'è la chiave provvisoria l'invio è solo
+  simulato (compare il messaggio di conferma ma non parte nessuna email)
+- da verificare col cliente: attestato regionale, ritocco incluso, consulenza
+  gratuita, acconto, tempi di risposta, guest spot, metodi di pagamento
+- i disegni sono provvisori: il portfolio va riempito con le foto dei tatuaggi veri
+  (stesso nome di file oppure aggiornando i nomi nelle pagine)
+
+
+VERSIONI
+--------
+Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
+
+1.0  (13/11/2026)  Prima versione del sito: nome e logo INKUBO, otto pagine (home,
+                   stili, portfolio, studio, cura del tatuaggio, FAQ, prenota, privacy),
+                   navbar con gli stessi effetti di Olimp, prima schermata della home
+                   che si compone a pixel, immagini che si compongono a pixel quando
+                   entrano nello schermo, disegni provvisori in SVG.
+                   style.css?v=1 e script.js?v=1 in tutte le pagine.
+1.1  (13/11/2026)  Sito chiaro invece che scuro: fondo carta avorio, testo nero
+                   inchiostro, rosso più scuro per leggersi bene sul chiaro. Barra e
+                   bande del menu in vetro chiaro con il logo nero; la falena della
+                   home ora è disegnata in nero; nell'effetto pixel i lampi sono neri
+                   e rossi. Restano scuri solo il footer e la foto a schermo intero.
+                   Aggiornati style.css?v=2 e script.js?v=2 in tutte le pagine.
+1.2  (13/11/2026)  Effetto pixel: quadretti più piccoli (8 px su computer, 4 px su
+                   telefono, prima 16 e 8) e animazione più veloce: la prima schermata
+                   si compone in circa 2 secondi invece di 3,5; le immagini delle altre
+                   sezioni in 0,65 secondi invece di 1,1. La griglia di puntini dello
+                   sfondo resta larga come prima. Aggiornati style.css?v=3 e
+                   script.js?v=3 in tutte le pagine.
+1.3  (13/11/2026)  Home: la navbar all'apertura è senza sfondo, sfocatura e ombra, e
+                   si riempie man mano che si scorre la pagina, fino a essere piena
+                   dopo 160 px (come in Olimp, ma graduale). Col menu a panino aperto
+                   è subito piena. Aggiornati style.css?v=4 e script.js?v=4 in tutte
+                   le pagine.
+1.4  (13/11/2026)  Più disegni in stile giapponese: koi, ramo di ciliegio (sakura),
+                   monte Fuji, peonia e foglie d'acero (images/flash/*-giapponese.svg).
+                   Stili: sotto lo stile Giapponese la galleria «Altri disegni
+                   giapponese» (5 disegni, portano al portfolio filtrato). Portfolio:
+                   6 lavori nel filtro Giapponese (14 in tutto). Flash disponibili in
+                   home e nel portfolio: da 4 a 8, con koi, ciliegio, Fuji e peonia.
+                   Aggiornato style.css?v=5 in tutte le pagine.
+1.5  (13/11/2026)  Effetto pixel un po' meno veloce (tempi allungati di circa un
+                   terzo): la prima schermata si compone in circa 2,8 secondi invece
+                   di 2, le immagini delle altre sezioni in 0,85 secondi invece di
+                   0,65. Aggiornato script.js?v=5 in tutte le pagine.
+1.6  (13/11/2026)  Tutto il sito in stile Apple: caratteri Inter Tight e Inter, fondo
+                   bianco, schede con angoli tondi, footer chiaro con il logo
+                   nero. Movimenti diversi per ogni sezione (elenco in MOVIMENTI):
+                   parole che si accendono, stili che scorrono di lato, immagini che
+                   si aprono, carosello dei flash, schede impilate, cerchio rosso,
+                   linea della cura che si riempie, filtro a pillola e foto del
+                   portfolio che si riordinano e si ingrandiscono, FAQ morbide.
+                   Le gallerie non si compongono più a pixel: l'effetto pixel resta
+                   solo nella prima schermata della home. Falena della home ridisegnata
+                   sul nuovo fondo. Aggiornati style.css?v=6 e script.js?v=6 in tutte
+                   le pagine.
