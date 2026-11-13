@@ -93,16 +93,21 @@
     });
     return src;
   }
+  /* Scritte dei nomi: bianche con un contorno scuro netto (prima rosso sfumato, poco leggibile
+     su telefono sopra le foto satellitari); su schermi stretti più piccole e su più righe. */
+  function stretto(){return box.clientWidth<600}
+  var NOME_TESTO='#fff3f1', NOME_ALONE='rgba(28,6,4,.92)';
   function areeLivelli(){
-    var L=[];
+    var L=[], k=stretto()?0.72:1;
     AREE.forEach(function(a){
       var s='area-'+a.id;
       L.push({id:s+'-velo',type:'fill',source:s,paint:{'fill-color':ROSSO,'fill-opacity':finestra(a.zoom,0.14)}});
       L.push({id:s+'-alone',type:'line',source:s,paint:{'line-color':ROSSO,'line-width':14,'line-blur':10,'line-opacity':finestra(a.zoom,0.9)}});
       L.push({id:s+'-bordo',type:'line',source:s,paint:{'line-color':ROSSO,'line-width':2.5,'line-opacity':finestra(a.zoom,1)}});
       L.push({id:s+'-nome',type:'symbol',source:'nome-'+a.id,
-        layout:{'text-field':['get','nome'],'text-font':['Noto Sans Bold'],'text-size':a.testo,'text-letter-spacing':0.25,'text-transform':'uppercase','text-allow-overlap':true},
-        paint:{'text-color':'#ffe9e6','text-halo-color':ROSSO,'text-halo-width':2.5,'text-halo-blur':1,'text-opacity':finestra(a.zoom,1)}});
+        layout:{'text-field':['get','nome'],'text-font':['Noto Sans Bold'],'text-size':Math.round(a.testo*k),'text-letter-spacing':stretto()?0.12:0.25,
+                'text-max-width':stretto()?7:12,'text-line-height':1.15,'text-transform':'uppercase','text-allow-overlap':true},
+        paint:{'text-color':NOME_TESTO,'text-halo-color':NOME_ALONE,'text-halo-width':2.6,'text-halo-blur':0.4,'text-opacity':finestra(a.zoom,1)}});
     });
     return L;
   }
@@ -135,9 +140,10 @@
            paint:{'line-color':ROSSO,'line-width':3,'line-opacity':['interpolate',['linear'],['zoom'],9.6,0,10.4,1]}},
           // scritta Montelupone: compare verso la fine e svanisce all'arrivo
           {id:'citta-nome',type:'symbol',source:'nome',
-           layout:{'text-field':['get','nome'],'text-font':['Noto Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],10,22,13,30],
-                   'text-letter-spacing':0.25,'text-transform':'uppercase','text-allow-overlap':true},
-           paint:{'text-color':'#ffe9e6','text-halo-color':ROSSO,'text-halo-width':2.5,'text-halo-blur':1,
+           layout:{'text-field':['get','nome'],'text-font':['Noto Sans Bold'],
+                   'text-size':stretto()?['interpolate',['linear'],['zoom'],10,17,13,22]:['interpolate',['linear'],['zoom'],10,22,13,30],
+                   'text-letter-spacing':stretto()?0.12:0.25,'text-transform':'uppercase','text-allow-overlap':true},
+           paint:{'text-color':NOME_TESTO,'text-halo-color':NOME_ALONE,'text-halo-width':2.6,'text-halo-blur':0.4,
                   'text-opacity':['interpolate',['linear'],['zoom'],9.8,0,10.6,1,13.5,1,14.6,0]}}
         ])
       },

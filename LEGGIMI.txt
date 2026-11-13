@@ -481,3 +481,9 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    più alta e si legge meglio; nel Portfolio il filtro degli stili
                    sfuma a destra per far capire che scorre di lato.
                    Aggiornati style.css?v=31, script.js?v=13, mappa.js?v=3.
+5.0  (13/11/2026)  Mappa «Dove siamo»: le scritte Italia, Marche, Provincia di Macerata e
+                   Montelupone ora sono bianche con un contorno scuro netto (prima rosso
+                   sfumato, poco leggibile su iPhone sopra le foto satellitari). Su
+                   schermi stretti sono più piccole, meno spaziate e «Provincia di
+                   Macerata» va su due righe, così non escono dal riquadro.
+                   I contorni rossi delle aree non cambiano. Aggiornato mappa.js?v=4.
