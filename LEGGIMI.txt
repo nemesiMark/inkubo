@@ -610,3 +610,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    browser, invio con percentuale; Portfolio in un solo elenco; nuova
                    voce «Video» nella guida. Il Worker va incollato di nuovo su
                    Cloudflare. style.css?v=44, script.js?v=21.
+                   Prima schermata: scritta «Rain Ink» più bassa (scaleY .7, stessa
+                   larghezza); foto a colori, scontornata (images/lavori/hero-tatuatore.png,
+                   fatta col ritaglio automatico di macOS dalla foto «Concentrazione»):
+                   il volto e il busto del cliente sono tolti e i bordi sfumano nel nero.
+                   style.css?v=45.

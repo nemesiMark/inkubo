@@ -357,21 +357,20 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
    ====================================================== */
 .hero { position: relative; height: 100vh; height: 100svh; min-height: 620px; padding: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 35%, #17161a 0%, var(--bg) 70%); }
 .hero .layer { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; will-change: transform; }
-.word { font: 800 clamp(110px, 25vw, 420px)/.8 var(--head); letter-spacing: -.05em; white-space: nowrap; text-transform: uppercase; user-select: none; }
+.word { font: 800 clamp(110px, 25vw, 420px)/.8 var(--head); letter-spacing: -.05em; white-space: nowrap; text-transform: uppercase; user-select: none; transform-origin: 50% 0; transform: scaleY(.7); } /* scritta più bassa, stessa larghezza */
 .hero .l-word { place-items: start center; padding-top: calc(var(--top) + 8px); } /* la scritta subito sotto la navbar */
 .l-word { -webkit-mask-image: linear-gradient(180deg, #000 0, #000 45%, rgba(0, 0, 0, .5) 62%, transparent 85%); mask-image: linear-gradient(180deg, #000 0, #000 45%, rgba(0, 0, 0, .5) 62%, transparent 85%); }
-.w-far { color: var(--red); filter: blur(28px); opacity: .55; transform: scale(1.18); animation: flickerFar 6s infinite steps(1); }
+.w-far { color: var(--red); filter: blur(28px); opacity: .55; transform: scale(1.18, .826); animation: flickerFar 6s infinite steps(1); }
 .w-mid { color: #ff6a58; opacity: .5; filter: blur(2.5px); text-shadow: 0 0 18px rgba(255, 90, 74, .9), 0 0 60px rgba(214, 52, 44, .8), 0 0 140px rgba(214, 52, 44, .6); animation: flicker 6s infinite steps(1); }
-.w-near { color: transparent; -webkit-text-stroke: 1.5px rgba(235, 227, 210, .22); filter: blur(1px); transform: scale(1.08); }
+.w-near { color: transparent; -webkit-text-stroke: 1.5px rgba(235, 227, 210, .22); filter: blur(1px); transform: scale(1.08, .756); }
 @keyframes flicker {
   0%, 100% { opacity: .5; } 7% { opacity: .18; } 8% { opacity: .5; } 9% { opacity: .12; } 11% { opacity: .5; }
   41% { opacity: .5; } 42% { opacity: .25; } 43% { opacity: .5; } 70% { opacity: .5; } 71% { opacity: .08; } 74% { opacity: .08; } 75% { opacity: .5; } 77% { opacity: .3; } 78% { opacity: .5; } }
 @keyframes flickerFar { 0%, 100% { opacity: .55; } 7% { opacity: .2; } 8% { opacity: .55; } 9% { opacity: .15; } 11% { opacity: .55; } 71% { opacity: .1; } 75% { opacity: .55; } }
 .hero .l-figure { place-items: end center; } /* la foto al centro */
-.l-figure img { height: 118svh; min-height: 730px; width: auto; max-width: none; transform: translateY(24svh); /* foto al centro, sotto la scritta */
-  filter: grayscale(1) contrast(1.1) brightness(1.05) drop-shadow(0 0 60px rgba(0, 0, 0, .85));
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16%, #000 84%, transparent 100%), linear-gradient(180deg, transparent 0, #000 12%, #000 75%, transparent 98%); -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(90deg, transparent 0, #000 16%, #000 84%, transparent 100%), linear-gradient(180deg, transparent 0, #000 12%, #000 75%, transparent 98%); mask-composite: intersect; }
+.l-figure img { height: 118svh; min-height: 730px; width: auto; max-width: none; transform: translateY(24svh); /* tatuatore scontornato, al centro sotto la scritta */
+  filter: drop-shadow(0 0 50px rgba(0, 0, 0, .9));
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 70%, transparent 96%); mask-image: linear-gradient(180deg, #000 0, #000 70%, transparent 96%); }
 .hero .shade { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0, 0, 0, .7) 100%), linear-gradient(180deg, transparent 70%, var(--bg) 100%); }
 
 /* HOME: ruota 3D dei lavori, uno per stile (le facce le scrive scripts/genera_lavori.py) */
