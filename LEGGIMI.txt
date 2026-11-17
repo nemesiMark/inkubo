@@ -145,7 +145,7 @@ Home, e viceversa.
 - Tatuaggi, Piercing, Studio: le immagini fisse della pagina; «Cambia foto» e il testo
   che dice cosa si vede (per Google e per chi non vede).
 Dopo ogni salvataggio compare la finestra verde «Salvataggio riuscito correttamente»
-(si chiude con la X o da sola); il sito si aggiorna da solo in qualche minuto.
+(sparisce da sola dopo pochi secondi); il sito si aggiorna da solo in qualche minuto.
 La foto viene rimpicciolita nel telefono prima dell'invio (lato lungo 1600 px, JPEG
 qualità 85) e perde i dati EXIF, compresa la posizione GPS.
 File:
@@ -531,7 +531,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Niente più tasto + fisso: in fondo a Portfolio e alla ruota della
                    Home c'è un riquadro grigio tratteggiato con il +, grande come le foto.
                    Dopo ogni salvataggio una finestra verde «Salvataggio riuscito
-                   correttamente», con la X per chiuderla.
+                   correttamente», che sparisce da sola dopo 3,5 secondi.
                    Il lavoro aggiunto dal Portfolio lampeggia in rosso finché il
                    cliente non sceglie dove metterlo e tocca «Conferma posizione».
                    Portfolio dell'area riservata diviso per stile, con un + per stile:
