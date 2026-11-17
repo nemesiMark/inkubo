@@ -144,8 +144,10 @@ Home, e viceversa.
   lavori si scambiano fra i posti che già occupano, gli altri stili non si muovono.
 - Tatuaggi, Piercing, Studio: le immagini fisse della pagina; «Cambia foto» e il testo
   che dice cosa si vede (per Google e per chi non vede).
-Dopo ogni salvataggio compare la finestra verde «Salvataggio riuscito correttamente»
-(sparisce da sola dopo pochi secondi); il sito si aggiorna da solo in qualche minuto.
+Ogni salvataggio (aggiunta, modifica, spostamento, eliminazione) apre subito una
+finestra con una barra che avanza; la barra si completa quando il salvataggio è davvero
+riuscito e compare «Salvataggio riuscito correttamente» in verde, da chiudere con «OK»;
+il sito si aggiorna da solo in qualche minuto.
 La foto viene rimpicciolita nel telefono prima dell'invio (lato lungo 1600 px, JPEG
 qualità 85) e perde i dati EXIF, compresa la posizione GPS.
 File:
@@ -547,3 +549,9 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    foto si legge il titolo del lavoro. Il Worker va incollato di nuovo su
                    Cloudflare. home.js?v=2. Nella scheda di una foto restano solo foto e
                    titolo (tolti stile, zona e «Sposta prima / dopo»).
+                   Tolte tutte le descrizioni dalle pagine dell'area riservata (restano
+                   solo i titoli delle sezioni e le foto).
+                   Salvataggio: finestra che compare subito con una barra che avanza e
+                   si completa quando GitHub ha davvero salvato; poi «Salvataggio
+                   riuscito correttamente» con il tasto «OK» (se non riesce: messaggio
+                   in rosso, «Riprova» e «Chiudi»).

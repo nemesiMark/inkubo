@@ -87,7 +87,7 @@ input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0
 .slot{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;cursor:pointer;transition:box-shadow 200ms var(--ease)}
 .slot .ph{aspect-ratio:4/5;border-radius:10px;overflow:hidden;background:var(--paper)}
 .slot img{width:100%;height:100%;object-fit:cover;display:block}
-.slot b{display:block;font-weight:600;font-size:16px;margin-bottom:2px}
+.slot b{display:block;font-weight:600;font-size:16px;margin-bottom:10px}
 .slot span{display:block;color:var(--mute);font-size:14px;margin-bottom:10px}
 .slot span.btn{display:inline-flex;min-height:38px;font-size:14px;margin:0}
 @media (hover:hover) and (pointer:fine){.slot:hover{box-shadow:0 10px 30px -12px rgba(0,0,0,.3)}}
@@ -97,20 +97,24 @@ input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0
 .head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px 0 6px}
 .head h1{font:700 clamp(26px,4vw,34px)/1.1 var(--head);letter-spacing:-.01em}
 .head h1 small{font:500 15px Inter;color:var(--mute);margin-left:8px;font-variant-numeric:tabular-nums}
-.aiuto{color:var(--mute);font-size:14px;padding-bottom:18px}
+.pag-head{margin-bottom:14px}
 .stato{padding:12px 0 4px;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mute);min-height:24px}
 .stato::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.7}
-/* finestra «salvataggio riuscito» */
-.esito{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));z-index:30;width:min(420px,100% - 32px);
-  display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;padding:16px 18px 16px 16px;pointer-events:none;
-  background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ok);border-radius:16px;
-  box-shadow:0 18px 50px -12px rgba(0,0,0,.35);transform:translate(-50%,0);opacity:1;
-  transition:transform 260ms var(--ease),opacity 200ms ease}
-.esito[hidden]{display:grid;visibility:hidden;opacity:0;transform:translate(-50%,16px);pointer-events:none}
-.esito .ico{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--ok);color:#fff}
-.esito .ico svg{width:22px;height:22px}
-.esito b{display:block;color:var(--ok);font-weight:600;font-size:16px;line-height:1.3;padding-top:2px}
-.esito p{color:var(--mute);font-size:14px;margin-top:2px}
+/* finestra di salvataggio: barra che avanza subito e si completa quando GitHub ha davvero salvato */
+#d-salva{width:min(380px,100% - 32px);outline:none}
+.sv{padding:26px 22px 20px;text-align:center}
+.sv .ico{display:grid;place-items:center;width:52px;height:52px;margin:0 auto 14px;border-radius:50%;background:#eef0f3;color:var(--mute)}
+.sv .ico svg{width:26px;height:26px}
+.sv .ico .giro{animation:giro 900ms linear infinite}
+@keyframes giro{to{transform:rotate(360deg)}}
+.sv h2{font:700 20px/1.25 var(--head);margin-bottom:6px}
+.sv p{color:var(--mute);font-size:14px;min-height:20px}
+.sv .barra{height:8px;margin:18px 0 4px;border-radius:4px;background:#eef0f3;overflow:hidden}
+.sv .barra span{display:block;height:100%;width:0;border-radius:inherit;background:var(--ink);transition:width 300ms var(--ease),background-color 200ms ease}
+.sv .azioni{justify-content:center;padding-top:16px}
+.sv .azioni .btn{min-width:120px}
+.sv.ok .ico{background:var(--ok);color:#fff} .sv.ok h2{color:var(--ok)} .sv.ok .barra span{background:var(--ok)}
+.sv.err .ico{background:var(--red);color:#fff} .sv.err h2{color:var(--red)} .sv.err .barra span{background:var(--red)}
 .stato.ok{color:var(--ok)} .stato.err{color:var(--red)} .stato.lav{color:var(--mute)}
 .stato.lav::before{animation:pulsa 1s ease-in-out infinite}
 @keyframes pulsa{50%{opacity:.2}}
@@ -239,11 +243,9 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     <!-- HOME -->
     <section class="pag" id="pag-index.html" role="tabpanel" hidden>
       <div class="pag-head"><h1>Home <small>index.html</small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="index.html">Vedi la pagina ↗</a></div>
-      <p class="aiuto">La prima pagina del sito. Qui sotto le immagini nell'ordine in cui si vedono scorrendo.</p>
       <ol class="blocchi">
         <li><h2><span class="num">1</span> Prima schermata</h2><ul class="slots" data-slots="home-hero"></ul></li>
         <li><h2><span class="num">2</span> Ruota dei lavori</h2>
-          <p class="aiuto">Le foto che girano nella ruota della Home, nell'ordine in cui compaiono. Sono solo della Home: cambiarle qui non tocca il Portfolio, e viceversa. Tocca una foto per selezionarla e trascinarla dove vuoi; il riquadro <b>+</b> ne aggiunge una.</p>
           <ul class="griglia piccola" id="ruota"></ul></li>
         <li><h2><span class="num">3</span> Lo studio</h2><ul class="slots" data-slots="home-studio"></ul></li>
       </ol>
@@ -252,24 +254,20 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     <!-- PORTFOLIO -->
     <section class="pag" id="pag-portfolio.html" role="tabpanel" hidden>
       <div class="pag-head"><h1>Portfolio <small id="conta"></small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="portfolio.html">Vedi la pagina ↗</a></div>
-      <p class="aiuto">I lavori divisi per stile, come i filtri del Portfolio sul sito. Sono solo di questa pagina: cambiarli qui non tocca la Home. Tocca un lavoro per selezionarlo: diventa rosso e lo puoi trascinare dove vuoi, modificare o eliminare. Il riquadro <b>+</b> in fondo a uno stile aggiunge un lavoro in quello stile.</p>
       <div id="portfolio-stili"></div>
     </section>
 
     <!-- PAGINE CON IMMAGINI FISSE -->
     <section class="pag" id="pag-tatuaggi.html" role="tabpanel" hidden>
       <div class="pag-head"><h1>Tatuaggi <small>tatuaggi.html</small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="tatuaggi.html">Vedi la pagina ↗</a></div>
-      <p class="aiuto">Un'immagine per ognuno dei sei stili, accanto alla sua descrizione, nell'ordine della pagina.</p>
       <ul class="slots" data-pagina="tatuaggi.html"></ul>
     </section>
     <section class="pag" id="pag-piercing.html" role="tabpanel" hidden>
       <div class="pag-head"><h1>Piercing <small>piercing.html</small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="piercing.html">Vedi la pagina ↗</a></div>
-      <p class="aiuto">Le immagini della pagina Piercing, dall'alto in basso.</p>
       <ul class="slots" data-pagina="piercing.html"></ul>
     </section>
     <section class="pag" id="pag-studio.html" role="tabpanel" hidden>
       <div class="pag-head"><h1>Studio <small>studio.html</small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="studio.html">Vedi la pagina ↗</a></div>
-      <p class="aiuto">Le immagini della pagina Lo studio, dall'alto in basso.</p>
       <ul class="slots" data-pagina="studio.html"></ul>
     </section>
   </div>
@@ -281,10 +279,6 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
       <button class="btn" type="button" id="sc-mod">Modifica o elimina</button>
       <button class="btn pri" type="button" id="sc-ok">Conferma</button>
     </div>
-  </div>
-  <div class="esito" id="esito" role="status" aria-live="polite" hidden>
-    <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
-    <div><b>Salvataggio riuscito correttamente</b><p>Le modifiche saranno visibili sul sito tra qualche minuto.</p></div>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" hidden>
 </main>
@@ -309,7 +303,6 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
 <dialog id="d-img" aria-labelledby="img-t">
   <form id="f-img" method="dialog" novalidate>
     <h2 id="img-t"></h2>
-    <p class="nota-pw" id="img-dove"></p>
     <div class="anteprima"><img id="img-ant" alt=""><button class="btn cambia" type="button" id="img-cambia">Cambia foto</button></div>
     <div class="campo">
       <label for="img-alt">Cosa si vede nella foto <span class="facoltativo">(serve a Google e a chi non vede)</span></label>
@@ -321,6 +314,19 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
       <button class="btn pri" type="submit" id="img-ok">Salva</button>
     </div>
   </form>
+</dialog>
+
+<dialog id="d-salva" aria-labelledby="sv-t" aria-describedby="sv-p">
+  <div class="sv" id="sv" role="status" aria-live="polite">
+    <span class="ico" id="sv-ico" aria-hidden="true"></span>
+    <h2 id="sv-t">Salvataggio in corso…</h2>
+    <p id="sv-p"></p>
+    <div class="barra" role="progressbar" aria-label="Avanzamento del salvataggio" aria-valuemin="0" aria-valuemax="100" id="sv-barra"><span id="sv-bar"></span></div>
+    <div class="azioni">
+      <button class="btn" type="button" id="sv-riprova" hidden>Riprova</button>
+      <button class="btn pri" type="button" id="sv-ok" hidden>OK</button>
+    </div>
+  </div>
 </dialog>
 
 <dialog id="d-pw" aria-labelledby="pw-t">
@@ -478,9 +484,8 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     ph.appendChild(im);
     var tx = document.createElement('div');
     var b = document.createElement('b'); b.textContent = v.sezione;
-    var s = document.createElement('span'); s.textContent = v.descrizione;
     var bt = document.createElement('span'); bt.className = 'btn'; bt.textContent = 'Cambia foto';
-    tx.appendChild(b); tx.appendChild(s); tx.appendChild(bt);
+    tx.appendChild(b); tx.appendChild(bt);
     li.appendChild(ph); li.appendChild(tx);
     li.onclick = function () { if (sel) confermaScelta(); apriImmagine(v.id); };
     li.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.onclick(); } };
@@ -588,17 +593,42 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     var el = $('stato'); el.className = 'stato ' + tipo; el.textContent = testo;
     if (riprova) { var b = document.createElement('button'); b.type = 'button'; b.textContent = 'Riprova'; b.onclick = riprova; el.appendChild(document.createTextNode(' ')); el.appendChild(b); }
   }
-  var timerEsito = null;
-  function mostraEsito() { // sparisce da sola dopo 3,5 secondi
-    clearTimeout(timerEsito); $('esito').hidden = false;
-    timerEsito = setTimeout(function () { $('esito').hidden = true; }, 3500);
+  /* finestra di salvataggio: compare subito, la barra avanza da sola fino a circa il 90% e si
+     completa solo quando il salvataggio è davvero riuscito; poi si chiude con «OK» */
+  var dsv = $('d-salva'), svGiro = null, svVal = 0, svAttivo = false;
+  var ICO = {
+    lav: '<svg class="giro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>',
+    ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    err: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 7v6M12 17h.01"/></svg>'
+  };
+  function barra(v) { svVal = v; $('sv-bar').style.width = v + '%'; $('sv-barra').setAttribute('aria-valuenow', Math.round(v)); }
+  function inizioSalva() {
+    svAttivo = true; clearInterval(svGiro);
+    $('sv').className = 'sv'; $('sv-ico').innerHTML = ICO.lav;
+    $('sv-t').textContent = 'Salvataggio in corso…'; $('sv-p').textContent = 'Non chiudere la pagina.';
+    $('sv-ok').hidden = true; $('sv-riprova').hidden = true;
+    barra(4); if (!dsv.open) dsv.showModal();
+    svGiro = setInterval(function () { barra(svVal + (90 - svVal) * 0.07); }, 150);
   }
+  function fineSalva(riuscito, testo, riprova) {
+    clearInterval(svGiro); svAttivo = false;
+    barra(100);
+    $('sv').className = 'sv ' + (riuscito ? 'ok' : 'err'); $('sv-ico').innerHTML = riuscito ? ICO.ok : ICO.err;
+    $('sv-t').textContent = riuscito ? 'Salvataggio riuscito correttamente' : 'Salvataggio non riuscito';
+    $('sv-p').textContent = riuscito ? 'Le modifiche saranno visibili sul sito tra qualche minuto.' : testo;
+    $('sv-ok').textContent = riuscito ? 'OK' : 'Chiudi'; $('sv-ok').hidden = false;
+    $('sv-riprova').hidden = !riprova; $('sv-riprova').onclick = riprova || null;
+    if (!dsv.open) dsv.showModal();
+    $('sv-ok').focus();
+  }
+  $('sv-ok').onclick = function () { dsv.close(); };
+  dsv.addEventListener('cancel', function (e) { if (svAttivo) e.preventDefault(); }); // durante il salvataggio non si chiude
   function salvaPresto(msg) { clearTimeout(timer); stato('lav', 'Modifiche da salvare…'); timer = setTimeout(function () { salva(msg); }, 1200); }
   function salva(msg, nuove) {
     clearTimeout(timer);
     if (nuove) Object.assign(fotoInAttesa, nuove);
     if (inCorso) { inAttesa = msg; return Promise.resolve(); }
-    inCorso = true; stato('lav', 'Salvataggio…');
+    inCorso = true; stato('lav', 'Salvataggio…'); inizioSalva();
     var foto = fotoInAttesa; fotoInAttesa = {};
     var inviati = lavori.map(function (l) { return l.foto; }), inviatiR = ruota.map(function (r) { return r.foto; });
     var imm = immagini.map(function (v) { return { id: v.id, foto: v.foto, alt: v.alt }; });
@@ -618,13 +648,17 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
         }
       });
       disegna();
-      stato('ok', 'Salvato'); mostraEsito();
+      stato('ok', 'Salvato');
+      return true;
     }).catch(function (err) {
       Object.assign(fotoInAttesa, foto);
       stato('err', 'Non salvato: ' + err.message, function () { salva(msg); });
-    }).then(function () {
+      return err;
+    }).then(function (esito) {
       inCorso = false;
-      if (inAttesa) { var m = inAttesa; inAttesa = null; salva(m); }
+      if (inAttesa) { var m = inAttesa; inAttesa = null; salva(m); return; } // la finestra resta aperta per il salvataggio successivo
+      if (esito === true) fineSalva(true);
+      else fineSalva(false, esito.message, function () { salva(msg); });
     });
   }
 
@@ -723,9 +757,7 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   function apriImmagine(id) {
     immAperta = immagini.filter(function (v) { return v.id === id; })[0]; if (!immAperta) return;
     fotoImm = null;
-    var nomePag = PAGINE.filter(function (p) { return p[0] === immAperta.pagina; })[0];
     $('img-t').textContent = immAperta.sezione;
-    $('img-dove').textContent = (nomePag ? nomePag[1] + ' · ' : '') + immAperta.descrizione;
     $('img-alt').value = immAperta.alt || ''; $('err-img').textContent = '';
     var im = $('img-ant'); riserva(im, immAperta.foto); im.src = sorgente(immAperta.foto); im.alt = 'Foto attuale';
     dimg.showModal();
