@@ -13,6 +13,10 @@
  *   Text    REPO             nemesiMark/inkubo
  *   Text    BRANCH           main
  *   Text    ORIGINS          https://nemesimark.github.io  (più indirizzi separati da virgola)
+ * Per il cambio password dall'area riservata (Settings → Bindings → KV namespace):
+ *   KV      DATI             un namespace KV (es. «rainink-area-riservata»). Lì si salva
+ *                            l'impronta della password nuova (PBKDF2, mai la password in
+ *                            chiaro). Finché nessuno la cambia vale ADMIN_PASSWORD.
  * Nessuna chiave è scritta in questo file.
  */
 
@@ -23,6 +27,8 @@ const MAX_FOTO_BYTES = 4 * 1024 * 1024;   // dopo il ridimensionamento nel brows
 const MAX_FOTO_PER_SALVATAGGIO = 12;
 const MAX_LAVORI = 300;
 const DURATA_ACCESSO_S = 30 * 24 * 3600;  // 30 giorni
+const PW_ITERAZIONI = 100000;              // massimo consentito da Cloudflare per PBKDF2
+const PW_MIN = 8, PW_MAX = 128;
 const FOTO_VALIDA = /^images\/(lavori|flash)\/[a-z0-9][a-z0-9._-]{0,120}\.(jpe?g|png|webp|svg)$/;
 
 export default {
@@ -35,6 +41,7 @@ export default {
       if (!(await accessoValido(request, env))) return json({ errore: "Accesso scaduto, entra di nuovo" }, 401, cors);
       if (request.method === "GET" && url.pathname === "/lavori") return await leggiLavori(env, cors);
       if (request.method === "POST" && url.pathname === "/salva") return await salva(request, env, cors);
+      if (request.method === "POST" && url.pathname === "/password") return await cambiaPassword(request, env, cors);
       return json({ errore: "Indirizzo non valido" }, 404, cors);
     } catch (e) {
       const stato = e && e.stato ? e.stato : 500;
@@ -47,14 +54,56 @@ export default {
 
 async function login(request, env, cors) {
   const corpo = await request.json().catch(() => ({}));
-  const ok = typeof corpo.password === "string" && (await ugualiCostante(corpo.password, env.ADMIN_PASSWORD || ""));
-  if (!ok || !env.ADMIN_PASSWORD) {
+  const pw = await passwordSalvata(env);
+  if (!(await passwordGiusta(corpo.password, pw, env))) {
     await new Promise((r) => setTimeout(r, 1200)); // rallenta i tentativi a raffica
     return json({ errore: "Password non corretta" }, 401, cors);
   }
+  return json(await nuovoAccesso(env, pw ? pw.versione : 0), 200, cors);
+}
+
+async function nuovoAccesso(env, versione) {
   const scade = Math.floor(Date.now() / 1000) + DURATA_ACCESSO_S;
-  const dati = b64url(new TextEncoder().encode(JSON.stringify({ scade })));
-  return json({ token: dati + "." + (await firma(dati, env)), scade }, 200, cors);
+  const dati = b64url(new TextEncoder().encode(JSON.stringify({ scade, v: versione })));
+  return { token: dati + "." + (await firma(dati, env)), scade };
+}
+
+/* password: se è stata cambiata dall'area riservata sta nel KV DATI (impronta PBKDF2),
+   altrimenti vale ADMIN_PASSWORD. «versione» cresce a ogni cambio: gli accessi vecchi
+   (altri telefoni o computer) non valgono più. */
+async function passwordSalvata(env) {
+  if (!env.DATI) return null;
+  return await env.DATI.get("password", "json");
+}
+
+async function passwordGiusta(tentativo, pw, env) {
+  if (typeof tentativo !== "string" || !tentativo) return false;
+  if (pw) return await ugualiCostante(await impronta(tentativo, pw.sale, pw.iterazioni), pw.impronta);
+  return !!env.ADMIN_PASSWORD && (await ugualiCostante(tentativo, env.ADMIN_PASSWORD));
+}
+
+async function impronta(password, sale, iterazioni) {
+  const chiave = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
+  const bit = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: daB64url(sale), iterations: iterazioni }, chiave, 256);
+  return b64url(new Uint8Array(bit));
+}
+
+async function cambiaPassword(request, env, cors) {
+  if (!env.DATI) throw errore("Cambio password non ancora attivo: manca il collegamento DATI su Cloudflare", 501);
+  const corpo = await request.json().catch(() => ({}));
+  const pw = await passwordSalvata(env);
+  if (!(await passwordGiusta(corpo.attuale, pw, env))) {
+    await new Promise((r) => setTimeout(r, 1200));
+    throw errore("La password attuale non è corretta", 403);
+  }
+  const nuova = corpo.nuova;
+  if (typeof nuova !== "string" || nuova.length < PW_MIN) throw errore(`La password nuova deve avere almeno ${PW_MIN} caratteri`, 400);
+  if (nuova.length > PW_MAX) throw errore("La password nuova è troppo lunga", 400);
+  if (nuova === corpo.attuale) throw errore("La password nuova è uguale a quella attuale", 400);
+  const sale = b64url(crypto.getRandomValues(new Uint8Array(16)));
+  const versione = (pw ? pw.versione : 0) + 1;
+  await env.DATI.put("password", JSON.stringify({ sale, iterazioni: PW_ITERAZIONI, impronta: await impronta(nuova, sale, PW_ITERAZIONI), versione, cambiata: new Date().toISOString() }));
+  return json(await nuovoAccesso(env, versione), 200, cors);
 }
 
 async function accessoValido(request, env) {
@@ -64,8 +113,10 @@ async function accessoValido(request, env) {
   if (!dati || !sig || !env.SESSION_SECRET) return false;
   if (!(await ugualiCostante(sig, await firma(dati, env)))) return false;
   try {
-    const { scade } = JSON.parse(new TextDecoder().decode(daB64url(dati)));
-    return typeof scade === "number" && scade > Date.now() / 1000;
+    const { scade, v } = JSON.parse(new TextDecoder().decode(daB64url(dati)));
+    if (!(typeof scade === "number" && scade > Date.now() / 1000)) return false;
+    const pw = await passwordSalvata(env);
+    return (v || 0) === (pw ? pw.versione : 0);
   } catch { return false; }
 }
 

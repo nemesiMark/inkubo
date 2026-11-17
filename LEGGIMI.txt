@@ -79,7 +79,8 @@ testo avorio #ebe3d2, testo secondario #9a958c, rosso del marchio #d6342c, rosso
 Caratteri: Inter Tight (titoli) e Inter (testi).
 Navbar 3D: lastra sospesa in alto che col mouse si inclina e si illumina dove passa;
 le voci si sollevano al passaggio, la pagina in cui si è ha la voce sollevata con una
-linea rossa; a destra il pulsante rosso «Contattaci». Scorrendo
+linea rossa; a destra il pulsante rosso «Contattaci» e, all'estrema destra, il lucchetto che porta
+all'area riservata. Scorrendo
 diventa più bassa. Sotto i 1020 px di larghezza: tasto a panino e pannello che scende.
 Pulsanti: rossi in rilievo (si alzano al passaggio e si abbassano quando si premono);
 quelli secondari sono grigio scuro.
@@ -164,8 +165,15 @@ Attivazione (una volta sola):
    ORIGINS = https://nemesimark.github.io
 4. In area-riservata.html mettere l'indirizzo del Worker in <meta name="ar-api">.
 5. Al cliente: indirizzo della pagina (da aggiungere alla schermata Home del telefono)
-   e password. Per cambiare password si cambia ADMIN_PASSWORD; per far uscire tutti
-   si cambia SESSION_SECRET.
+   e password. Per far uscire tutti si cambia SESSION_SECRET.
+6. Cambio password dall'area riservata (tasto «Cambia password» in alto): nel Worker,
+   Settings → Bindings → Add → KV namespace, nome della variabile DATI, e crea un
+   namespace nuovo (es. rainink-area-riservata). Poi incolla di nuovo nel Worker il
+   contenuto aggiornato di worker/area-riservata-worker.js e pubblica (Deploy).
+   La password nuova si salva lì solo come impronta (PBKDF2), mai in chiaro; da quel
+   momento ADMIN_PASSWORD non vale più. Dopo il cambio si resta dentro sul dispositivo
+   usato, sugli altri bisogna rientrare. Se il cliente la dimentica: su Cloudflare,
+   KV → il namespace → cancellare la voce «password»; torna a valere ADMIN_PASSWORD.
 
 
 DATI DA SOSTITUIRE PRIMA DI PUBBLICARE
@@ -481,3 +489,10 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    inchiostro WebGL, figura 3D e librerie inutilizzate (GSAP, Lenis,
                    three.js). Area riservata invariata. style.css?v=40, script.js?v=20,
                    nuovo home.js?v=1.
+6.1  (17/11/2026)  Navbar: all'estrema destra di tutte le pagine (anche su telefono,
+                   accanto al panino) un lucchetto che porta all'area riservata.
+                   style.css?v=41.
+6.2  (17/11/2026)  Area riservata: tasto «Cambia password» in alto (password attuale,
+                   nuova due volte, almeno 8 caratteri). Il Worker salva l'impronta
+                   della password nel KV DATI di Cloudflare e fa uscire gli altri
+                   dispositivi. Va attivato su Cloudflare (vedi AREA RISERVATA, punto 6).

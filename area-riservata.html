@@ -36,7 +36,7 @@ button{cursor:pointer}
 .top .wrap{display:flex;align-items:center;gap:12px;height:60px}
 .top img{height:30px;width:auto}
 .top .t{font-weight:500;color:var(--mute);font-size:14px;padding-left:12px;border-left:1px solid var(--line)}
-.top .esci{margin-left:auto}
+.top .cambia-pw{margin-left:auto}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:500;font-size:15px;
   transition:transform 140ms var(--ease),background-color 150ms ease,border-color 150ms ease}
@@ -121,6 +121,10 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
 .stili input:checked+span{background:var(--ink);border-color:var(--ink);color:#fff}
 .stili input:focus-visible+span{outline:2px solid var(--red);outline-offset:2px}
 .facoltativo{color:var(--mute);font-weight:400}
+.mostra-tutte{display:flex;align-items:center;gap:8px;font-weight:400;font-size:14px;margin:-6px 0 14px;min-height:32px}
+.mostra-tutte input{width:18px;height:18px;accent-color:var(--ink)}
+.nota-pw{color:var(--mute);font-size:13px;margin-bottom:14px}
+@media (max-width:420px){.top .t{display:none}}
 .ordine{display:flex;align-items:center;gap:8px;margin:-4px 0 18px;font-size:14px;color:var(--mute)}
 .ordine .btn{min-height:36px;padding:0 12px;font-size:14px}
 .azioni{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;padding-top:4px}
@@ -135,6 +139,7 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   <div class="wrap">
     <img src="images/comune/logo-rainink-scuro.svg" alt="Rain Ink Tattoo" width="504" height="128">
     <span class="t">Area riservata</span>
+    <button class="btn link cambia-pw" type="button" id="apri-pw" hidden>Cambia password</button>
     <button class="btn link esci" type="button" id="esci" hidden>Esci</button>
   </div>
 </header>
@@ -199,6 +204,31 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   </form>
 </dialog>
 
+<dialog id="d-pw" aria-labelledby="pw-t">
+  <form id="f-pw" method="dialog" novalidate>
+    <h2 id="pw-t">Cambia password</h2>
+    <div class="campo">
+      <label for="pw-att">Password attuale</label>
+      <input type="password" id="pw-att" autocomplete="current-password" required>
+    </div>
+    <div class="campo">
+      <label for="pw-nuova">Password nuova <span class="facoltativo">(almeno 8 caratteri)</span></label>
+      <input type="password" id="pw-nuova" autocomplete="new-password" minlength="8" maxlength="128" required>
+    </div>
+    <div class="campo">
+      <label for="pw-ripeti">Ripeti la password nuova</label>
+      <input type="password" id="pw-ripeti" autocomplete="new-password" maxlength="128" required>
+    </div>
+    <label class="mostra-tutte"><input type="checkbox" id="pw-mostra"> Mostra le password</label>
+    <p class="nota-pw">Dopo il cambio resti dentro su questo dispositivo; sugli altri bisogna entrare di nuovo con la password nuova.</p>
+    <p class="errore" id="err-pw" role="alert"></p>
+    <div class="azioni">
+      <button class="btn" type="button" id="pw-annulla">Annulla</button>
+      <button class="btn pri" type="submit" id="pw-ok">Cambia password</button>
+    </div>
+  </form>
+</dialog>
+
 <script src="js/vendor/sortable/Sortable.min.js"></script>
 <script>
 (function () {
@@ -233,6 +263,7 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     $('vista-login').hidden = nome !== 'login';
     $('vista-lavori').hidden = nome !== 'lavori';
     $('esci').hidden = nome !== 'lavori';
+    $('apri-pw').hidden = nome !== 'lavori';
   }
   function esci() { token = null; mem.set('ar-token', null); lavori = []; mostraVista('login'); $('pw').value = ''; }
   $('esci').onclick = esci;
@@ -429,6 +460,29 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     if (indice < 0) lavori.unshift(l);
     scheda.close(); disegna();
     salva((indice < 0 ? 'Aggiunto «' : 'Modificato «') + titolo + '»', nuove);
+  };
+
+  /* ---------- cambio password ---------- */
+  var dpw = $('d-pw');
+  $('apri-pw').onclick = function () {
+    $('f-pw').reset(); $('err-pw').textContent = ''; mostraPw(false);
+    dpw.showModal(); $('pw-att').focus();
+  };
+  $('pw-annulla').onclick = function () { dpw.close(); };
+  function mostraPw(v) { ['pw-att', 'pw-nuova', 'pw-ripeti'].forEach(function (id) { $(id).type = v ? 'text' : 'password'; }); }
+  $('pw-mostra').onchange = function () { mostraPw(this.checked); };
+  $('f-pw').onsubmit = function (e) {
+    e.preventDefault();
+    var att = $('pw-att').value, nuova = $('pw-nuova').value, rip = $('pw-ripeti').value;
+    var err = !att ? ['Scrivi la password attuale', 'pw-att'] : nuova.length < 8 ? ['La password nuova deve avere almeno 8 caratteri', 'pw-nuova']
+      : nuova !== rip ? ['Le due password nuove non sono uguali', 'pw-ripeti'] : nuova === att ? ['La password nuova è uguale a quella attuale', 'pw-nuova'] : null;
+    if (err) { $('err-pw').textContent = err[0]; $(err[1]).focus(); return; }
+    $('pw-ok').disabled = true; $('pw-ok').textContent = 'Salvataggio…'; $('err-pw').textContent = '';
+    chiama('/password', { attuale: att, nuova: nuova }).then(function (d) {
+      token = d.token; mem.set('ar-token', { token: d.token, scade: d.scade });
+      dpw.close(); stato('ok', 'Password cambiata');
+    }).catch(function (er) { $('err-pw').textContent = er.message; })
+      .then(function () { $('pw-ok').disabled = false; $('pw-ok').textContent = 'Cambia password'; });
   };
 
   /* ---------- avvio ---------- */

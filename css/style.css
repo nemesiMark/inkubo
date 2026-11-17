@@ -537,3 +537,12 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
   .js .rv { transform: none; }
   .w-mid { opacity: .5; } .w-far { opacity: .55; }
 }
+
+/* Lucchetto all'estrema destra della navbar: porta all'area riservata */
+.nav-lock { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; color: var(--mute);
+  background: linear-gradient(180deg, #2a2a31, #17171c); box-shadow: 0 1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #050506;
+  transform: translateZ(30px); transition: transform 160ms var(--ease), color 200ms ease; }
+.nav-lock:active { transform: translateZ(30px) translateY(3px); }
+@media (hover: hover) and (pointer: fine) { .nav-lock:hover { color: var(--txt); transform: translateZ(30px) translateY(-2px); } }
+@media (max-width: 1020px) { .nav-lock { width: 46px; height: 46px; } }
+.nav-cta + .nav-lock, .burger ~ .nav-lock { margin-left: -8px; }
