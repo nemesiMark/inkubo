@@ -250,6 +250,40 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
 .sv .ico{background:#e0e0dc}
 .sv .barra{border-radius:2px;background:#e0e0dc}
 .sv .barra span{background:var(--acc)}
+
+/* ================= GUIDA ================= */
+.top .guida-btn{margin-left:auto;color:var(--ink);gap:6px}
+.top .guida-btn+.cambia-pw{margin-left:0}
+.guida-btn .q{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:2px;background:var(--acc);color:var(--ink);font:600 14px/1 var(--head)}
+.cambia-pw .corto{display:none}
+@media (max-width:480px){.cambia-pw .lungo{display:none}.cambia-pw .corto{display:inline}}
+#d-guida{width:min(760px,100% - 24px)}
+.g-testa{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;padding:16px 20px 12px;background:var(--card);border-bottom:4px solid var(--acc)}
+.g-testa h2{margin:0;flex:1;outline:0}
+.g-chiudi{min-width:44px;padding:0;font-size:26px;line-height:1}
+.g-indice{display:flex;flex-wrap:wrap;gap:8px;padding:14px 20px 4px}
+.g-indice a{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border:1px solid var(--line);border-radius:3px;background:#fff;color:var(--ink);text-decoration:none;
+  font:500 14px/1 var(--head);text-transform:uppercase;letter-spacing:.06em}
+@media (hover:hover) and (pointer:fine){.g-indice a:hover{border-color:var(--ink)}}
+.g-corpo{padding:4px 20px 20px}
+.g-intro{color:var(--mute);font-size:15px;line-height:1.5;margin:10px 0 4px}
+.g-sez{padding-top:22px;scroll-margin-top:72px}
+.g-sez h3{font:600 20px/1.2 var(--head);text-transform:uppercase;letter-spacing:.02em;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.g-passo{display:grid;grid-template-columns:34px 1fr 210px;gap:4px 14px;align-items:start;padding:16px 0;border-bottom:1px solid var(--line)}
+.g-passo:last-child{border-bottom:0}
+.g-passo .num{width:30px;height:30px;font-size:16px}
+.g-passo p{font-size:16px;line-height:1.5;padding-top:2px}
+.g-passo p b{font-weight:600}
+.g-passo img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:var(--paper);box-shadow:0 10px 24px -14px rgba(0,0,0,.45)}
+.g-passo.solo-testo{grid-template-columns:34px 1fr}
+.g-nota{margin-top:12px;padding:10px 14px;border-left:4px solid var(--acc);background:#fff;font-size:14px;line-height:1.45;color:var(--ink)}
+.g-nota.rossa{border-left-color:var(--red)}
+.g-piede{display:flex;justify-content:flex-end;padding:8px 20px 20px}
+@media (max-width:600px){
+  .g-passo{grid-template-columns:34px 1fr}
+  .g-passo img{grid-column:1/-1;width:min(250px,100%);margin:10px auto 0}
+  .g-piede .btn{flex:1}
+}
 </style>
 </head>
 <body>
@@ -257,7 +291,8 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   <div class="wrap">
     <img src="images/comune/logo-rainink-scuro.svg" alt="Rain Ink Tattoo" width="504" height="128">
     <span class="t">Area riservata</span>
-    <button class="btn link cambia-pw" type="button" id="apri-pw" hidden>Cambia password</button>
+    <button class="btn link guida-btn" type="button" id="apri-guida" hidden><span class="q" aria-hidden="true">?</span>Guida</button>
+    <button class="btn link cambia-pw" type="button" id="apri-pw" hidden><span class="lungo">Cambia password</span><span class="corto">Password</span></button>
     <button class="btn link esci" type="button" id="esci" hidden>Esci</button>
   </div>
 </header>
@@ -397,6 +432,51 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   </form>
 </dialog>
 
+<dialog id="d-guida" aria-labelledby="g-t">
+  <div class="g-testa">
+    <h2 id="g-t" tabindex="-1">Guida</h2>
+    <button class="btn link g-chiudi" type="button" id="g-x" aria-label="Chiudi la guida">&times;</button>
+  </div>
+  <nav class="g-indice" aria-label="Argomenti della guida">
+    <a href="#g-aggiungere">Aggiungere</a><a href="#g-riordinare">Riordinare</a><a href="#g-rinominare">Rinominare</a><a href="#g-eliminare">Eliminare</a><a href="#g-fisse">Altre foto</a>
+  </nav>
+  <div class="g-corpo">
+    <p class="g-intro">In alto c'è una scheda per ogni pagina del sito. Le modifiche valgono solo per la pagina in cui le fai e si vedono online entro qualche minuto dal salvataggio. Questa guida si riapre quando vuoi dal pulsante <b>Guida</b> in alto.</p>
+    <section class="g-sez" id="g-aggiungere" aria-labelledby="g-aggiungere-t">
+      <h3 id="g-aggiungere-t">Aggiungere una foto</h3>
+      <div class="g-passo"><span class="num">1</span><p>In alto scegli la <b>pagina</b> del sito da modificare, per esempio <b>Portfolio</b>.</p><img src="images/guida/tab.jpg" alt="La fila di schede in alto con Portfolio evidenziato" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <div class="g-passo"><span class="num">2</span><p>Scorri fino alla <b>sezione</b> giusta e tocca la casella grigia con il <b>+</b>, in fondo alle foto di quella sezione. Si apre la galleria del telefono (o le cartelle del computer): scegli la foto.</p><img src="images/guida/piu.jpg" alt="La casella con il + in fondo alla sezione Blackwork" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <div class="g-passo"><span class="num">3</span><p>Controlla l'anteprima, scrivi il <b>titolo</b> e tocca <b>Aggiungi</b>. Se hai sbagliato foto, tocca <b>Cambia foto</b>.</p><img src="images/guida/nuova.jpg" alt="La finestra per aggiungere una foto, con il titolo scritto" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <div class="g-passo"><span class="num">4</span><p>La foto nuova lampeggia in arancio. Se vuoi, <b>tienila premuta e trascinala</b> nel posto che preferisci; altrimenti resta ultima. Poi tocca <b>Conferma e salva</b>.</p><img src="images/guida/nuova-sel.jpg" alt="La foto nuova evidenziata e il pulsante Conferma e salva" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <div class="g-passo"><span class="num">5</span><p>Si apre la finestra del salvataggio: aspetta che la barra arrivi in fondo e tocca <b>OK</b>. Il sito si aggiorna da solo entro qualche minuto.</p><img src="images/guida/salvato.jpg" alt="La finestra Salvataggio riuscito correttamente con il pulsante OK" width="557" height="1000" loading="lazy" decoding="async"></div>
+    </section>
+    <section class="g-sez" id="g-riordinare" aria-labelledby="g-riordinare-t">
+      <h3 id="g-riordinare-t">Riordinare le foto</h3>
+      <div class="g-passo"><span class="num">1</span><p>Tocca la foto da spostare: si accende in arancio e le altre diventano più chiare.</p><img src="images/guida/scegli.jpg" alt="Una foto selezionata in arancio, le altre più chiare" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <div class="g-passo"><span class="num">2</span><p><b>Tienila premuta e trascinala</b> dove vuoi, dentro la stessa sezione. Il numero in alto a sinistra indica il posto. Poi tocca <b>Conferma</b>.</p><img src="images/guida/spostata.jpg" alt="La foto spostata al posto 1 e il pulsante Conferma" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <p class="g-nota">Hai cambiato idea? Tocca <b>Annulla</b> e la foto torna dov'era, senza salvare nulla.</p>
+    </section>
+    <section class="g-sez" id="g-rinominare" aria-labelledby="g-rinominare-t">
+      <h3 id="g-rinominare-t">Rinominare una foto</h3>
+      <div class="g-passo"><span class="num">1</span><p>Tocca la foto, poi tocca <b>Modifica o elimina</b> nella barra in basso.</p><img src="images/guida/modifica.jpg" alt="La barra in basso con il pulsante Modifica o elimina" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <div class="g-passo"><span class="num">2</span><p>Correggi il <b>titolo</b> e tocca <b>Salva</b>. Da qui puoi anche cambiare la foto con <b>Cambia foto</b>.</p><img src="images/guida/rinomina.jpg" alt="La finestra di modifica con il titolo cambiato e il pulsante Salva" width="557" height="1000" loading="lazy" decoding="async"></div>
+    </section>
+    <section class="g-sez" id="g-eliminare" aria-labelledby="g-eliminare-t">
+      <h3 id="g-eliminare-t">Eliminare una foto</h3>
+      <div class="g-passo solo-testo"><span class="num">1</span><p>Tocca la foto, poi tocca <b>Modifica o elimina</b> nella barra in basso (come per rinominare).</p></div>
+      <div class="g-passo"><span class="num">2</span><p>Tocca <b>Elimina</b> in fondo alla finestra. Il pulsante diventa rosso con scritto <b>Sì, elimina</b>: toccalo di nuovo per confermare.</p><img src="images/guida/elimina.jpg" alt="Il pulsante rosso Sì, elimina" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <p class="g-nota rossa">L'eliminazione è definitiva: la foto sparisce dal sito. Se non tocchi «Sì, elimina» non succede nulla.</p>
+    </section>
+    <section class="g-sez" id="g-fisse" aria-labelledby="g-fisse-t">
+      <h3 id="g-fisse-t">Cambiare le altre foto</h3>
+      <div class="g-passo"><span class="num">1</span><p>Nelle pagine <b>Tatuaggi</b>, <b>Piercing</b>, <b>Studio</b> e nella <b>Home</b> ci sono foto con un posto fisso: tocca quella da cambiare.</p><img src="images/guida/fissa.jpg" alt="Una foto della pagina Tatuaggi con il pulsante Cambia foto" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <div class="g-passo"><span class="num">2</span><p>Tocca <b>Cambia foto</b> e scegli quella nuova. Scrivi in breve cosa si vede (serve a Google) e tocca <b>Salva</b>.</p><img src="images/guida/fissa-scheda.jpg" alt="La finestra per cambiare una foto, con Cambia foto e Salva evidenziati" width="557" height="1000" loading="lazy" decoding="async"></div>
+      <p class="g-nota">Ogni pagina è indipendente: una foto cambiata in una pagina resta uguale in tutte le altre.</p>
+    </section>
+  </div>
+  <div class="g-piede"><button class="btn pri" type="button" id="g-ok">Ho capito</button></div>
+</dialog>
+
 <script src="js/vendor/sortable/Sortable.min.js"></script>
 <script>
 (function () {
@@ -434,6 +514,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     $('vista-lavori').hidden = nome !== 'lavori';
     $('esci').hidden = nome !== 'lavori';
     $('apri-pw').hidden = nome !== 'lavori';
+    $('apri-guida').hidden = nome !== 'lavori';
   }
   function esci() { token = null; mem.set('ar-token', null); lavori = []; ruota = []; mostraVista('login'); $('pw').value = ''; }
   $('esci').onclick = function () { if (sel) confermaScelta(); esci(); };
@@ -457,6 +538,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       lavori = d.lavori || []; immagini = d.immagini || [];
       ruotaCaricata = Array.isArray(d.ruota); ruota = d.ruota || []; // senza il Worker aggiornato la ruota non si tocca
       disegna(); stato('', '');
+      if (!mem.get('ar-guida-vista')) apriGuida(); // la prima volta si apre da sola
     })
       .catch(function (err) { stato('err', err.message, carica); });
   }
@@ -824,6 +906,20 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     dimg.close(); disegna();
     salva((fotoImm ? 'Cambiata la foto «' : 'Cambiata la descrizione «') + immAperta.sezione + '» (' + immAperta.pagina + ')', nuove);
   };
+
+  /* ---------- guida ---------- */
+  var dg = $('d-guida');
+  function apriGuida() {
+    if (dg.open) return;
+    mem.set('ar-guida-vista', true);
+    dg.showModal(); dg.scrollTop = 0; $('g-t').focus();
+  }
+  $('apri-guida').onclick = apriGuida;
+  $('g-x').onclick = $('g-ok').onclick = function () { dg.close(); };
+  dg.addEventListener('click', function (e) { if (e.target === dg) dg.close(); }); // tocco fuori dalla finestra
+  [].forEach.call(dg.querySelectorAll('.g-indice a'), function (a) {
+    a.onclick = function (e) { e.preventDefault(); dg.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); };
+  });
 
   /* ---------- cambio password ---------- */
   var dpw = $('d-pw');

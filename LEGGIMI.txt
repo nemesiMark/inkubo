@@ -63,6 +63,7 @@ images/home/             tatuatore-spalle.png: foto della prima schermata (Haber
                          sostituire con una foto sua, di spalle, in bianco e nero
 images/flash/            Disegni provvisori usati in tatuaggi, studio e portfolio
 images/lavori/           Foto caricate dal cliente dall'area riservata
+images/guida/            Schermate della guida dell'area riservata
 images/piercing/, images/studio/   disegni delle pagine Piercing e Studio
 
 Tolti nella versione 6.0 perché non più usati: servizi.html (le voci Tatuaggi e Piercing
@@ -148,6 +149,12 @@ Ogni salvataggio (aggiunta, modifica, spostamento, eliminazione) apre subito una
 finestra con una barra che avanza; la barra si completa quando il salvataggio è davvero
 riuscito e compare «Salvataggio riuscito correttamente» in verde, da chiudere con «OK»;
 il sito si aggiorna da solo in qualche minuto.
+Guida: pulsante «Guida» in alto (dopo l'accesso). Spiega passo passo, con testo e
+schermate, come aggiungere, riordinare, rinominare ed eliminare le foto e come cambiare
+quelle fisse. Si apre da sola la prima volta che si entra da un dispositivo (ricordato
+nel browser con ar-guida-vista). Le schermate sono in images/guida/ (JPEG, prese dal
+telefono a 390 px di larghezza, con gli anelli blu sui punti da toccare): se l'aspetto
+dell'area riservata cambia molto vanno rifatte.
 La foto viene rimpicciolita nel telefono prima dell'invio (lato lungo 1600 px, JPEG
 qualità 85) e perde i dati EXIF, compresa la posizione GPS.
 File:
@@ -560,3 +567,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Oswald maiuscolo, testo in Work Sans, angoli quasi vivi e una linea
                    arancio sotto la barra in alto. Il sito pubblico
                    non cambia.
+                   Guida per il cliente dentro l'area riservata (pulsante «Guida», si apre
+                   da sola al primo accesso): aggiungere, riordinare, rinominare,
+                   eliminare e cambiare le foto fisse, con schermate in images/guida/.
+                   Su telefono «Cambia password» diventa «Password».
