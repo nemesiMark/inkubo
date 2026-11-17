@@ -1,0 +1,98 @@
+[
+  {
+    "id": "home-hero",
+    "pagina": "index.html",
+    "sezione": "Prima schermata",
+    "descrizione": "La foto grande in primo piano, sopra la scritta «Rain Ink» al neon. Meglio verticale, in bianco e nero, con Matteo di spalle mentre tatua.",
+    "foto": "images/home/tatuatore-spalle.png",
+    "alt": "Tatuatore di spalle, in bianco e nero, al lavoro"
+  },
+  {
+    "id": "home-studio",
+    "pagina": "index.html",
+    "sezione": "Lo studio",
+    "descrizione": "Il riquadro accanto a «Una postazione, tutto il tempo che serve», sotto la ruota dei lavori.",
+    "foto": "images/studio/macchinetta.svg",
+    "alt": "Macchinetta da tatuaggio, disegno a inchiostro"
+  },
+  {
+    "id": "tatuaggi-blackwork",
+    "pagina": "tatuaggi.html",
+    "sezione": "01 · Blackwork",
+    "descrizione": "Immagine accanto alla descrizione dello stile blackwork.",
+    "foto": "images/flash/mandala-blackwork.svg",
+    "alt": "Blackwork: disegno di esempio dello studio"
+  },
+  {
+    "id": "tatuaggi-fine-line",
+    "pagina": "tatuaggi.html",
+    "sezione": "02 · Fine line",
+    "descrizione": "Immagine accanto alla descrizione dello stile fine line.",
+    "foto": "images/flash/ramo-fine-line.svg",
+    "alt": "Fine line: disegno di esempio dello studio"
+  },
+  {
+    "id": "tatuaggi-dotwork",
+    "pagina": "tatuaggi.html",
+    "sezione": "03 · Dotwork",
+    "descrizione": "Immagine accanto alla descrizione dello stile dotwork.",
+    "foto": "images/flash/geometria-dotwork.svg",
+    "alt": "Dotwork: disegno di esempio dello studio"
+  },
+  {
+    "id": "tatuaggi-tradizionale",
+    "pagina": "tatuaggi.html",
+    "sezione": "04 · Tradizionale",
+    "descrizione": "Immagine accanto alla descrizione dello stile tradizionale.",
+    "foto": "images/flash/pugnale-cuore-tradizionale.svg",
+    "alt": "Tradizionale: disegno di esempio dello studio"
+  },
+  {
+    "id": "tatuaggi-giapponese",
+    "pagina": "tatuaggi.html",
+    "sezione": "05 · Giapponese",
+    "descrizione": "Immagine accanto alla descrizione dello stile giapponese.",
+    "foto": "images/flash/onda-giapponese.svg",
+    "alt": "Giapponese: disegno di esempio dello studio"
+  },
+  {
+    "id": "tatuaggi-realistico",
+    "pagina": "tatuaggi.html",
+    "sezione": "06 · Realistico",
+    "descrizione": "Immagine accanto alla descrizione dello stile realistico.",
+    "foto": "images/flash/occhio-realistico.svg",
+    "alt": "Realistico: disegno di esempio dello studio"
+  },
+  {
+    "id": "piercing-come",
+    "pagina": "piercing.html",
+    "sezione": "Come lavoriamo",
+    "descrizione": "In alto, accanto a «Con l'ago, mai con la pistola».",
+    "foto": "images/piercing/piercing-orecchio.svg",
+    "alt": "Disegno di un orecchio con piercing a lobo, helix, industrial, tragus, conch, rook e daith"
+  },
+  {
+    "id": "piercing-cura",
+    "pagina": "piercing.html",
+    "sezione": "Dopo il piercing",
+    "descrizione": "In basso, accanto ai consigli «Pochi gesti, ogni giorno».",
+    "foto": "images/piercing/piercing-gioielli.svg",
+    "alt": "Disegno di gioielli per piercing: anello, barretta dritta, barretta curva, clicker, labret e ferro di cavallo"
+  },
+  {
+    "id": "studio-artista",
+    "pagina": "studio.html",
+    "sezione": "L'artista",
+    "descrizione": "In alto, accanto a «Disegno prima, inchiostro poi» (Matteo Quattrini).",
+    "foto": "images/studio/macchinetta.svg",
+    "alt": "Macchinetta per tatuaggi a penna, disegno a inchiostro"
+  },
+  {
+    "id": "studio-spazio",
+    "pagina": "studio.html",
+    "sezione": "Lo spazio",
+    "descrizione": "Al centro, accanto a «Su appuntamento, senza fretta»: una foto dello studio.",
+    "foto": "images/flash/mandala-blackwork.svg",
+    "alt": "Mandala in stile blackwork disegnato nello studio"
+  }
+]

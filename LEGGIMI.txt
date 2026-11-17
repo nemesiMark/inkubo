@@ -124,12 +124,23 @@ OpenStreetMap, salvati nello stesso file.
 
 AREA RISERVATA (FOTO GESTITE DAL CLIENTE)
 -----------------------------------------
-Il cliente aggiunge, cambia, riordina ed elimina i lavori del portfolio da solo, da
-area-riservata.html (non collegata dal menu, non indicizzata): entra con una password,
-vede i lavori in griglia, aggiunge con il tasto + (sceglie la foto, scrive titolo, stile
-e zona) e cambia l'ordine tenendo premuta una foto e trascinandola. Il primo lavoro di
-ogni stile compare anche in home («In home» sulla scheda). Dopo ogni salvataggio il
-sito si aggiorna da solo in circa un minuto.
+Il cliente cambia da solo le foto del sito da area-riservata.html (lucchetto in fondo
+alla navbar, non indicizzata): entra con una password e trova una scheda per ogni
+pagina, con le immagini nell'ordine in cui si vedono e una descrizione di dove stanno:
+- Home: prima schermata, ruota dei lavori (il primo lavoro di ogni stile del Portfolio;
+  toccandolo lo si modifica; il + in fondo aggiunge un lavoro in cima al Portfolio, così
+  entra nella ruota), lo studio.
+- Portfolio: tutti i lavori in griglia; il riquadro tratteggiato con il + in fondo ne
+  aggiunge uno (foto, titolo, stile e zona). Il lavoro nuovo compare in fondo con il
+  bordo rosso che lampeggia e una barra in basso: lo si trascina dove si vuole (o si usano
+  «← Prima» / «Dopo →») e si tocca «Conferma posizione»; per lasciarlo in fondo basta
+  confermare subito. Si salva solo alla conferma («Annulla» lo toglie). Tocco su un
+  lavoro per modificarlo o eliminarlo, tenere premuto e trascinare per cambiare
+  l'ordine. Il primo di ogni stile ha «In home».
+- Tatuaggi, Piercing, Studio: le immagini fisse della pagina; «Cambia foto» e il testo
+  che dice cosa si vede (per Google e per chi non vede).
+Dopo ogni salvataggio compare la finestra verde «Salvataggio riuscito correttamente»
+(si chiude con la X o da sola); il sito si aggiorna da solo in qualche minuto.
 La foto viene rimpicciolita nel telefono prima dell'invio (lato lungo 1600 px, JPEG
 qualità 85) e perde i dati EXIF, compresa la posizione GPS.
 File:
@@ -144,12 +155,19 @@ File:
                          sul sito.
 - data/lavori.json       Elenco dei lavori: foto, titolo, stile, zona. L'ordine è quello
                          del portfolio.
-- images/lavori/         Foto caricate dal cliente. Quelle tolte dall'elenco vengono
-                         cancellate; i disegni di images/flash non vengono mai toccati.
+- data/immagini.json     Le immagini fisse delle pagine: id, pagina, sezione, descrizione
+                         (quello che il cliente legge nell'area riservata), foto e testo
+                         alternativo. Nell'HTML ogni immagine gestita ha data-slot="id".
+                         Il cliente cambia solo foto e testo alternativo; per aggiungere
+                         un'immagine gestibile: data-slot nell'<img> e una voce qui.
+- images/lavori/         Foto caricate dal cliente (anche quelle delle pagine). Quelle che
+                         non usa più nessuno vengono cancellate; images/flash, home,
+                         studio e piercing non vengono mai toccate.
 - scripts/genera_lavori.py
                          Scrive i lavori in portfolio.html e la ruota 3D in index.html
                          fra <!-- lavori:inizio --> e <!-- lavori:fine --> (quel tratto non
-                         si modifica a mano). In locale, dopo aver cambiato lavori.json:
+                         si modifica a mano) e aggiorna src e alt delle <img data-slot>
+                         da data/immagini.json. In locale, dopo aver cambiato i JSON:
                            python3 scripts/genera_lavori.py   (--check per solo controllo)
 - .github/workflows/pubblica.yml
                          A ogni modifica del ramo main GitHub Actions esegue lo script e
@@ -496,3 +514,16 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    nuova due volte, almeno 8 caratteri). Il Worker salva l'impronta
                    della password nel KV DATI di Cloudflare e fa uscire gli altri
                    dispositivi. Va attivato su Cloudflare (vedi AREA RISERVATA, punto 6).
+6.3  (17/11/2026)  Area riservata divisa per pagina: schede Home, Portfolio, Tatuaggi,
+                   Piercing e Studio, ognuna con le immagini nell'ordine della pagina,
+                   una descrizione di dove stanno e il collegamento «Vedi la pagina».
+                   Oltre ai lavori si possono cambiare le immagini fisse delle pagine
+                   (nuovo data/immagini.json, data-slot nell'HTML, lo script le
+                   aggiorna). Tolti da Tatuaggi i disegni in più sotto Giapponese.
+                   Niente più tasto + fisso: in fondo a Portfolio e alla ruota della
+                   Home c'è un riquadro grigio tratteggiato con il +, grande come le foto.
+                   Dopo ogni salvataggio una finestra verde «Salvataggio riuscito
+                   correttamente», con la X per chiuderla.
+                   Il lavoro aggiunto dal Portfolio lampeggia in rosso finché il
+                   cliente non sceglie dove metterlo e tocca «Conferma posizione».
+                   Il Worker va incollato di nuovo su Cloudflare. style.css?v=42.

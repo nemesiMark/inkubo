@@ -187,15 +187,6 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 .specs { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; margin-top: 2rem; }
 .specs li { padding: 1rem 1.1rem; background: var(--bg2); border: 1px solid var(--line); border-radius: 12px; font-size: .95rem; color: var(--mute); }
 .specs b { display: block; font-size: .8rem; font-weight: 600; color: var(--red2); margin-bottom: .2rem; }
-.style-more { grid-column: 1 / -1; }
-.minis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.1rem; }
-.mini .ph { aspect-ratio: 4 / 5; }
-.mini .ph img { transition: transform 600ms var(--ease); }
-.mini .cap { display: block; padding-top: .7rem; font: 600 1rem/1.2 var(--head); transition: color 200ms ease; }
-@media (hover: hover) and (pointer: fine) {
-  .mini:hover .ph img { transform: scale(1.05); }
-  .mini:hover .cap { color: var(--red2); }
-}
 .note { margin-top: 3rem; padding: 1.1rem 1.3rem; background: var(--bg2); border: 1px solid var(--line); border-radius: 12px; font-size: .92rem; color: var(--mute); max-width: none; }
 
 /* Portfolio: filtro a pillola con l'indicatore che scivola */
@@ -411,7 +402,8 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 /* HOME: lo studio */
 .about .wrap { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(2.5rem, 6vw, 60px); align-items: center; }
 .about .frame { position: relative; border-radius: var(--r); padding: 40px; background: #0e0e11; border: 1px solid var(--line); box-shadow: 0 0 0 10px var(--bg2), 0 0 0 11px var(--line); }
-.about .frame img { filter: invert(1) hue-rotate(180deg) contrast(1.1); opacity: .9; border-radius: 8px; }
+.about .frame img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; }
+.about .frame img[src$=".svg"] { filter: invert(1) hue-rotate(180deg) contrast(1.1); opacity: .9; }   /* i disegni in negativo; le foto restano come sono */
 .steps { display: flex; flex-wrap: wrap; gap: 8px 0; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); list-style: none; counter-reset: s; }
 .steps li { counter-increment: s; font-weight: 500; }
 .steps li::before { content: counter(s); font: 500 13px var(--body); font-variant-numeric: tabular-nums; color: var(--mute); margin-right: 8px; }
@@ -502,7 +494,6 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
   .about .wrap, .split, .style-row, .contact-grid { grid-template-columns: 1fr; }
   .style-row:nth-child(even) > .ph, .split.rev > .ph { order: 0; }
   .style-row > .ph, .split > .ph { max-width: 460px; }
-  .minis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .zones { grid-template-columns: 1fr; }
   .word { font-size: 34vw; white-space: normal; text-align: center; line-height: .82; }
   .l-figure img { height: 78svh; min-height: 0; margin-right: -22vw; }
@@ -514,7 +505,6 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 @media (max-width: 640px) {
   body { font-size: 1rem; }
   .works, .hygiene, .specs { grid-template-columns: 1fr; }
-  .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
   .foot-list { grid-template-columns: 1fr 1fr; }
   .wname { min-width: 0; flex: 1; }
   .about .frame { padding: 22px; }

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Genera i lavori di portfolio.html e la selezione della home (index.html)
+"""Genera i lavori di portfolio.html, la ruota della home (index.html) e le altre immagini
+delle pagine (data/immagini.json: ogni <img data-slot="…"> prende foto e testo alternativo)
 partendo da data/lavori.json, il file che il cliente modifica dall'area riservata.
 Nella home scrive le facce della ruota 3D (un lavoro per stile).
 
@@ -8,7 +9,7 @@ Uso:  python3 scripts/genera_lavori.py           (scrive i file)
 
 Tocca solo il testo fra i segnaposto <!-- lavori:inizio --> e <!-- lavori:fine -->.
 """
-import html, json, os, sys
+import html, json, os, re, sys
 
 RADICE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STILI = [  # ordine dei filtri e della ruota in home; uguale ad area-riservata.html
@@ -58,6 +59,47 @@ def home(lavori):
         f'<img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" draggable="false"></figure>'
         for l in scelti]
 
+def immagini(controlla):
+    # ogni voce di data/immagini.json aggiorna src e alt dell'<img data-slot="id"> nella sua pagina
+    percorso = os.path.join(RADICE, "data", "immagini.json")
+    if not os.path.exists(percorso):
+        return True
+    with open(percorso, encoding="utf-8") as f:
+        voci = json.load(f)
+    pagine, ok = {}, True
+    for v in voci:
+        foto = str(v.get("foto") or "").strip().lstrip("/")
+        if not foto or not os.path.exists(os.path.join(RADICE, foto)):
+            print(f"avviso: immagine {v.get('id')} saltata, la foto {foto} non esiste", file=sys.stderr)
+            continue
+        nome = v["pagina"]
+        if nome not in pagine:
+            with open(os.path.join(RADICE, nome), encoding="utf-8") as f:
+                pagine[nome] = [f.read(), None]
+            pagine[nome][1] = pagine[nome][0]
+        s = pagine[nome][0]
+        segno = f'<img data-slot="{v["id"]}" '
+        a = s.find(segno)
+        if a < 0:
+            print(f"avviso: in {nome} manca l'immagine {v['id']}", file=sys.stderr)
+            continue
+        b = s.index(">", a)
+        tag = s[a:b]
+        tag = re.sub(r' src="[^"]*"', f' src="{att(foto)}"', tag, count=1)
+        tag = re.sub(r' alt="[^"]*"', f' alt="{att(str(v.get("alt") or "").strip())}"', tag, count=1)
+        pagine[nome][0] = s[:a] + tag + s[b:]
+    for nome, (nuovo, prima) in pagine.items():
+        if nuovo == prima:
+            continue
+        if controlla:
+            print(f"{nome} non è aggiornato: esegui python3 scripts/genera_lavori.py", file=sys.stderr)
+            ok = False
+            continue
+        with open(os.path.join(RADICE, nome), "w", encoding="utf-8") as f:
+            f.write(nuovo)
+        print(f"{nome} aggiornato (immagini)")
+    return ok
+
 def sostituisci(nome, righe, controlla):
     percorso = os.path.join(RADICE, nome)
     with open(percorso, encoding="utf-8") as f:
@@ -79,4 +121,5 @@ if __name__ == "__main__":
     controlla = "--check" in sys.argv
     lavori = carica()
     ok = sostituisci("portfolio.html", portfolio(lavori), controlla) & sostituisci("index.html", home(lavori), controlla)
+    ok = immagini(controlla) & ok
     sys.exit(0 if ok else 1)

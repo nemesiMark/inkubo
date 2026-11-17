@@ -2,7 +2,8 @@
  * Rain Ink Tattoo — servizio dell'area riservata (Cloudflare Worker).
  *
  * Fa da ponte fra la pagina area-riservata.html e il repository GitHub del sito:
- * controlla la password, poi legge e salva data/lavori.json e le foto in images/lavori/
+ * controlla la password, poi legge e salva data/lavori.json (portfolio e ruota della home),
+ * data/immagini.json (le altre immagini delle pagine) e le foto in images/lavori/
  * con un solo commit per ogni salvataggio. GitHub Actions ripubblica il sito da solo.
  *
  * Impostazioni del Worker (Cloudflare → Workers → questo Worker → Settings → Variables):
@@ -22,6 +23,7 @@
 
 const STILI = ["blackwork", "fine-line", "dotwork", "tradizionale", "giapponese", "realistico"];
 const FILE_LAVORI = "data/lavori.json";
+const FILE_IMMAGINI = "data/immagini.json";
 const CARTELLA_FOTO = "images/lavori/";
 const MAX_FOTO_BYTES = 4 * 1024 * 1024;   // dopo il ridimensionamento nel browser sono ~0,3–0,6 MB
 const MAX_FOTO_PER_SALVATAGGIO = 12;
@@ -29,7 +31,7 @@ const MAX_LAVORI = 300;
 const DURATA_ACCESSO_S = 30 * 24 * 3600;  // 30 giorni
 const PW_ITERAZIONI = 100000;              // massimo consentito da Cloudflare per PBKDF2
 const PW_MIN = 8, PW_MAX = 128;
-const FOTO_VALIDA = /^images\/(lavori|flash)\/[a-z0-9][a-z0-9._-]{0,120}\.(jpe?g|png|webp|svg)$/;
+const FOTO_VALIDA = /^images\/(lavori|flash|home|studio|piercing)\/[a-z0-9][a-z0-9._-]{0,120}\.(jpe?g|png|webp|svg)$/;
 
 export default {
   async fetch(request, env) {
@@ -138,25 +140,31 @@ async function ugualiCostante(a, b) {
 /* ---------- lettura ---------- */
 
 async function leggiLavori(env, cors) {
-  const { lavori } = await statoAttuale(env);
-  return json({ lavori }, 200, cors);
+  const { lavori, immagini } = await statoAttuale(env);
+  return json({ lavori, immagini }, 200, cors);
 }
 
 async function statoAttuale(env) {
   const ref = await gh(env, `git/ref/heads/${env.BRANCH}`);
   const sha = ref.object.sha;
-  const file = await gh(env, `contents/${FILE_LAVORI}?ref=${sha}`);
-  const testo = new TextDecoder().decode(daB64(file.content.replace(/\n/g, "")));
-  const lavori = JSON.parse(testo);
-  return { sha, lavori: Array.isArray(lavori) ? lavori : [] };
+  const [lavori, immagini] = await Promise.all([leggiJson(env, FILE_LAVORI, sha), leggiJson(env, FILE_IMMAGINI, sha).catch(() => [])]);
+  return { sha, lavori: Array.isArray(lavori) ? lavori : [], immagini: Array.isArray(immagini) ? immagini : [] };
+}
+
+async function leggiJson(env, percorso, sha) {
+  const file = await gh(env, `contents/${percorso}?ref=${sha}`);
+  return JSON.parse(new TextDecoder().decode(daB64(file.content.replace(/\n/g, ""))));
 }
 
 /* ---------- salvataggio ---------- */
 
 /**
- * Corpo: { lavori: [ {foto, titolo, stile, zona} ], nuoveFoto: { "nuova:ID": "base64…" }, messaggio }
- * Nel campo foto di un lavoro nuovo c'è "nuova:ID": qui diventa il percorso vero della foto caricata.
- * Le foto di images/lavori/ che non compaiono più nell'elenco vengono cancellate.
+ * Corpo: { lavori: [ {foto, titolo, stile, zona} ], immagini: [ {id, foto, alt} ] (facoltativo),
+ *         nuoveFoto: { "nuova:ID": "base64…" }, messaggio }
+ * Nel campo foto di una foto nuova c'è "nuova:ID": qui diventa il percorso vero della foto caricata.
+ * Delle immagini delle pagine si cambiano solo foto e testo alternativo: quali sono, in che
+ * pagina e con che descrizione lo decide data/immagini.json sul sito.
+ * Le foto di images/lavori/ che non sono più usate da nessuna parte vengono cancellate.
  */
 async function salva(request, env, cors) {
   const corpo = await request.json().catch(() => null);
@@ -190,20 +198,32 @@ async function salva(request, env, cors) {
     return { foto, titolo, stile, zona };
   });
 
+  // immagini delle pagine: id → foto e testo alternativo scelti
+  const scelte = {};
+  if (Array.isArray(corpo.immagini)) for (const im of corpo.immagini) {
+    if (!im || typeof im.id !== "string" || !/^[a-z0-9-]{1,40}$/.test(im.id)) throw errore("Immagine non valida", 400);
+    const foto = String(im.foto || "");
+    if (!(foto in percorsi) && !FOTO_VALIDA.test(foto)) throw errore("Foto non valida", 400);
+    scelte[im.id] = { foto, alt: pulisci(im.alt, 160) };
+  }
+
   const giorno = new Date().toISOString().slice(0, 10);
   for (const f of blobFoto) {
     const lavoro = lavori.find((l) => l.foto === f.id);
-    if (!lavoro) continue; // foto caricata ma non usata: si ignora
-    const nome = `${giorno}-${slug(lavoro.titolo)}-${casuale(6)}.${f.est}`;
+    const slot = Object.entries(scelte).find(([, v]) => v.foto === f.id);
+    if (!lavoro && !slot) continue; // foto caricata ma non usata: si ignora
+    const nome = `${giorno}-${slug(lavoro ? lavoro.titolo : slot[0])}-${casuale(6)}.${f.est}`;
     percorsi[f.id] = CARTELLA_FOTO + nome;
-    lavoro.foto = percorsi[f.id];
+    for (const l of lavori) if (l.foto === f.id) l.foto = percorsi[f.id];
+    for (const v of Object.values(scelte)) if (v.foto === f.id) v.foto = percorsi[f.id];
   }
 
   // fino a 3 tentativi se nel frattempo il ramo è cambiato
   for (let tentativo = 0; tentativo < 3; tentativo++) {
-    const { sha, lavori: prima } = await statoAttuale(env);
-    const usate = new Set(lavori.map((l) => l.foto));
-    const daCancellare = [...new Set(prima.map((l) => l && l.foto).filter((p) =>
+    const { sha, lavori: prima, immagini: immPrima } = await statoAttuale(env);
+    const immagini = immPrima.map((v) => scelte[v.id] ? { ...v, foto: scelte[v.id].foto, alt: scelte[v.id].alt || v.alt } : v);
+    const usate = new Set([...lavori, ...immagini].map((x) => x.foto));
+    const daCancellare = [...new Set([...prima, ...immPrima].map((l) => l && l.foto).filter((p) =>
       typeof p === "string" && p.startsWith(CARTELLA_FOTO) && FOTO_VALIDA.test(p) && !usate.has(p)))];
 
     const commit = await gh(env, `git/commits/${sha}`);
@@ -214,6 +234,8 @@ async function salva(request, env, cors) {
       albero.push({ path: percorsi[f.id], mode: "100644", type: "blob", sha: blob.sha });
     }
     albero.push({ path: FILE_LAVORI, mode: "100644", type: "blob", content: JSON.stringify(lavori, null, 2) + "\n" });
+    if (immPrima.length && JSON.stringify(immagini) !== JSON.stringify(immPrima))
+      albero.push({ path: FILE_IMMAGINI, mode: "100644", type: "blob", content: JSON.stringify(immagini, null, 2) + "\n" });
     for (const p of daCancellare) albero.push({ path: p, mode: "100644", type: "blob", sha: null });
 
     const nuovoAlbero = await gh(env, "git/trees", "POST", { base_tree: commit.tree.sha, tree: albero });
@@ -221,7 +243,7 @@ async function salva(request, env, cors) {
     const nuovoCommit = await gh(env, "git/commits", "POST", { message: messaggio, tree: nuovoAlbero.sha, parents: [sha] });
     try {
       await gh(env, `git/refs/heads/${env.BRANCH}`, "PATCH", { sha: nuovoCommit.sha, force: false });
-      return json({ lavori, commit: nuovoCommit.sha }, 200, cors);
+      return json({ lavori, immagini, commit: nuovoCommit.sha }, 200, cors);
     } catch (e) {
       if (e.stato !== 422) throw e; // 422: il ramo è andato avanti, si riprova sul nuovo stato
     }
