@@ -1,80 +1,249 @@
 [
   {
-    "foto": "images/flash/mandala-blackwork.svg",
-    "titolo": "Mandala",
-    "stile": "blackwork",
-    "zona": "Schiena"
+    "foto": "images/lavori/tatuaggio-01-ritratto-biomeccanico.jpg",
+    "titolo": "Ritratto biomeccanico"
   },
   {
-    "foto": "images/flash/ramo-fine-line.svg",
-    "titolo": "Ramo e luna",
-    "stile": "fine-line",
-    "zona": "Costole"
+    "foto": "images/lavori/tatuaggio-02-manica-con-volto-di-donna.jpg",
+    "titolo": "Manica con volto di donna"
   },
   {
-    "foto": "images/flash/fasi-lunari-fine-line.svg",
-    "titolo": "Fasi lunari",
-    "stile": "fine-line",
-    "zona": "Schiena alta"
+    "foto": "images/lavori/tatuaggio-03-composizione-a-colori.jpg",
+    "titolo": "Composizione a colori"
   },
   {
-    "foto": "images/flash/pugnale-cuore-tradizionale.svg",
-    "titolo": "Pugnale e cuore",
-    "stile": "tradizionale",
-    "zona": "Braccio"
+    "foto": "images/lavori/tatuaggio-04-robot-viola.jpg",
+    "titolo": "Robot viola"
   },
   {
-    "foto": "images/flash/serpente-tradizionale.svg",
-    "titolo": "Serpente",
-    "stile": "tradizionale",
-    "zona": "Coscia"
+    "foto": "images/lavori/video-02-robot-viola.jpg",
+    "video": "video/video-02-robot-viola.mp4",
+    "titolo": "Robot viola"
   },
   {
-    "foto": "images/flash/onda-giapponese.svg",
-    "titolo": "Onda e sole",
-    "stile": "giapponese",
-    "zona": "Spalla"
+    "foto": "images/lavori/tatuaggio-05-volpe.jpg",
+    "titolo": "Volpe"
   },
   {
-    "foto": "images/flash/fuji-giapponese.svg",
-    "titolo": "Monte Fuji",
-    "stile": "giapponese",
-    "zona": "Avambraccio"
+    "foto": "images/lavori/video-03-fiori-di-ciliegio.jpg",
+    "video": "video/video-03-fiori-di-ciliegio.mp4",
+    "titolo": "Fiori di ciliegio"
   },
   {
-    "foto": "images/flash/koi-giapponese.svg",
-    "titolo": "Koi",
-    "stile": "giapponese",
-    "zona": "Polpaccio"
+    "foto": "images/lavori/tatuaggio-06-soldato-cartoon.jpg",
+    "titolo": "Soldato cartoon"
   },
   {
-    "foto": "images/flash/sakura-giapponese.svg",
-    "titolo": "Ramo di ciliegio",
-    "stile": "giapponese",
-    "zona": "Spalla"
+    "foto": "images/lavori/tatuaggio-07-personaggio-con-cappello.jpg",
+    "titolo": "Personaggio con cappello"
   },
   {
-    "foto": "images/flash/peonia-giapponese.svg",
-    "titolo": "Peonia",
-    "stile": "giapponese",
-    "zona": "Coscia"
+    "foto": "images/lavori/tatuaggio-08-ragazza-in-rosso.jpg",
+    "titolo": "Ragazza in rosso"
   },
   {
-    "foto": "images/flash/momiji-giapponese.svg",
-    "titolo": "Foglie d'acero",
-    "stile": "giapponese",
-    "zona": "Fianco"
+    "foto": "images/lavori/tatuaggio-09-drago-blu.jpg",
+    "titolo": "Drago blu"
   },
   {
-    "foto": "images/flash/occhio-realistico.svg",
-    "titolo": "Occhio",
-    "stile": "realistico",
-    "zona": "Avambraccio"
+    "foto": "images/lavori/tatuaggio-10-renna-con-cappello-rosa.jpg",
+    "titolo": "Renna con cappello rosa"
   },
   {
-    "foto": "images/lavori/2026-11-17-frt-y6u7u8.jpg",
-    "titolo": "frt",
-    "stile": "blackwork",
-    "zona": ""
+    "foto": "images/lavori/tatuaggio-11-guerriero-tra-le-fiamme.jpg",
+    "titolo": "Guerriero tra le fiamme"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-12-personaggio-arancio.jpg",
+    "titolo": "Personaggio arancio"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-13-manica-in-bianco-e-nero.jpg",
+    "titolo": "Manica in bianco e nero"
+  },
+  {
+    "foto": "images/lavori/video-04-samurai-in-bianco-e-nero.jpg",
+    "video": "video/video-04-samurai-in-bianco-e-nero.mp4",
+    "titolo": "Samurai in bianco e nero"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-14-manica-a-colori.jpg",
+    "titolo": "Manica a colori"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-15-ganesha.jpg",
+    "titolo": "Ganesha"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-16-cappello-rosso.jpg",
+    "titolo": "Cappello rosso"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-17-re-scimmia.jpg",
+    "titolo": "Re scimmia"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-18-volto-con-nuvola-rossa.jpg",
+    "titolo": "Volto con nuvola rossa"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-19-bacco.jpg",
+    "titolo": "Bacco"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-20-draghetto-viola.jpg",
+    "titolo": "Draghetto viola"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-21-ritratto-femminile.jpg",
+    "titolo": "Ritratto femminile"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-22-ragazzo-dai-capelli-verdi.jpg",
+    "titolo": "Ragazzo dai capelli verdi"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-23-spalla-a-colori.jpg",
+    "titolo": "Spalla a colori"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-24-principessa-con-draghetto.jpg",
+    "titolo": "Principessa con draghetto"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-25-creatura-verde.jpg",
+    "titolo": "Creatura verde"
+  },
+  {
+    "foto": "images/lavori/video-05-nastro-rosso-e-onde.jpg",
+    "video": "video/video-05-nastro-rosso-e-onde.mp4",
+    "titolo": "Nastro rosso e onde"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-26-lupo-e-mani.jpg",
+    "titolo": "Lupo e mani"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-27-guerriero-viola.jpg",
+    "titolo": "Guerriero viola"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-28-geisha.jpg",
+    "titolo": "Geisha"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-29-profilo-di-donna.jpg",
+    "titolo": "Profilo di donna"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-30-mani-e-mela.jpg",
+    "titolo": "Mani e mela"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-31-elfo-con-spada.jpg",
+    "titolo": "Elfo con spada"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-32-lupo-cartoon.jpg",
+    "titolo": "Lupo cartoon"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-33-furgone-e-auto-d-epoca.jpg",
+    "titolo": "Furgone e auto d'epoca"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-34-manica-rossa.jpg",
+    "titolo": "Manica rossa"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-35-draghetto-in-volo.jpg",
+    "titolo": "Draghetto in volo"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-36-tucano.jpg",
+    "titolo": "Tucano"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-37-creatura-in-bianco-e-nero.jpg",
+    "titolo": "Creatura in bianco e nero"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-38-donna-con-lanterna.jpg",
+    "titolo": "Donna con lanterna"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-39-donna-con-lanterna-di-lato.jpg",
+    "titolo": "Donna con lanterna, di lato"
+  },
+  {
+    "foto": "images/lavori/video-06-donna-con-lanterna.jpg",
+    "video": "video/video-06-donna-con-lanterna.mp4",
+    "titolo": "Donna con lanterna"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-40-leone-guardiano.jpg",
+    "titolo": "Leone guardiano"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-41-guerriero-dai-capelli-dorati.jpg",
+    "titolo": "Guerriero dai capelli dorati"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-42-ragazza-col-cappuccio-rosso.jpg",
+    "titolo": "Ragazza col cappuccio rosso"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-43-manica-a-colori-completa.jpg",
+    "titolo": "Manica a colori completa"
+  },
+  {
+    "foto": "images/lavori/video-07-manica-a-colori-completa.jpg",
+    "video": "video/video-07-manica-a-colori-completa.mp4",
+    "titolo": "Manica a colori completa"
+  },
+  {
+    "foto": "images/lavori/video-01-una-seduta-in-studio.jpg",
+    "video": "video/video-01-una-seduta-in-studio.mp4",
+    "titolo": "Una seduta in studio"
+  },
+  {
+    "foto": "images/lavori/studio-01-preparazione-della-pelle.jpg",
+    "titolo": "Preparazione della pelle"
+  },
+  {
+    "foto": "images/lavori/studio-02-la-postazione.jpg",
+    "titolo": "La postazione"
+  },
+  {
+    "foto": "images/lavori/studio-03-lo-stencil.jpg",
+    "titolo": "Lo stencil"
+  },
+  {
+    "foto": "images/lavori/studio-04-lo-stencil-da-vicino.jpg",
+    "titolo": "Lo stencil, da vicino"
+  },
+  {
+    "foto": "images/lavori/studio-05-lo-stencil-sul-braccio.jpg",
+    "titolo": "Lo stencil sul braccio"
+  },
+  {
+    "foto": "images/lavori/studio-06-prima-di-iniziare.jpg",
+    "titolo": "Prima di iniziare"
+  },
+  {
+    "foto": "images/lavori/studio-07-al-lavoro.jpg",
+    "titolo": "Al lavoro"
+  },
+  {
+    "foto": "images/lavori/studio-08-al-lavoro-da-vicino.jpg",
+    "titolo": "Al lavoro, da vicino"
+  },
+  {
+    "foto": "images/lavori/studio-09-il-cliente-durante-la-seduta.jpg",
+    "titolo": "Il cliente durante la seduta"
+  },
+  {
+    "foto": "images/lavori/studio-10-concentrazione.jpg",
+    "titolo": "Concentrazione"
   }
 ]

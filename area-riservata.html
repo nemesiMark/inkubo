@@ -126,13 +126,16 @@ input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0
   transition:box-shadow 200ms var(--ease),transform 200ms var(--ease),opacity 200ms ease}
 .card .ph{aspect-ratio:4/5;background:var(--paper);overflow:hidden}
 .card img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.card .ph{position:relative}
+.card .play,.anteprima .play{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(10,10,12,.6);border:1px solid rgba(255,255,255,.6);pointer-events:none}
+.card .play::after{content:"";position:absolute;left:17px;top:13px;border-style:solid;border-width:8px 0 8px 13px;border-color:transparent transparent transparent #fff}
+.card .tipo-v{position:absolute;top:8px;right:8px;height:24px;padding:0 9px;border-radius:12px;background:rgba(10,10,12,.75);color:#fff;font:600 12px/24px Inter}
 .card .tx{padding:10px 12px 12px}
 .sez-stile{padding:18px 0 6px;border-top:1px solid var(--line)}
 .sez-stile:first-child{border-top:0}
 .sez-stile h2{font:700 19px/1.2 var(--head);margin-bottom:12px;display:flex;align-items:baseline;gap:8px}
 .sez-stile h2 small{font:500 14px Inter;color:var(--mute);font-variant-numeric:tabular-nums}
 .sez-stile .griglia{padding-bottom:12px}
-#portfolio-stili{padding-bottom:48px}
 .griglia.piccola{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;padding-bottom:0}
 .griglia.piccola .card{cursor:pointer}
 .card b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -151,7 +154,7 @@ input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0
 .slot{transition:box-shadow 200ms var(--ease),opacity 200ms ease}
 body.selezione .card:not(.scelta),body.selezione .aggiungi,body.selezione .slot{opacity:.3}
 body.selezione .card:not(.scelta){cursor:pointer}
-body.selezione #portfolio-stili,body.selezione .blocchi{padding-bottom:220px}
+body.selezione #portfolio,body.selezione .blocchi{padding-bottom:220px}
 /* barra della foto selezionata */
 .posiziona{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));z-index:25;width:min(560px,100% - 24px);transform:translateX(-50%);
   padding:16px;background:var(--ink);color:#fff;border-radius:18px;box-shadow:0 18px 50px -12px rgba(0,0,0,.5)}
@@ -193,7 +196,10 @@ dialog[open]::backdrop{opacity:1}
 dialog form{padding:20px}
 dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
 .anteprima{position:relative;aspect-ratio:4/5;max-height:46svh;margin:0 auto 16px;border-radius:14px;overflow:hidden;background:var(--paper)}
-.anteprima img{width:100%;height:100%;object-fit:cover;display:block}
+.anteprima img,.anteprima video{width:100%;height:100%;object-fit:cover;display:block}
+.anteprima video{object-fit:contain;background:#000}
+.anteprima [hidden]{display:none}
+.avanza{font-size:14px;color:var(--mute);margin:-6px 0 12px;min-height:1.3em;font-variant-numeric:tabular-nums}
 .anteprima .cambia{position:absolute;right:10px;bottom:10px;min-height:38px;background:rgba(255,255,255,.95)}
 .stili{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;border:0}
 .stili legend{font-size:14px;font-weight:500;margin-bottom:8px}
@@ -341,14 +347,17 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
         <li><h2><span class="num">1</span> Prima schermata</h2><ul class="slots" data-slots="home-hero"></ul></li>
         <li><h2><span class="num">2</span> Ruota dei lavori</h2>
           <ul class="griglia piccola" id="ruota"></ul></li>
-        <li><h2><span class="num">3</span> Lo studio</h2><ul class="slots" data-slots="home-studio"></ul></li>
+        <li><h2><span class="num">3</span> Video</h2>
+          <ul class="griglia piccola" id="video-home"></ul></li>
+        <li><h2><span class="num">4</span> Lo studio</h2><ul class="slots" data-slots="home-studio"></ul></li>
       </ol>
     </section>
 
     <!-- PORTFOLIO -->
     <section class="pag" id="pag-portfolio.html" role="tabpanel" hidden>
       <div class="pag-head"><h1>Portfolio <small id="conta"></small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="portfolio.html">Vedi la pagina ↗</a></div>
-      <div id="portfolio-stili"></div>
+      <p class="nota-pw">Foto e video tutti insieme, nell'ordine in cui si vedono sul sito.</p>
+      <ul class="griglia" id="portfolio"></ul>
     </section>
 
     <!-- PAGINE CON IMMAGINI FISSE -->
@@ -380,7 +389,8 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
 <dialog id="scheda" aria-labelledby="scheda-t">
   <form id="f-lavoro" method="dialog" novalidate>
     <h2 id="scheda-t">Nuovo lavoro</h2>
-    <div class="anteprima"><img id="anteprima" alt=""><button class="btn cambia" type="button" id="cambia">Cambia foto</button></div>
+    <div class="anteprima"><img id="anteprima" alt=""><video id="anteprima-v" controls playsinline muted preload="metadata" hidden></video><button class="btn cambia" type="button" id="cambia">Cambia foto</button></div>
+    <p class="avanza" id="avanza" aria-live="polite"></p>
     <div class="campo">
       <label for="titolo">Titolo</label>
       <input type="text" id="titolo" maxlength="80" required placeholder="Es. Falena notturna">
@@ -454,33 +464,40 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     <button class="btn link g-chiudi" type="button" id="g-x" aria-label="Chiudi la guida">&times;</button>
   </div>
   <nav class="g-indice" aria-label="Argomenti della guida">
-    <a href="#g-aggiungere">Aggiungere</a><a href="#g-riordinare">Riordinare</a><a href="#g-rinominare">Rinominare</a><a href="#g-eliminare">Eliminare</a><a href="#g-fisse">Foto fisse</a>
+    <a href="#g-aggiungere">Aggiungere</a><a href="#g-video">Video</a><a href="#g-riordinare">Riordinare</a><a href="#g-rinominare">Rinominare</a><a href="#g-eliminare">Eliminare</a><a href="#g-fisse">Foto fisse</a>
   </nav>
   <div class="g-corpo">
     <p class="g-intro">In alto c'è una scheda per ogni pagina del sito. Le modifiche valgono solo per la pagina in cui le fai e si vedono online entro qualche minuto dal salvataggio. Questa guida si riapre quando vuoi dal pulsante <b>Guida</b> in alto. Clicca una schermata per ingrandirla. Dal telefono funziona allo stesso modo: al posto del clic si tocca con il dito.</p>
     <section class="g-sez" id="g-aggiungere" aria-labelledby="g-aggiungere-t">
       <h3 id="g-aggiungere-t">Aggiungere una foto</h3>
       <div class="g-passo"><span class="num">1</span><p>In alto scegli la <b>pagina</b> del sito da modificare, per esempio <b>Portfolio</b>.</p><a href="images/guida/tab.jpg" class="g-zoom" data-punti="12.47,8.62,8.99,6.50" aria-label="Ingrandisci la schermata"><img src="images/guida/tab.jpg" alt="La fila di schede in alto con Portfolio evidenziato" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
-      <div class="g-passo"><span class="num">2</span><p>Scorri fino alla <b>sezione</b> giusta e clicca la casella grigia con il <b>+</b>, in fondo alle foto di quella sezione. Si apre la finestra per scegliere il file: scegli la foto e clicca <b>Apri</b>.</p><a href="images/guida/piu.jpg" class="g-zoom" data-punti="35.62,33.04,14.22,36.00" aria-label="Ingrandisci la schermata"><img src="images/guida/piu.jpg" alt="La casella con il + in fondo alla sezione Blackwork" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
-      <div class="g-passo"><span class="num">3</span><p>Controlla l'anteprima, scrivi il <b>titolo</b> e clicca <b>Aggiungi</b>. Se hai sbagliato foto, clicca <b>Cambia foto</b>.</p><a href="images/guida/nuova.jpg" class="g-zoom" data-punti="33.12,68.64,33.75,7.50;58.13,80.64,8.74,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/nuova.jpg" alt="La finestra per aggiungere una foto, con il titolo scritto" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
-      <div class="g-passo"><span class="num">4</span><p>La foto nuova lampeggia in arancio. Se vuoi spostarla, <b>tieni premuto il clic sulla foto e trascinala</b> nel posto che preferisci; altrimenti resta ultima. Poi clicca <b>Conferma e salva</b> nella barra in basso.</p><a href="images/guida/nuova-sel.jpg" class="g-zoom" data-punti="35.62,22.04,14.22,36.00;57.22,89.75,13.87,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/nuova-sel.jpg" alt="La foto nuova evidenziata e il pulsante Conferma e salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">2</span><p>Clicca la casella grigia con il <b>+</b>, in fondo alle foto (nel Portfolio è dopo l'ultima foto). Si apre la finestra per scegliere il file: scegli la foto e clicca <b>Apri</b>.</p><a href="images/guida/piu.jpg" class="g-zoom" data-punti="6.56,68.22,14.22,26.50" aria-label="Ingrandisci la schermata"><img src="images/guida/piu.jpg" alt="La casella con il + in fondo al Portfolio" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">3</span><p>Controlla l'anteprima, scrivi il <b>titolo</b> e clicca <b>Aggiungi</b>. Se hai sbagliato foto, clicca <b>Cambia foto</b>.</p><a href="images/guida/nuova.jpg" class="g-zoom" data-punti="33.12,70.15,33.75,7.50;58.13,82.15,8.74,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/nuova.jpg" alt="La finestra per aggiungere una foto, con il titolo scritto" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">4</span><p>La foto nuova lampeggia in arancio. Se vuoi spostarla, <b>tieni premuto il clic sulla foto e trascinala</b> nel posto che preferisci; altrimenti resta ultima. Poi clicca <b>Conferma e salva</b> nella barra in basso.</p><a href="images/guida/nuova-sel.jpg" class="g-zoom" data-punti="6.56,37.23,14.22,36.00;57.22,89.75,13.87,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/nuova-sel.jpg" alt="La foto nuova evidenziata e il pulsante Conferma e salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <div class="g-passo"><span class="num">5</span><p>Si apre la finestra del salvataggio: aspetta che la barra arrivi in fondo e clicca <b>OK</b>. Il sito si aggiorna da solo entro qualche minuto.</p><a href="images/guida/salvato.jpg" class="g-zoom" data-punti="44.84,60.00,10.31,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/salvato.jpg" alt="La finestra Salvataggio riuscito correttamente con il pulsante OK" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+    </section>
+    <section class="g-sez" id="g-video" aria-labelledby="g-video-t">
+      <h3 id="g-video-t">Aggiungere un video</h3>
+      <div class="g-passo"><span class="num">1</span><p>I video si mettono nel <b>Portfolio</b> (insieme alle foto) e nella <b>Home</b>, nel blocco <b>3 Video</b>. Nella ruota della Home vanno solo foto.</p></div>
+      <div class="g-passo"><span class="num">2</span><p>Clicca la casella con il <b>+</b> e scegli il video (va bene quello del telefono, al massimo 3 minuti).</p><a href="images/guida/video.jpg" class="g-zoom" data-punti="82.58,35.31,10.86,29.29" aria-label="Ingrandisci la schermata"><img src="images/guida/video.jpg" alt="Blocco Video della Home con il + in fondo" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">3</span><p>Il video viene <b>preparato qui nella pagina</b>: diventa più leggero, senza audio, e la sua copertina è l'immagine al primo secondo. Ci vuole quanto dura il video (30 secondi di video, circa 30 secondi di attesa): <b>non chiudere la pagina</b> e segui la percentuale sotto l'anteprima.</p></div>
+      <div class="g-passo"><span class="num">4</span><p>Scrivi il <b>titolo</b> e clicca <b>Aggiungi</b>: il video viene inviato (anche qui vedi la percentuale). Poi lo sposti e confermi come una foto, con <b>Conferma e salva</b>.</p></div>
     </section>
     <section class="g-sez" id="g-riordinare" aria-labelledby="g-riordinare-t">
       <h3 id="g-riordinare-t">Riordinare le foto</h3>
-      <div class="g-passo"><span class="num">1</span><p>Clicca la foto da spostare: si accende in arancio e le altre diventano più chiare.</p><a href="images/guida/scegli.jpg" class="g-zoom" data-punti="21.09,23.79,14.22,36.00" aria-label="Ingrandisci la schermata"><img src="images/guida/scegli.jpg" alt="Una foto selezionata in arancio, le altre più chiare" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
-      <div class="g-passo"><span class="num">2</span><p><b>Tieni premuto il clic sulla foto e trascinala</b> dove vuoi, dentro la stessa sezione. Il numero in alto a sinistra indica il posto. Poi clicca <b>Conferma</b>.</p><a href="images/guida/spostata.jpg" class="g-zoom" data-punti="6.56,23.79,14.22,36.00;61.55,89.75,9.55,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/spostata.jpg" alt="La foto spostata al posto 1 e il pulsante Conferma" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">1</span><p>Clicca la foto da spostare: si accende in arancio e le altre diventano più chiare.</p><a href="images/guida/scegli.jpg" class="g-zoom" data-punti="21.09,30.60,14.22,36.00" aria-label="Ingrandisci la schermata"><img src="images/guida/scegli.jpg" alt="Una foto selezionata in arancio, le altre più chiare" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">2</span><p><b>Tieni premuto il clic sulla foto e trascinala</b> dove vuoi, dentro lo stesso blocco. Il numero in alto a sinistra indica il posto. Poi clicca <b>Conferma</b>.</p><a href="images/guida/spostata.jpg" class="g-zoom" data-punti="6.56,30.60,14.22,36.00;61.55,89.75,9.55,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/spostata.jpg" alt="La foto spostata al posto 1 e il pulsante Conferma" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <p class="g-nota">Hai cambiato idea? Clicca <b>Annulla</b> e la foto torna dov'era, senza salvare nulla. Finché non scegli <b>Conferma</b> o <b>Annulla</b> il resto della pagina è bloccato: se clicchi altrove, la barra in basso lampeggia per ricordartelo.</p>
     </section>
     <section class="g-sez" id="g-rinominare" aria-labelledby="g-rinominare-t">
       <h3 id="g-rinominare-t">Rinominare una foto</h3>
       <div class="g-passo"><span class="num">1</span><p>Clicca la foto, poi clicca <b>Modifica o elimina</b> nella barra in basso.</p><a href="images/guida/modifica.jpg" class="g-zoom" data-punti="35.17,89.75,14.48,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/modifica.jpg" alt="La barra in basso con il pulsante Modifica o elimina" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
-      <div class="g-passo"><span class="num">2</span><p>Correggi il <b>titolo</b> e clicca <b>Salva</b>. Da qui puoi anche cambiare la foto con <b>Cambia foto</b>.</p><a href="images/guida/rinomina.jpg" class="g-zoom" data-punti="33.12,68.64,33.75,7.50;59.90,80.64,6.98,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/rinomina.jpg" alt="La finestra di modifica con il titolo cambiato e il pulsante Salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">2</span><p>Correggi il <b>titolo</b> e clicca <b>Salva</b>. Da qui puoi anche cambiare la foto con <b>Cambia foto</b>.</p><a href="images/guida/rinomina.jpg" class="g-zoom" data-punti="33.12,70.15,33.75,7.50;59.90,82.15,6.98,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/rinomina.jpg" alt="La finestra di modifica con il titolo cambiato e il pulsante Salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
     </section>
     <section class="g-sez" id="g-eliminare" aria-labelledby="g-eliminare-t">
       <h3 id="g-eliminare-t">Eliminare una foto</h3>
       <div class="g-passo solo-testo"><span class="num">1</span><p>Clicca la foto, poi clicca <b>Modifica o elimina</b> nella barra in basso (come per rinominare).</p></div>
-      <div class="g-passo"><span class="num">2</span><p>Clicca <b>Elimina</b> in basso a sinistra nella finestra. Il pulsante diventa rosso con scritto <b>Sì, elimina</b>: cliccalo di nuovo per confermare.</p><a href="images/guida/elimina.jpg" class="g-zoom" data-punti="33.12,80.64,9.90,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/elimina.jpg" alt="Il pulsante rosso Sì, elimina" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">2</span><p>Clicca <b>Elimina</b> in basso a sinistra nella finestra. Il pulsante diventa rosso con scritto <b>Sì, elimina</b>: cliccalo di nuovo per confermare.</p><a href="images/guida/elimina.jpg" class="g-zoom" data-punti="33.12,82.15,9.90,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/elimina.jpg" alt="Il pulsante rosso Sì, elimina" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <p class="g-nota rossa">L'eliminazione è definitiva: la foto sparisce dal sito. Se non clicchi «Sì, elimina» non succede nulla.</p>
     </section>
     <section class="g-sez" id="g-fisse" aria-labelledby="g-fisse-t">
@@ -504,13 +521,11 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   'use strict';
   var meta = function (n) { var m = document.querySelector('meta[name="' + n + '"]'); return m ? m.content : ''; };
   var API = meta('ar-api').replace(/\/+$/, ''), REPO = meta('ar-repo'), RAMO = meta('ar-branch') || 'main';
-  var STILI = [['blackwork', 'Blackwork'], ['fine-line', 'Fine line'], ['dotwork', 'Dotwork'], ['tradizionale', 'Tradizionale'], ['giapponese', 'Giapponese'], ['realistico', 'Realistico']];
-  var NOME = {}; STILI.forEach(function (s) { NOME[s[0]] = s[1]; });
   var $ = function (id) { return document.getElementById(id); };
 
-  var lavori = [], ruota = [], ruotaCaricata = false, immagini = [], anteprimeLocali = {}, token = null;
+  var lavori = [], ruota = [], ruotaCaricata = false, video = [], videoCaricati = false, immagini = [], anteprimeLocali = {}, token = null;
   var PAGINE = [['index.html', 'Home'], ['portfolio.html', 'Portfolio'], ['tatuaggi.html', 'Tatuaggi'], ['piercing.html', 'Piercing'], ['studio.html', 'Studio']];
-  var ORDINE_RUOTA = ['blackwork', 'dotwork', 'fine-line', 'tradizionale', 'giapponese', 'realistico']; // ordine dei filtri del Portfolio, come scripts/genera_lavori.py
+  var SOLO_FOTO = 'image/jpeg,image/png,image/webp,image/heic,image/heif', SOLO_VIDEO = 'video/*';
   var mem = { get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
               set: function (k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
 
@@ -537,7 +552,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     $('apri-pw').hidden = nome !== 'lavori';
     $('apri-guida').hidden = nome !== 'lavori';
   }
-  function esci() { token = null; mem.set('ar-token', null); lavori = []; ruota = []; mostraVista('login'); $('pw').value = ''; }
+  function esci() { token = null; mem.set('ar-token', null); lavori = []; ruota = []; video = []; mostraVista('login'); $('pw').value = ''; }
   $('esci').onclick = function () { if (sel) confermaScelta(); esci(); };
   $('mostra').onclick = function () {
     var vis = $('pw').type === 'password'; $('pw').type = vis ? 'text' : 'password';
@@ -558,6 +573,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     chiama('/lavori').then(function (d) {
       lavori = d.lavori || []; immagini = d.immagini || [];
       ruotaCaricata = Array.isArray(d.ruota); ruota = d.ruota || []; // senza il Worker aggiornato la ruota non si tocca
+      videoCaricati = Array.isArray(d.video); video = d.video || [];
       disegna(); stato('', '');
       if (!mem.get('ar-guida-vista')) apriGuida(); // la prima volta si apre da sola
     })
@@ -594,29 +610,32 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   mostraPagina(tabAttiva);
 
   /* ---------- sezioni con foto da ordinare ----------
-     Ogni sezione è un pezzo di un elenco: uno stile del Portfolio (data/lavori.json) oppure la
-     ruota della Home (data/ruota.json). I due elenchi sono indipendenti: cambiare una foto del
-     Portfolio non tocca la Home e viceversa. In uno stile del Portfolio, riordinando, i suoi lavori
-     si scambiano fra i posti che già occupano nell'elenco, così gli altri stili non si muovono. */
-  var SEZ_RUOTA = { id: 'ruota', lista: 'ruota', stile: null, nome: 'Ruota dei lavori' };
-  var SEZ_STILI = ORDINE_RUOTA.map(function (st) { return { id: 'p-' + st, lista: 'lavori', stile: st, nome: NOME[st] }; });
-  function elenco(sez) { return sez.lista === 'ruota' ? ruota : lavori; }
-  function membri(sez) { var r = []; elenco(sez).forEach(function (x, i) { if (!sez.stile || x.stile === sez.stile) r.push(i); }); return r; }
-  function posto(sez, x) { return membri(sez).indexOf(elenco(sez).indexOf(x)) + 1; }
+     Ogni sezione è un elenco a sé: il Portfolio (data/lavori.json, foto e video insieme, per ora
+     senza suddivisioni), la ruota della Home (data/ruota.json, solo foto) e i video della Home
+     (data/video.json). Cambiare una foto del Portfolio non tocca la Home e viceversa. */
+  var SEZ_RUOTA = { id: 'ruota', lista: 'ruota', nome: 'Ruota dei lavori', accetta: SOLO_FOTO };
+  var SEZ_VIDEO = { id: 'video-home', lista: 'video', nome: 'Video della Home', accetta: SOLO_VIDEO };
+  var SEZ_PORT = { id: 'portfolio', lista: 'lavori', nome: 'Portfolio', accetta: SOLO_FOTO + ',' + SOLO_VIDEO };
+  function elenco(sez) { return sez.lista === 'ruota' ? ruota : sez.lista === 'video' ? video : lavori; }
+  function membri(sez) { return elenco(sez).map(function (x, i) { return i; }); }
+  function posto(sez, x) { return elenco(sez).indexOf(x) + 1; }
 
   function cartaLavoro(sez, x, numero) {
     var li = document.createElement('li'); li.className = 'card'; li.tabIndex = 0;
     var ph = document.createElement('div'); ph.className = 'ph';
     var im = document.createElement('img'); im.alt = ''; im.loading = 'lazy'; riserva(im, x.foto); im.src = sorgente(x.foto);
-    ph.appendChild(im); li.appendChild(ph);
+    ph.appendChild(im);
+    if (x.video) { var pl = document.createElement('span'); pl.className = 'play'; ph.appendChild(pl); }
+    li.appendChild(ph);
     var n = document.createElement('span'); n.className = 'n'; n.textContent = numero; li.appendChild(n);
+    if (x.video) { var tv = document.createElement('span'); tv.className = 'tipo-v'; tv.textContent = 'Video'; li.appendChild(tv); }
     var tx = document.createElement('div'); tx.className = 'tx';
     var b = document.createElement('b'); b.textContent = x.titolo;
-    var s = document.createElement('span'); s.textContent = sez.stile ? NOME[x.stile] + (x.zona ? ' · ' + x.zona : '') : 'Home';
+    var s = document.createElement('span'); s.textContent = sez.lista === 'lavori' ? (x.video ? 'Video' : 'Foto') : 'Home';
     tx.appendChild(b); tx.appendChild(s); li.appendChild(tx);
     var scelta = sel && sel.x === x;
     if (scelta) li.classList.add('scelta');
-    li.setAttribute('aria-label', numero + '. ' + x.titolo + (scelta ? ', selezionata: trascinala dove vuoi' : '. Premi Invio per selezionarla'));
+    li.setAttribute('aria-label', numero + '. ' + (x.video ? 'Video: ' : '') + x.titolo + (scelta ? ', selezionata: trascinala dove vuoi' : '. Premi Invio per selezionarla'));
     function tocca() { if (trascinato || scelta) return; scegli(sez, x); }
     li.onclick = tocca;
     li.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tocca(); } };
@@ -660,7 +679,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     ul.innerHTML = '';
     var lista = elenco(sez);
     membri(sez).forEach(function (i, k) { ul.appendChild(cartaLavoro(sez, lista[i], k + 1)); });
-    ul.appendChild(cartaAggiungi(sez.stile ? 'Aggiungi un lavoro ' + sez.nome : 'Aggiungi una foto alla ruota', sez));
+    ul.appendChild(cartaAggiungi(sez.lista === 'lavori' ? 'Aggiungi foto o video' : sez.lista === 'video' ? 'Aggiungi un video' : 'Aggiungi una foto alla ruota', sez));
     ordinatori.push(new Sortable(ul, {
       // si trascina solo la foto selezionata (le altre sono «filtrate»); trascinamento gestito da
       // Sortable con il puntatore, uguale su telefono e computer
@@ -684,17 +703,10 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     disegnaImmagini();
     ordinatori.forEach(function (o) { o.destroy(); }); ordinatori = [];
     disegnaSezione(SEZ_RUOTA, $('ruota'));
-    var box = $('portfolio-stili'); box.innerHTML = '';
-    $('conta').textContent = lavori.length ? '(' + lavori.length + ')' : '';
-    SEZ_STILI.forEach(function (sez) {
-      var n = membri(sez).length;
-      var se = document.createElement('section'); se.className = 'sez-stile';
-      var h = document.createElement('h2'); h.textContent = sez.nome + ' ';
-      var c = document.createElement('small'); c.textContent = n === 1 ? '1 lavoro' : n + ' lavori'; h.appendChild(c);
-      var ul = document.createElement('ul'); ul.className = 'griglia';
-      se.appendChild(h); se.appendChild(ul); box.appendChild(se);
-      disegnaSezione(sez, ul);
-    });
+    disegnaSezione(SEZ_VIDEO, $('video-home'));
+    disegnaSezione(SEZ_PORT, $('portfolio'));
+    var nv = lavori.filter(function (x) { return x.video; }).length;
+    $('conta').textContent = lavori.length ? '(' + (lavori.length - nv) + ' foto, ' + nv + ' video)' : '';
     document.body.classList.toggle('selezione', !!sel);
   }
 
@@ -795,17 +807,20 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     if (inCorso) { inAttesa = msg; return Promise.resolve(); }
     inCorso = true; inizioSalva(); // l'avanzamento si vede solo nella finestra di salvataggio
     var foto = fotoInAttesa; fotoInAttesa = {};
-    var inviati = lavori.map(function (l) { return l.foto; }), inviatiR = ruota.map(function (r) { return r.foto; });
+    var inviati = lavori.map(function (l) { return l.foto; }), inviatiR = ruota.map(function (r) { return r.foto; }), inviatiV = video.map(function (v) { return v.foto; });
     var imm = immagini.map(function (v) { return { id: v.id, foto: v.foto, alt: v.alt }; });
-    var corpo = { lavori: lavori, immagini: imm, nuoveFoto: foto, messaggio: 'Area riservata: ' + msg };
+    var corpo = { lavori: lavori.map(function (l) { var o = { foto: l.foto, titolo: l.titolo }; if (l.video) o.video = l.video; return o; }),
+                  immagini: imm, nuoveFoto: foto, messaggio: 'Area riservata: ' + msg };
     if (ruotaCaricata) corpo.ruota = ruota.map(function (r) { return { foto: r.foto, titolo: r.titolo }; });
+    if (videoCaricati) corpo.video = video.map(function (v) { return { foto: v.foto, titolo: v.titolo, video: v.video }; });
     return chiama('/salva', corpo).then(function (d) {
       // le foto nuove ricevono il nome definitivo; si aggiorna l'elenco attuale (che nel frattempo può
       // essere stato riordinato) e si tiene l'anteprima locale finché il sito non pubblica la foto
       var nomi = {};
       inviati.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.lavori[i]) nomi[f] = d.lavori[i].foto; });
       if (corpo.ruota && d.ruota) inviatiR.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.ruota[i]) nomi[f] = d.ruota[i].foto; });
-      lavori.concat(ruota).forEach(function (l) { var n = nomi[l.foto]; if (n) { anteprimeLocali[n] = anteprimeLocali[l.foto]; l.foto = n; } });
+      if (corpo.video && d.video) inviatiV.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.video[i]) nomi[f] = d.video[i].foto; });
+      lavori.concat(ruota, video).forEach(function (l) { var n = nomi[l.foto]; if (n) { anteprimeLocali[n] = anteprimeLocali[l.foto]; l.foto = n; } });
       (d.immagini || []).forEach(function (srv) {
         var loc = immagini.filter(function (v) { return v.id === srv.id; })[0];
         if (loc && loc.foto.indexOf('nuova:') === 0 && imm.some(function (x) { return x.id === srv.id && x.foto === loc.foto; })) {
@@ -847,37 +862,145 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     });
   }
 
+  /* ---------- video: convertito nel browser (MP4 se il browser lo sa fare, altrimenti WebM),
+     lato lungo massimo 1280 px, senza audio; la copertina è il fotogramma a 1 secondo.
+     La conversione va alla velocità del video: un video di 30 secondi richiede circa 30 secondi. */
+  var MAX_DURATA = 180, MAX_VIDEO_MB = 90;
+  function formatoRegistrazione() {
+    if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return null;
+    var tipi = ['video/mp4;codecs=avc1.640028', 'video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+    for (var i = 0; i < tipi.length; i++) if (MediaRecorder.isTypeSupported(tipi[i])) return tipi[i];
+    return null;
+  }
+  function eVideo(f) { return /^video\//.test(f.type) || /\.(mov|mp4|m4v|webm)$/i.test(f.name); }
+  function preparaVideo(file, avanza) {
+    return new Promise(function (ok, ko) {
+      var url = URL.createObjectURL(file), v = document.createElement('video'), fatto = false;
+      v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.preload = 'auto';
+      v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none';
+      document.body.appendChild(v);
+      function fine(err, val) { if (fatto) return; fatto = true; v.pause(); v.remove(); URL.revokeObjectURL(url); err ? ko(err) : ok(val); }
+      v.onerror = function () { fine(new Error('Questo video non si apre qui: prova a esportarlo in MP4')); };
+      v.onloadedmetadata = function () {
+        if (!isFinite(v.duration) || v.duration > MAX_DURATA) return fine(new Error('Il video è troppo lungo: al massimo ' + (MAX_DURATA / 60) + ' minuti'));
+        var k = Math.min(1, 1280 / Math.max(v.videoWidth, v.videoHeight));
+        var c = document.createElement('canvas'); c.width = Math.round(v.videoWidth * k / 2) * 2; c.height = Math.round(v.videoHeight * k / 2) * 2;
+        var ctx = c.getContext('2d');
+        v.onseeked = function () {
+          v.onseeked = null;
+          ctx.drawImage(v, 0, 0, c.width, c.height);
+          c.toBlob(function (pb) {
+            if (!pb) return fine(new Error('Video non leggibile'));
+            var r = new FileReader();
+            r.onload = function () { registra({ b64: String(r.result).split(',')[1], anteprima: URL.createObjectURL(pb) }); };
+            r.readAsDataURL(pb);
+          }, 'image/jpeg', 0.85);
+        };
+        v.currentTime = Math.min(1, v.duration / 3);
+        function registra(copertina) {
+          var tipo = formatoRegistrazione();
+          if (!tipo || !c.captureStream) { // il browser non sa convertire: va bene solo un MP4 già leggero
+            if (/mp4$/.test(file.type) && file.size <= MAX_VIDEO_MB * 1048576) return fine(null, { copertina: copertina, blob: file, tipo: 'video/mp4' });
+            return fine(new Error('Questo browser non sa convertire il video: prova da un altro browser (es. Chrome o Safari aggiornati)'));
+          }
+          var flusso = c.captureStream(30), pezzi = [];
+          var rec = new MediaRecorder(flusso, { mimeType: tipo, videoBitsPerSecond: 3500000 });
+          rec.ondataavailable = function (e) { if (e.data && e.data.size) pezzi.push(e.data); };
+          rec.onstop = function () {
+            var base = tipo.split(';')[0], blob = new Blob(pezzi, { type: base });
+            if (blob.size > MAX_VIDEO_MB * 1048576) return fine(new Error('Il video è troppo pesante anche dopo la conversione: accorcialo'));
+            fine(null, { copertina: copertina, blob: blob, tipo: base });
+          };
+          var disegna = function () {
+            if (fatto || v.ended) return;
+            ctx.drawImage(v, 0, 0, c.width, c.height);
+            avanza(Math.min(99, Math.round(v.currentTime / v.duration * 100)));
+            if (v.requestVideoFrameCallback) v.requestVideoFrameCallback(disegna); else requestAnimationFrame(disegna);
+          };
+          v.onended = function () { ctx.drawImage(v, 0, 0, c.width, c.height); setTimeout(function () { if (rec.state !== 'inactive') rec.stop(); }, 150); };
+          v.onseeked = function () {
+            v.onseeked = null;
+            rec.start(1000);
+            var p = v.play(); if (p && p.catch) p.catch(function () { fine(new Error('Il video non parte: riprova')); });
+            disegna();
+          };
+          v.currentTime = 0;
+        }
+      };
+      v.src = url;
+    });
+  }
+  function caricaVideo(p, titolo, avanza) { // invio con avanzamento; risponde «video/nome.mp4»
+    return new Promise(function (ok, ko) {
+      var x = new XMLHttpRequest();
+      x.open('POST', API + '/video?nome=' + encodeURIComponent(titolo));
+      x.setRequestHeader('Authorization', 'Bearer ' + token);
+      x.setRequestHeader('Content-Type', p.tipo);
+      x.upload.onprogress = function (e) { if (e.lengthComputable) avanza(Math.round(e.loaded / e.total * 100)); };
+      x.onload = function () {
+        var d = {}; try { d = JSON.parse(x.responseText); } catch (e) {}
+        if (x.status === 401) { esci(); return ko(new Error('Accesso scaduto, entra di nuovo')); }
+        if (x.status !== 200 || !d.video) return ko(new Error(d.errore || 'Caricamento del video non riuscito'));
+        ok(d.video);
+      };
+      x.onerror = function () { ko(new Error('Nessuna connessione, riprova')); };
+      x.send(p.blob);
+    });
+  }
+
   /* ---------- scheda: nuova foto o modifica ---------- */
   var scheda = $('scheda'), schSez = null, schX = null, fotoScelta = null, confermaElimina = false;
 
-  function nuovoLavoro(sez) { schSez = sez; schX = null; $('file').value = ''; $('file').click(); }
-  $('cambia').onclick = function () { $('file').value = ''; $('file').click(); };
+  function scegliFile(accetta) { $('file').accept = accetta; $('file').value = ''; $('file').click(); }
+  function nuovoLavoro(sez) { schSez = sez; schX = null; scegliFile(sez.accetta); }
+  $('cambia').onclick = function () { scegliFile(schSez.accetta); };
+  function mostraAnteprima(foto, vid) { // vid: indirizzo del video (o niente per una foto)
+    var im = $('anteprima'), vd = $('anteprima-v');
+    vd.pause();
+    if (vid) { im.hidden = true; vd.hidden = false; vd.poster = foto || ''; vd.src = vid; }
+    else { vd.hidden = true; vd.removeAttribute('src'); vd.removeAttribute('poster'); im.hidden = false; if (foto) im.src = foto; else im.removeAttribute('src'); }
+  }
   $('file').onchange = function () {
     var f = this.files && this.files[0]; if (!f) return;
-    if (dimg.open) { fotoImmagine(f); return; }
+    if (dimg.open) { if (eVideo(f)) $('err-img').textContent = 'Qui va una foto, non un video'; else fotoImmagine(f); return; }
+    var vid = eVideo(f);
+    if (vid && schSez.accetta === SOLO_FOTO) { $('err-scheda').textContent = 'Qui vanno solo foto'; if (!scheda.open) stato('err', 'Nella ruota vanno solo foto'); return; }
+    if (!vid && schSez.accetta === SOLO_VIDEO) { $('err-scheda').textContent = 'Qui vanno solo video'; if (!scheda.open) stato('err', 'Nei video della Home vanno solo video'); return; }
     var nuovo = !schX && !scheda.open;
     if (nuovo) apriScheda(schSez, null);
-    $('err-scheda').textContent = ''; $('conferma').disabled = true; $('anteprima').removeAttribute('src'); $('anteprima').alt = 'Preparazione della foto…';
-    preparaFoto(f).then(function (p) { fotoScelta = p; $('anteprima').src = p.anteprima; $('anteprima').alt = 'Anteprima della foto'; })
-      .catch(function (err) { $('err-scheda').textContent = err.message; if (nuovo) fotoScelta = null; })
-      .then(function () { $('conferma').disabled = false; });
+    $('err-scheda').textContent = ''; $('conferma').disabled = true; $('cambia').disabled = true;
+    mostraAnteprima(null); $('anteprima').alt = vid ? 'Preparazione del video…' : 'Preparazione della foto…';
+    $('avanza').textContent = vid ? 'Preparazione del video… lascia aperta questa pagina' : '';
+    var pronto = vid ? preparaVideo(f, function (n) { $('avanza').textContent = 'Preparazione del video: ' + n + '% · lascia aperta questa pagina'; })
+      .then(function (p) { var u = URL.createObjectURL(p.blob); return { b64: p.copertina.b64, anteprima: p.copertina.anteprima, video: p, videoUrl: u }; })
+      : preparaFoto(f);
+    pronto.then(function (p) {
+      fotoScelta = p; $('avanza').textContent = p.video ? 'Video pronto (' + (p.video.blob.size / 1048576).toFixed(1).replace('.', ',') + ' MB): scrivi il titolo e tocca «' + $('conferma').textContent + '».' : '';
+      mostraAnteprima(p.anteprima, p.videoUrl); $('anteprima').alt = 'Anteprima della foto';
+    })
+      .catch(function (err) { $('err-scheda').textContent = err.message; $('avanza').textContent = ''; if (nuovo) fotoScelta = null; })
+      .then(function () { $('conferma').disabled = false; $('cambia').disabled = false; });
   };
 
-  // nella scheda solo foto e titolo: lo stile è quello della sezione in cui si trova la foto
+  // nella scheda solo foto (o video) e titolo
   function apriScheda(sez, x) {
     schSez = sez; schX = x; fotoScelta = null; confermaElimina = false;
     var nuovo = !x || (sel && sel.nuovo && sel.x === x);
-    $('scheda-t').textContent = (nuovo ? (sez.stile ? 'Nuovo lavoro · ' : 'Nuova foto · ') : 'Modifica · ') + sez.nome;
+    $('scheda-t').textContent = (nuovo ? (sez.lista === 'lavori' ? 'Nuovo lavoro · ' : sez.lista === 'video' ? 'Nuovo video · ' : 'Nuova foto · ') : 'Modifica · ') + sez.nome;
+    $('cambia').textContent = sez.accetta === SOLO_FOTO ? 'Cambia foto' : sez.accetta === SOLO_VIDEO ? 'Cambia video' : 'Cambia foto o video';
+    $('avanza').textContent = '';
     $('conferma').textContent = x ? 'Salva' : 'Aggiungi';
     $('titolo').value = x ? x.titolo : '';
     $('elimina').hidden = !x; $('elimina').textContent = 'Elimina'; $('elimina').classList.remove('conf');
     $('err-scheda').textContent = '';
     var im = $('anteprima');
-    if (x) { riserva(im, x.foto); im.src = sorgente(x.foto); im.alt = 'Foto attuale'; } else { im.removeAttribute('src'); im.alt = ''; }
+    if (x) { riserva(im, x.foto); mostraAnteprima(sorgente(x.foto), x.video ? sorgente(x.video) : null); im.alt = 'Foto attuale'; } else { mostraAnteprima(null); im.alt = ''; }
     if (!scheda.open) scheda.showModal();
     $('titolo').focus();
   }
-  $('annulla').onclick = function () { scheda.close(); };
+  $('annulla').onclick = function () { if (!$('annulla').disabled) scheda.close(); };
+  scheda.addEventListener('close', function () { $('anteprima-v').pause(); });
+  scheda.addEventListener('cancel', function (e) { if ($('annulla').disabled) e.preventDefault(); }); // durante l'invio del video non si chiude
   $('elimina').onclick = function () {
     if (!confermaElimina) { confermaElimina = true; this.textContent = 'Sì, elimina'; this.classList.add('conf'); return; }
     scheda.close();
@@ -891,20 +1014,31 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     var titolo = $('titolo').value.trim();
     var err = !schX && !fotoScelta ? 'Scegli una foto' : !titolo ? 'Scrivi un titolo' : '';
     if (err) { $('err-scheda').textContent = err; if (!titolo && fotoScelta) $('titolo').focus(); return; }
-    var nuove = null, id = null;
+    // un video nuovo si invia subito (pesa troppo per il salvataggio normale); poi si continua come per una foto
+    if (fotoScelta && fotoScelta.video && !fotoScelta.percorso) {
+      var bloccaScheda = function (b) { ['conferma', 'annulla', 'cambia', 'elimina'].forEach(function (k) { $(k).disabled = b; }); $('titolo').disabled = b; };
+      bloccaScheda(true); $('err-scheda').textContent = '';
+      $('avanza').textContent = 'Invio del video: 0% · lascia aperta questa pagina';
+      caricaVideo(fotoScelta.video, titolo, function (n) { $('avanza').textContent = 'Invio del video: ' + n + '% · lascia aperta questa pagina'; })
+        .then(function (percorso) { fotoScelta.percorso = percorso; bloccaScheda(false); $('f-lavoro').onsubmit(e); })
+        .catch(function (err) { bloccaScheda(false); $('avanza').textContent = ''; $('err-scheda').textContent = err.message; });
+      return;
+    }
+    var nuove = null, id = null, vid = fotoScelta && fotoScelta.percorso;
     if (fotoScelta) {
       id = 'nuova:' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
       anteprimeLocali[id] = fotoScelta.anteprima; nuove = {}; nuove[id] = fotoScelta.b64;
+      if (vid) anteprimeLocali[vid] = fotoScelta.videoUrl;
     }
     scheda.close();
-    if (!schX) { // foto nuova: in fondo alla sezione, già selezionata per scegliere il posto
+    if (!schX) { // foto o video nuovo: in fondo alla sezione, già selezionato per scegliere il posto
       var x = { foto: id, titolo: titolo }, l = elenco(schSez);
-      if (schSez.stile) { x.stile = schSez.stile; x.zona = ''; }
+      if (vid) x.video = vid;
       sel = { sez: schSez, x: x, nuovo: true, nuove: nuove, prima: l.slice() };
       l.push(x); mostraScelta('center'); return;
     }
     var x2 = schX;
-    if (id) x2.foto = id;
+    if (id) { x2.foto = id; if (vid) x2.video = vid; else delete x2.video; }
     x2.titolo = titolo;
     if (sel && sel.nuovo && sel.x === x2) { // ancora da salvare: si aggiorna e si continua a posizionarla
       if (nuove) sel.nuove = nuove;

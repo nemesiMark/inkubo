@@ -31,14 +31,16 @@ index.html               Home: prima schermata con la scritta «Rain Ink» al ne
                          profondità subito sotto la navbar e il tatuatore in primo piano
                          al centro (nessun testo né pulsante sopra; il titolo h1 resta solo
                          per Google e i lettori di schermo), ruota 3D dei lavori (scelti
-                         dall'area riservata), Lo studio, Dove siamo (con la mappa animata),
+                         dall'area riservata), Video (striscia orizzontale di video verticali,
+                         da data/video.json), Lo studio, Dove siamo (con la mappa animata),
                          riquadro «Hai già un'idea?»
 tatuaggi.html            I sei stili (blackwork, fine line, dotwork, tradizionale,
                          giapponese, realistico), uno per riga con ancora
                          (es. tatuaggi.html#dotwork)
 piercing.html            Piercing: come lavoriamo, zone e tempi di guarigione, cura
-portfolio.html           Lavori con filtri per stile e foto a schermo intero. Il filtro si può
-                         aprire già scelto: portfolio.html#tradizionale
+portfolio.html           Foto e video dei lavori tutti insieme, per ora senza suddivisioni
+                         (da decidere col cliente); a schermo intero le foto si ingrandiscono
+                         e i video partono da soli
 studio.html              L'artista (#artista), Lo spazio (#studio), Igiene e sicurezza (#igiene)
 cura-del-tatuaggio.html  Cura del tatuaggio giorno per giorno, con la guida in PDF
 faq.html                 Domande frequenti
@@ -48,8 +50,9 @@ area-riservata.html      Area riservata del cliente (vedi AREA RISERVATA)
 downloads/               guida-cura-del-tatuaggio.pdf
 
 css/style.css            Tutti gli stili del sito
-js/script.js             Navbar 3D, comparsa allo scorrimento, cura del tatuaggio, filtri e
-                         foto a schermo intero del portfolio, FAQ, invio del modulo
+js/script.js             Navbar 3D, comparsa allo scorrimento, cura del tatuaggio, foto e
+                         video a schermo intero del portfolio, video della home (uno alla
+                         volta), FAQ, invio del modulo
 js/home.js               Solo home: profondità della prima schermata e ruota 3D dei lavori
 js/mappa.js              Mappa animata di «Dove siamo» (vedi DOVE SIAMO)
 js/cookie.js             Barra dei cookie e «Gestione cookie» nel footer
@@ -60,13 +63,14 @@ js/vendor/sortable/      SortableJS 1.15.6 (licenza MIT), per l'area riservata
 images/comune/           logo-rainink.svg (avorio, usato nella navbar e nel footer),
                          logo-rainink-scuro.svg (nero, solo nei dati per Google),
                          favicon.svg
-images/home/             tatuatore-spalle.png: foto della prima schermata (Haberdoedas su
-                         Unsplash, licenza Unsplash, scontornata). NON è Matteo: da
-                         sostituire con una foto sua, di spalle, in bianco e nero
-images/flash/            Disegni provvisori usati in tatuaggi, studio e portfolio
-images/lavori/           Foto caricate dal cliente dall'area riservata
+images/lavori/           Tutte le foto del sito (tatuaggio-NN-…, studio-NN-… e le copertine
+                         dei video video-NN-…), 1600 px, senza dati EXIF/GPS; più quelle
+                         caricate dal cliente dall'area riservata
+video/                   NON sta nel repository (è in .gitignore): i video sono allegati
+                         alla release «video» di GitHub e la pubblicazione li scarica qui.
+                         Per provarli in locale: gh release download video -D video
 images/guida/            Schermate della guida dell'area riservata
-images/piercing/, images/studio/   disegni delle pagine Piercing e Studio
+images/piercing/         disegni della pagina Piercing (non ci sono ancora foto di piercing)
 
 Tolti nella versione 6.0 perché non più usati: servizi.html (le voci Tatuaggi e Piercing
 sono ora direttamente nel menu), stili.html (vecchio rimando), test.html (le 30 proposte
@@ -91,8 +95,8 @@ Prima schermata della home: tre piani della scritta «Rain Ink» (alone rosso sf
 neon che sfarfalla, contorno) e la foto del tatuatore; col mouse (su telefono da soli,
 piano) i piani si spostano di quantità diverse e danno profondità; scorrendo scendono
 a velocità diverse.
-Ruota dei lavori (home): per ogni stile il primo lavoro dell'elenco dell'area
-riservata, in giro su una ruota 3D; quello davanti è grande e nitido, quelli ai lati
+Ruota dei lavori (home): le foto scelte nell'area riservata (data/ruota.json), in giro
+su una ruota 3D; quello davanti è grande e nitido, quelli ai lati
 sfocati e più scuri. Gira da sola ogni 4 secondi quando si vede; si gira con le frecce,
 i pallini, trascinando o con le frecce della tastiera; toccando l'immagine davanti va a
 tutto schermo (frecce, scorrimento col dito, Esc per chiudere).
@@ -133,10 +137,18 @@ pagina, con le immagini nell'ordine in cui si vedono e una descrizione di dove s
 Le foto di ogni pagina sono indipendenti: cambiare un lavoro del Portfolio non tocca la
 Home, e viceversa.
 - Home: prima schermata, ruota dei lavori (un elenco a sé, data/ruota.json: solo foto e
-  titolo), lo studio.
-- Portfolio: i lavori divisi per stile (Blackwork, Dotwork, Fine line, Tradizionale,
-  Giapponese, Realistico), come i filtri del sito.
-- Nella ruota e negli stili del Portfolio: tocco su una foto = la si seleziona; diventa
+  titolo), Video (data/video.json: solo video), lo studio.
+- Portfolio: foto e video in un solo elenco, nell'ordine del sito (niente stili per ora).
+- Video: nel Portfolio e nel blocco Video della Home il + accetta anche video. Il video
+  viene convertito nel browser (canvas + MediaRecorder: MP4 H.264 dove il browser lo
+  sa fare, altrimenti WebM; lato lungo 1280 px, 3,5 Mbit/s, SENZA audio, massimo 3
+  minuti / 90 MB); ci vuole quanto dura il video. La copertina è il fotogramma a 1
+  secondo, salvata come una foto normale. Cliccando «Aggiungi» il video parte subito
+  (POST /video del Worker, con la percentuale) verso la release «video» di GitHub;
+  poi lo si posiziona e conferma come una foto. Nei JSON: "video": "video/nome.mp4".
+  Ad ogni salvataggio il Worker cancella dalla release i video che nessun elenco usa
+  più (solo quelli caricati da più di 6 ore).
+- Nella ruota, nei Video e nel Portfolio: tocco su una foto = la si seleziona; diventa
   rossa e lampeggia, le altre diventano più chiare, e in basso compare una barra. Da lì
   la si prende e la si trascina dove si vuole (solo la foto selezionata si muove), poi
   «Conferma» salva il nuovo posto; «Annulla» la rimette dov'era; «Modifica o elimina»
@@ -147,8 +159,6 @@ Home, e viceversa.
   non si sceglie «Conferma» o «Annulla»: un clic altrove non salva e non seleziona
   altro, fa solo lampeggiare la barra in basso con l'avviso di scegliere. Se la foto
   è solo selezionata e non ancora spostata, toccarne un'altra cambia la selezione.
-  Nel Portfolio l'elenco in data/lavori.json resta uno solo: riordinando uno stile i suoi
-  lavori si scambiano fra i posti che già occupano, gli altri stili non si muovono.
 - Tatuaggi, Piercing, Studio: le immagini fisse della pagina; «Cambia foto» e il testo
   che dice cosa si vede (per Google e per chi non vede).
 Ogni salvataggio (aggiunta, modifica, spostamento, eliminazione) apre subito una
@@ -176,8 +186,9 @@ File:
                          salvataggio. Non contiene chiavi: stanno nelle impostazioni del
                          Worker (vedi le istruzioni in testa al file). Non viene pubblicato
                          sul sito.
-- data/lavori.json       Elenco dei lavori: foto, titolo, stile, zona. L'ordine è quello
-                         del portfolio.
+- data/lavori.json       Elenco del portfolio: foto e titolo, più "video" per i video
+                         (la foto è la copertina). L'ordine è quello del portfolio.
+- data/video.json        I video della home: foto (copertina), titolo, video.
 - data/ruota.json        Le foto della ruota della home (foto e titolo), nell'ordine in cui
                          girano. Indipendente dal portfolio.
 - data/immagini.json     Le immagini fisse delle pagine: id, pagina, sezione, descrizione
@@ -186,18 +197,19 @@ File:
                          Il cliente cambia solo foto e testo alternativo; per aggiungere
                          un'immagine gestibile: data-slot nell'<img> e una voce qui.
 - images/lavori/         Foto caricate dal cliente (anche quelle delle pagine). Quelle che
-                         non usa più nessuno vengono cancellate; images/flash, home,
-                         studio e piercing non vengono mai toccate.
+                         non usa più nessuno vengono cancellate; images/piercing non
+                         viene mai toccata.
 - scripts/genera_lavori.py
-                         Scrive i lavori in portfolio.html (da lavori.json) e la ruota 3D in
-                         index.html (da ruota.json)
+                         Scrive i lavori in portfolio.html (da lavori.json), la ruota 3D in
+                         index.html (da ruota.json) e i video della home (da video.json,
+                         fra <!-- video:inizio --> e <!-- video:fine -->)
                          fra <!-- lavori:inizio --> e <!-- lavori:fine --> (quel tratto non
                          si modifica a mano) e aggiorna src e alt delle <img data-slot>
                          da data/immagini.json. In locale, dopo aver cambiato i JSON:
                            python3 scripts/genera_lavori.py   (--check per solo controllo)
 - .github/workflows/pubblica.yml
-                         A ogni modifica del ramo main GitHub Actions esegue lo script e
-                         pubblica il sito. GitHub Pages va impostato su «GitHub Actions».
+                         A ogni modifica del ramo main GitHub Actions scarica i video della
+                         release «video» in video/, esegue lo script e pubblica il sito. GitHub Pages va impostato su «GitHub Actions».
 - js/vendor/sortable/    SortableJS 1.15.6 (licenza MIT): trascinamento per riordinare.
 Attivazione (una volta sola):
 1. GitHub → Settings → Developer settings → Fine-grained tokens: token solo per il
@@ -586,3 +598,15 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Google), scritta «Rain Ink» spostata in alto subito sotto la navbar,
                    foto del tatuatore al centro e più in basso, con la testa sotto la
                    scritta. style.css?v=43.
+6.5  (17/11/2026)  Foto e video veri dello studio al posto di tutti i disegni provvisori
+                   (tolti images/flash, images/home, images/studio): 43 tatuaggi, 10 foto
+                   dello studio e 7 video, rinominati (tatuaggio-NN-titolo, studio-NN-…,
+                   video-NN-…) e senza metadati (niente EXIF né GPS). Portfolio: foto e
+                   video insieme, tolti i filtri per stile (la suddivisione si decide
+                   col cliente). Home: nuova sezione «Video» dopo la ruota; prima
+                   schermata con la foto «Concentrazione» al centro. Video su GitHub
+                   come allegati della release «video» (scaricati dalla pubblicazione).
+                   Area riservata: video nel Portfolio e nella Home, conversione nel
+                   browser, invio con percentuale; Portfolio in un solo elenco; nuova
+                   voce «Video» nella guida. Il Worker va incollato di nuovo su
+                   Cloudflare. style.css?v=44, script.js?v=21.

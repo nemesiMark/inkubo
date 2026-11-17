@@ -84,102 +84,61 @@ function timeline() {
 }
 
 /* ======================================================
-   PORTFOLIO: filtro con indicatore che scivola, foto che si riordinano,
-   foto a schermo intero che si ingrandisce dalla miniatura
+   PORTFOLIO: foto e video insieme (per ora senza filtri); a schermo intero
+   la foto si ingrandisce dalla miniatura, il video parte da solo
    ====================================================== */
 function portfolio() {
-  var bar = document.querySelector('.filters'), works = all('.work');
-  if (bar) {
-    var btns = all('button', bar), thumb = document.createElement('span'), tok = 0;
-    thumb.className = 'seg-thumb'; bar.insertBefore(thumb, bar.firstChild); bar.classList.add('has-thumb');
-    var atEnd = function () { bar.classList.toggle('at-end', bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 4); };
-    bar.addEventListener('scroll', atEnd, { passive: true }); window.addEventListener('resize', atEnd); atEnd();
-    var moveThumb = function (bt, instant) {
-      if (instant) thumb.style.transition = 'none';
-      thumb.style.width = bt.offsetWidth + 'px';
-      thumb.style.transform = 'translateX(' + bt.offsetLeft + 'px)';
-      if (instant) { void thumb.offsetWidth; thumb.style.transition = ''; }
-    };
-    var active = function () { return bar.querySelector('[aria-pressed="true"]') || btns[0]; };
-    moveThumb(active(), true);
-    window.addEventListener('resize', function () { moveThumb(active(), true); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveThumb(active(), true); });
-
-    var apply = function (f, animate) {
-      var my = ++tok;
-      var match = function (w) { return f === 'tutti' || w.getAttribute('data-cat') === f; };
-      var out = works.filter(function (w) { return !w.hidden && !match(w); });
-      var inn = works.filter(function (w) { return w.hidden && match(w); });
-      var keep = works.filter(function (w) { return !w.hidden && match(w); });
-      if (!animate || !canAnimate) { works.forEach(function (w) { w.hidden = !match(w); }); return; }
-      Promise.all(out.map(function (w) {
-        return w.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.95)' }], { duration: 160, easing: 'ease-in' }).finished;
-      })).then(function () {
-        if (my !== tok) return;
-        var first = keep.map(function (w) { return w.getBoundingClientRect(); });
-        out.forEach(function (w) { w.hidden = true; });
-        inn.forEach(function (w) { w.hidden = false; });
-        keep.forEach(function (w, i) {
-          var a = first[i], b2 = w.getBoundingClientRect(), dx = a.left - b2.left, dy = a.top - b2.top;
-          if (dx || dy) w.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 400, easing: EASE });
-        });
-        inn.forEach(function (w, i) {
-          w.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }],
-            { duration: 400, delay: Math.min(i, 6) * 40, easing: EASE, fill: 'backwards' });
-        });
-      });
-    };
-    bar.addEventListener('click', function (e) {
-      var bt = e.target.closest('button'); if (!bt || bt.getAttribute('aria-pressed') === 'true') return;
-      btns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === bt)); });
-      moveThumb(bt);
-      bt.scrollIntoView({ block: 'nearest', inline: 'center', behavior: reduce ? 'auto' : 'smooth' });
-      apply(bt.getAttribute('data-f'), true);
-    });
-    /* filtro già scelto dall'indirizzo, es. portfolio.html#dotwork */
-    var pre = location.hash && bar.querySelector('[data-f="' + location.hash.slice(1) + '"]');
-    if (pre) { btns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === pre)); }); moveThumb(pre, true); apply(pre.getAttribute('data-f'), false); }
-  }
-
+  var works = all('.work');
   works.forEach(function (w) { var bt = w.querySelector('button'); if (bt) bt.addEventListener('click', function () { openLb(w); }); });
 
   function openLb(w) {
-    var list = works.filter(function (x) { return !x.hidden; }), i = list.indexOf(w), last = document.activeElement;
+    var list = works, i = list.indexOf(w), last = document.activeElement;
     var lb = document.createElement('div');
-    lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Foto a schermo intero');
-    lb.innerHTML = '<figure><img alt=""><figcaption><span></span><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Foto precedente">←</button><button class="lb-n" type="button" aria-label="Foto successiva">→</button>';
-    var im = lb.querySelector('img'), cap = lb.querySelector('figcaption span'), sub = lb.querySelector('figcaption small');
+    lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Foto e video a schermo intero');
+    lb.innerHTML = '<figure><img alt=""><video controls playsinline preload="auto" hidden></video><figcaption><span></span><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Precedente">←</button><button class="lb-n" type="button" aria-label="Successivo">→</button>';
+    var im = lb.querySelector('img'), vd = lb.querySelector('video'), cap = lb.querySelector('figcaption span'), sub = lb.querySelector('figcaption small');
+    function media() { return vd.hidden ? im : vd; }
     function fill(n) {
       i = (n + list.length) % list.length;
-      var src = list[i].querySelector('img'), fc = list[i].querySelector('figcaption');
-      im.src = src.getAttribute('src'); im.alt = src.alt;
-      cap.textContent = fc.querySelector('b').textContent; sub.textContent = fc.querySelector('span').textContent;
+      var it = list[i], src = it.querySelector('img'), fc = it.querySelector('figcaption'), v = it.getAttribute('data-video');
+      vd.pause();
+      if (v) {
+        im.hidden = true; vd.hidden = false;
+        vd.poster = src.getAttribute('src'); vd.src = v; vd.setAttribute('aria-label', fc.querySelector('b').textContent);
+        var p = vd.play(); if (p && p.catch) p.catch(function () {});
+      } else {
+        vd.hidden = true; vd.removeAttribute('src'); vd.load(); im.hidden = false;
+        im.src = src.getAttribute('src'); im.alt = src.alt;
+      }
+      cap.textContent = fc.querySelector('b').textContent;
+      var s2 = fc.querySelector('span'); sub.textContent = s2 ? s2.textContent : '';
     }
     function zoomFrom(el, reverse) {
       if (!canAnimate) return null;
-      var a = el.querySelector('img').getBoundingClientRect(), z = im.getBoundingClientRect();
+      var m = media(), a = el.querySelector('img').getBoundingClientRect(), z = m.getBoundingClientRect();
       if (!z.width || !a.width) return null;
       var from = 'translate(' + (a.left + a.width / 2 - z.left - z.width / 2) + 'px,' + (a.top + a.height / 2 - z.top - z.height / 2) + 'px) scale(' + (a.width / z.width) + ')';
       var k = [{ transform: from }, { transform: 'none' }];
-      return im.animate(reverse ? k.reverse() : k, { duration: reverse ? 250 : 380, easing: EASE, fill: 'forwards' });
+      return m.animate(reverse ? k.reverse() : k, { duration: reverse ? 250 : 380, easing: EASE, fill: 'forwards' });
     }
     function show(n, dir) {
       fill(n);
-      if (canAnimate) im.animate([{ opacity: 0, transform: 'translateX(' + (dir * 30) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: EASE });
+      if (canAnimate) media().animate([{ opacity: 0, transform: 'translateX(' + (dir * 30) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: EASE });
     }
     function key(e) {
       if (e.key === 'Escape') close();
       else if (e.key === 'ArrowLeft') show(i - 1, -1);
       else if (e.key === 'ArrowRight') show(i + 1, 1);
       else if (e.key === 'Tab') {
-        var f = all('button', lb), a = f.indexOf(document.activeElement);
+        var f = all('button, video:not([hidden])', lb), a = f.indexOf(document.activeElement);
         e.preventDefault(); f[(a + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
       }
     }
     function close() {
       document.removeEventListener('keydown', key);
+      vd.pause();
       var end = function () { lb.remove(); document.body.style.overflow = ''; if (last && last.focus) last.focus(); };
-      var anim = zoomFrom(list[i], true);
+      var anim = vd.hidden ? zoomFrom(list[i], true) : null;
       lb.classList.add('out');
       if (anim) anim.finished.then(end, end); else setTimeout(end, 250);
     }
@@ -195,13 +154,23 @@ function portfolio() {
     document.body.appendChild(lb); document.body.style.overflow = 'hidden';
     lb.querySelector('.lb-x').focus();
     var go = function () { zoomFrom(w, false); };
+    if (!vd.hidden) return;
     if (im.complete && im.naturalWidth) go(); else im.addEventListener('load', go, { once: true });
   }
 }
 
+
 /* ======================================================
    FAQ: risposte che si aprono e si chiudono morbide
    ====================================================== */
+/* VIDEO DELLA HOME: ne suona uno alla volta */
+function clips() {
+  var vs = all('.clips video');
+  vs.forEach(function (v) {
+    v.addEventListener('play', function () { vs.forEach(function (o) { if (o !== v) o.pause(); }); });
+  });
+}
+
 function faq() {
   all('.faq details').forEach(function (d) {
     var s = d.querySelector('summary'), c = d.querySelector('.ans');
@@ -267,6 +236,7 @@ navbar();
 reveal();
 timeline();
 portfolio();
+clips();
 faq();
 bookingForm();
 var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();

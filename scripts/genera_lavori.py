@@ -1,55 +1,74 @@
 #!/usr/bin/env python3
-"""Genera i lavori di portfolio.html (da data/lavori.json), la ruota 3D della home in index.html
-(da data/ruota.json, un elenco a sé: cambiare una foto del portfolio non tocca la home) e le
-altre immagini delle pagine (data/immagini.json: ogni <img data-slot="…"> prende foto e testo
-alternativo). Sono i file che il cliente modifica dall'area riservata.
+"""Genera i lavori di portfolio.html (da data/lavori.json: foto e video insieme, senza
+suddivisioni), la ruota 3D della home in index.html (da data/ruota.json, un elenco a sé),
+la sezione Video della home (data/video.json) e le altre immagini delle pagine
+(data/immagini.json: ogni <img data-slot="…"> prende foto e testo alternativo).
+Sono i file che il cliente modifica dall'area riservata.
+
+I video NON stanno nel repository: sono allegati alla release «video» di GitHub e la
+pubblicazione (.github/workflows/pubblica.yml) li scarica in video/ prima di eseguire questo
+script. Nei file data/*.json il campo «video» è il percorso sul sito (video/nome.mp4) e
+«foto» è la sua copertina (un normale JPEG in images/lavori/).
 
 Uso:  python3 scripts/genera_lavori.py           (scrive i file)
       python3 scripts/genera_lavori.py --check   (esce con errore se i file non sono aggiornati)
 
-Tocca solo il testo fra i segnaposto <!-- lavori:inizio --> e <!-- lavori:fine -->.
+Tocca solo il testo fra i segnaposto <!-- lavori:inizio --> / <!-- lavori:fine --> e
+<!-- video:inizio --> / <!-- video:fine -->.
 """
 import html, json, os, re, sys
 
 RADICE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STILI = [  # ordine dei filtri del portfolio; uguale ad area-riservata.html
-    ("blackwork", "Blackwork"), ("dotwork", "Dotwork"), ("fine-line", "Fine line"),
-    ("tradizionale", "Tradizionale"), ("giapponese", "Giapponese"), ("realistico", "Realistico"),
-]
-NOMI = dict(STILI)
 INIZIO, FINE = "<!-- lavori:inizio -->", "<!-- lavori:fine -->"
+VIDEO_VALIDO = re.compile(r"^video/[a-z0-9][a-z0-9._-]{0,120}\.(mp4|webm)$")
 
 def att(t): return html.escape(t, quote=True)
 def txt(t): return html.escape(t, quote=False)
 
-def carica():
-    with open(os.path.join(RADICE, "data", "lavori.json"), encoding="utf-8") as f:
+def carica(nome="lavori.json"):
+    # foto e video, nell'ordine scelto dal cliente
+    with open(os.path.join(RADICE, "data", nome), encoding="utf-8") as f:
         dati = json.load(f)
-    lavori = []
+    voci = []
     for n, l in enumerate(dati, 1):
         foto = str(l.get("foto") or "").strip().lstrip("/")
         titolo = str(l.get("titolo") or "").strip()
-        stile = str(l.get("stile") or "").strip()
-        zona = str(l.get("zona") or "").strip()
-        if not foto or not titolo or stile not in NOMI:
-            print(f"avviso: lavoro n. {n} saltato (manca la foto o il titolo, o lo stile non è valido)", file=sys.stderr)
+        video = str(l.get("video") or "").strip().lstrip("/")
+        if not foto or not titolo:
+            print(f"avviso: {nome} n. {n} saltato (manca la foto o il titolo)", file=sys.stderr)
             continue
         if not os.path.exists(os.path.join(RADICE, foto)):
-            print(f"avviso: lavoro n. {n} saltato, la foto {foto} non esiste", file=sys.stderr)
+            print(f"avviso: {nome} n. {n} saltato, la foto {foto} non esiste", file=sys.stderr)
             continue
-        lavori.append(dict(foto=foto, titolo=titolo, stile=stile, zona=zona, nome=NOMI[stile],
-                           alt=f"{titolo}, tatuaggio {NOMI[stile].lower()}"))
-    return lavori
+        if video and not VIDEO_VALIDO.match(video):
+            print(f"avviso: {nome} n. {n} saltato, video non valido: {video}", file=sys.stderr)
+            continue
+        if video and not os.path.exists(os.path.join(RADICE, video)):
+            # in locale di solito i video mancano: li scarica la pubblicazione
+            print(f"nota: {video} non è in questa cartella (lo scarica la pubblicazione)", file=sys.stderr)
+        voci.append(dict(foto=foto, titolo=titolo, video=video, alt=f"{titolo}, Rain Ink Tattoo"))
+    return voci
 
 def portfolio(lavori):
     righe = []
     for l in lavori:
-        sotto = l["nome"] + (" · " + l["zona"] if l["zona"] else "")
-        righe.append(
-            f'                    <figure class="work rv" data-cat="{l["stile"]}"><button type="button" aria-label="Apri {att(l["titolo"])} a schermo intero">'
-            f'<span class="ph"><img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" loading="lazy"></span></button>'
-            f'<figcaption><b>{txt(l["titolo"])}</b><span>{txt(sotto)}</span></figcaption></figure>')
+        if l["video"]:
+            righe.append(
+                f'                    <figure class="work rv is-video" data-video="{att(l["video"])}"><button type="button" aria-label="Guarda il video {att(l["titolo"])}">'
+                f'<span class="ph"><img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" loading="lazy"><span class="play" aria-hidden="true"></span></span></button>'
+                f'<figcaption><b>{txt(l["titolo"])}</b><span>Video</span></figcaption></figure>')
+        else:
+            righe.append(
+                f'                    <figure class="work rv"><button type="button" aria-label="Apri {att(l["titolo"])} a schermo intero">'
+                f'<span class="ph"><img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" loading="lazy"></span></button>'
+                f'<figcaption><b>{txt(l["titolo"])}</b></figcaption></figure>')
     return righe
+
+def video_home(lista):
+    return [
+        f'                    <figure class="clip"><video src="{att(v["video"])}" poster="{att(v["foto"])}" controls playsinline preload="none"'
+        f' aria-label="{att(v["titolo"])}"></video><figcaption>{txt(v["titolo"])}</figcaption></figure>'
+        for v in lista if v["video"]]
 
 def carica_ruota():
     # ruota 3D della home: data/ruota.json, nell'ordine scelto dal cliente (solo foto e titolo)
@@ -112,11 +131,11 @@ def immagini(controlla):
         print(f"{nome} aggiornato (immagini)")
     return ok
 
-def sostituisci(nome, righe, controlla):
+def sostituisci(nome, righe, controlla, segni=(INIZIO, FINE)):
     percorso = os.path.join(RADICE, nome)
     with open(percorso, encoding="utf-8") as f:
         s = f.read()
-    a, b = s.index(INIZIO) + len(INIZIO), s.index(FINE)
+    a, b = s.index(segni[0]) + len(segni[0]), s.index(segni[1])
     rientro = s[s.rfind("\n", 0, b) + 1:b]
     nuovo = s[:a] + "\n" + "\n".join(righe) + "\n" + rientro + s[b:]
     if nuovo == s:
@@ -133,5 +152,6 @@ if __name__ == "__main__":
     controlla = "--check" in sys.argv
     lavori = carica()
     ok = sostituisci("portfolio.html", portfolio(lavori), controlla) & sostituisci("index.html", home(carica_ruota()), controlla)
+    ok = sostituisci("index.html", video_home(carica("video.json")), controlla, ("<!-- video:inizio -->", "<!-- video:fine -->")) & ok
     ok = immagini(controlla) & ok
     sys.exit(0 if ok else 1)

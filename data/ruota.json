@@ -1,14 +1,34 @@
 [
   {
-    "foto": "images/flash/occhio-realistico.svg",
-    "titolo": "Occhio"
+    "foto": "images/lavori/tatuaggio-04-robot-viola.jpg",
+    "titolo": "Robot viola"
   },
   {
-    "foto": "images/flash/pugnale-cuore-tradizionale.svg",
-    "titolo": "Pugnale e cuore"
+    "foto": "images/lavori/tatuaggio-17-re-scimmia.jpg",
+    "titolo": "Re scimmia"
   },
   {
-    "foto": "images/flash/geometria-dotwork.svg",
-    "titolo": "Fiore della vitar4"
+    "foto": "images/lavori/tatuaggio-28-geisha.jpg",
+    "titolo": "Geisha"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-09-drago-blu.jpg",
+    "titolo": "Drago blu"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-19-bacco.jpg",
+    "titolo": "Bacco"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-36-tucano.jpg",
+    "titolo": "Tucano"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-15-ganesha.jpg",
+    "titolo": "Ganesha"
+  },
+  {
+    "foto": "images/lavori/tatuaggio-40-leone-guardiano.jpg",
+    "titolo": "Leone guardiano"
   }
 ]

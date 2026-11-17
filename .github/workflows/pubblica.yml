@@ -22,6 +22,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # i video non stanno nel repository: sono allegati alla release «video»
+      # (li carica l'area riservata) e vengono scaricati qui in video/
+      - name: Scarica i video
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p video
+          if gh release view video >/dev/null 2>&1; then
+            gh release download video -D video --clobber
+          fi
+          ls -la video
+
       - name: Genera portfolio e home dai lavori
         run: python3 scripts/genera_lavori.py
 
