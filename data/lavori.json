@@ -48,16 +48,16 @@
     "zona": "Spalla"
   },
   {
-    "foto": "images/flash/koi-giapponese.svg",
-    "titolo": "Koi",
-    "stile": "giapponese",
-    "zona": "Polpaccio"
-  },
-  {
     "foto": "images/flash/fuji-giapponese.svg",
     "titolo": "Monte Fuji",
     "stile": "giapponese",
     "zona": "Avambraccio"
+  },
+  {
+    "foto": "images/flash/koi-giapponese.svg",
+    "titolo": "Koi",
+    "stile": "giapponese",
+    "zona": "Polpaccio"
   },
   {
     "foto": "images/flash/sakura-giapponese.svg",
