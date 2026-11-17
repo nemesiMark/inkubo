@@ -387,6 +387,12 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       <label for="titolo">Titolo</label>
       <input type="text" id="titolo" maxlength="80" required placeholder="Es. Falena notturna">
     </div>
+    <fieldset class="stili" id="tipi" hidden>
+      <legend>Dove va nel portfolio</legend>
+      <label><input type="radio" name="tipo" value="colori"><span>Tatuaggi a colori</span></label>
+      <label><input type="radio" name="tipo" value="bn"><span>Bianco e nero</span></label>
+      <label><input type="radio" name="tipo" value="studio"><span>Dallo studio</span></label>
+    </fieldset>
     <p class="errore" id="err-scheda" role="alert"></p>
     <div class="azioni">
       <button class="btn del" type="button" id="elimina" hidden>Elimina</button>
@@ -464,13 +470,13 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       <h3 id="g-aggiungere-t">Aggiungere una foto</h3>
       <div class="g-passo"><span class="num">1</span><p>In alto scegli la <b>pagina</b> del sito da modificare, per esempio <b>Portfolio</b>.</p><a href="images/guida/tab.jpg" class="g-zoom" data-punti="12.47,8.62,8.99,6.50" aria-label="Ingrandisci la schermata"><img src="images/guida/tab.jpg" alt="La fila di schede in alto con Portfolio evidenziato" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <div class="g-passo"><span class="num">2</span><p>Clicca la casella grigia con il <b>+</b>, in fondo alle foto (nel Portfolio è dopo l'ultima foto). Si apre la finestra per scegliere il file: scegli la foto e clicca <b>Apri</b>.</p><a href="images/guida/piu.jpg" class="g-zoom" data-punti="6.56,68.22,14.22,26.50" aria-label="Ingrandisci la schermata"><img src="images/guida/piu.jpg" alt="La casella con il + in fondo al Portfolio" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
-      <div class="g-passo"><span class="num">3</span><p>Controlla l'anteprima, scrivi il <b>titolo</b> e clicca <b>Aggiungi</b>. Se hai sbagliato foto, clicca <b>Cambia foto</b>.</p><a href="images/guida/nuova.jpg" class="g-zoom" data-punti="33.12,70.15,33.75,7.50;58.13,82.15,8.74,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/nuova.jpg" alt="La finestra per aggiungere una foto, con il titolo scritto" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">3</span><p>Controlla l'anteprima, scrivi il <b>titolo</b>, scegli <b>dove va nel portfolio</b> (Tatuaggi a colori, Bianco e nero o Dallo studio) e clicca <b>Aggiungi</b>. Se hai sbagliato foto, clicca <b>Cambia foto</b>.</p><a href="images/guida/nuova.jpg" class="g-zoom" data-punti="33.12,70.15,33.75,7.50;58.13,82.15,8.74,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/nuova.jpg" alt="La finestra per aggiungere una foto, con il titolo scritto" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <div class="g-passo"><span class="num">4</span><p>La foto nuova lampeggia in arancio. Se vuoi spostarla, <b>tieni premuto il clic sulla foto e trascinala</b> nel posto che preferisci; altrimenti resta ultima. Poi clicca <b>Conferma e salva</b> nella barra in basso.</p><a href="images/guida/nuova-sel.jpg" class="g-zoom" data-punti="6.56,37.23,14.22,36.00;57.22,89.75,13.87,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/nuova-sel.jpg" alt="La foto nuova evidenziata e il pulsante Conferma e salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <div class="g-passo"><span class="num">5</span><p>Si apre la finestra del salvataggio: aspetta che la barra arrivi in fondo e clicca <b>OK</b>. Il sito si aggiorna da solo entro qualche minuto.</p><a href="images/guida/salvato.jpg" class="g-zoom" data-punti="44.84,60.00,10.31,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/salvato.jpg" alt="La finestra Salvataggio riuscito correttamente con il pulsante OK" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
     </section>
     <section class="g-sez" id="g-video" aria-labelledby="g-video-t">
       <h3 id="g-video-t">Aggiungere un video</h3>
-      <div class="g-passo"><span class="num">1</span><p>I video si mettono nel <b>Portfolio</b> (insieme alle foto) e nella <b>Home</b>, nel blocco <b>3 Video</b>. Nella ruota della Home vanno solo foto.</p></div>
+      <div class="g-passo"><span class="num">1</span><p>I video si mettono nel <b>Portfolio</b> (vanno da soli nel gruppo <b>Video</b>) e nella <b>Home</b>, nel blocco <b>3 Video</b>. Nella ruota della Home vanno solo foto.</p></div>
       <div class="g-passo"><span class="num">2</span><p>Clicca la casella con il <b>+</b> e scegli il video (va bene quello del telefono, al massimo 3 minuti).</p><a href="images/guida/video.jpg" class="g-zoom" data-punti="82.58,35.31,10.86,29.29" aria-label="Ingrandisci la schermata"><img src="images/guida/video.jpg" alt="Blocco Video della Home con il + in fondo" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <div class="g-passo"><span class="num">3</span><p>Il video viene <b>preparato qui nella pagina</b>: diventa più leggero, senza audio, e la sua copertina è l'immagine al primo secondo. Ci vuole quanto dura il video (30 secondi di video, circa 30 secondi di attesa): <b>non chiudere la pagina</b> e segui la percentuale sotto l'anteprima.</p></div>
       <div class="g-passo"><span class="num">4</span><p>Scrivi il <b>titolo</b> e clicca <b>Aggiungi</b>: il video viene inviato (anche qui vedi la percentuale). Poi lo sposti e confermi come una foto, con <b>Conferma e salva</b>.</p></div>
@@ -484,7 +490,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     <section class="g-sez" id="g-rinominare" aria-labelledby="g-rinominare-t">
       <h3 id="g-rinominare-t">Rinominare una foto</h3>
       <div class="g-passo"><span class="num">1</span><p>Clicca la foto, poi clicca <b>Modifica o elimina</b> nella barra in basso.</p><a href="images/guida/modifica.jpg" class="g-zoom" data-punti="35.17,89.75,14.48,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/modifica.jpg" alt="La barra in basso con il pulsante Modifica o elimina" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
-      <div class="g-passo"><span class="num">2</span><p>Correggi il <b>titolo</b> e clicca <b>Salva</b>. Da qui puoi anche cambiare la foto con <b>Cambia foto</b>.</p><a href="images/guida/rinomina.jpg" class="g-zoom" data-punti="33.12,70.15,33.75,7.50;59.90,82.15,6.98,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/rinomina.jpg" alt="La finestra di modifica con il titolo cambiato e il pulsante Salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">2</span><p>Correggi il <b>titolo</b> (o il gruppo del portfolio) e clicca <b>Salva</b>. Da qui puoi anche cambiare la foto con <b>Cambia foto</b>.</p><a href="images/guida/rinomina.jpg" class="g-zoom" data-punti="33.12,70.15,33.75,7.50;59.90,82.15,6.98,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/rinomina.jpg" alt="La finestra di modifica con il titolo cambiato e il pulsante Salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
     </section>
     <section class="g-sez" id="g-eliminare" aria-labelledby="g-eliminare-t">
       <h3 id="g-eliminare-t">Eliminare una foto</h3>
@@ -608,6 +614,14 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   var SEZ_RUOTA = { id: 'ruota', lista: 'ruota', nome: 'Ruota dei lavori', accetta: SOLO_FOTO };
   var SEZ_VIDEO = { id: 'video-home', lista: 'video', nome: 'Video della Home', accetta: SOLO_VIDEO };
   var SEZ_PORT = { id: 'portfolio', lista: 'lavori', nome: 'Portfolio', accetta: SOLO_FOTO + ',' + SOLO_VIDEO };
+  // gruppi del portfolio per le foto (i video sono sempre «Video»); uguali a scripts/genera_lavori.py e al Worker
+  var NOMI_TIPO = { colori: 'A colori', bn: 'Bianco e nero', studio: 'Dallo studio' };
+  function tipoScelto() { var r = document.querySelector('#tipi input:checked'); return r ? r.value : 'colori'; }
+  function mostraTipi(sez, x, video) {
+    $('tipi').hidden = sez.lista !== 'lavori' || !!video;
+    var t = (x && x.tipo) || 'colori';
+    [].forEach.call(document.querySelectorAll('#tipi input'), function (r) { r.checked = r.value === t; });
+  }
   function elenco(sez) { return sez.lista === 'ruota' ? ruota : sez.lista === 'video' ? video : lavori; }
   function membri(sez) { return elenco(sez).map(function (x, i) { return i; }); }
   function posto(sez, x) { return elenco(sez).indexOf(x) + 1; }
@@ -623,7 +637,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     if (x.video) { var tv = document.createElement('span'); tv.className = 'tipo-v'; tv.textContent = 'Video'; li.appendChild(tv); }
     var tx = document.createElement('div'); tx.className = 'tx';
     var b = document.createElement('b'); b.textContent = x.titolo;
-    var s = document.createElement('span'); s.textContent = sez.lista === 'lavori' ? (x.video ? 'Video' : 'Foto') : 'Home';
+    var s = document.createElement('span'); s.textContent = sez.lista === 'lavori' ? (x.video ? 'Video' : NOMI_TIPO[x.tipo] || NOMI_TIPO.colori) : 'Home';
     tx.appendChild(b); tx.appendChild(s); li.appendChild(tx);
     var scelta = sel && sel.x === x;
     if (scelta) li.classList.add('scelta');
@@ -801,7 +815,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     var foto = fotoInAttesa; fotoInAttesa = {};
     var inviati = lavori.map(function (l) { return l.foto; }), inviatiR = ruota.map(function (r) { return r.foto; }), inviatiV = video.map(function (v) { return v.foto; });
     var imm = immagini.map(function (v) { return { id: v.id, foto: v.foto, alt: v.alt }; });
-    var corpo = { lavori: lavori.map(function (l) { var o = { foto: l.foto, titolo: l.titolo }; if (l.video) o.video = l.video; return o; }),
+    var corpo = { lavori: lavori.map(function (l) { var o = { foto: l.foto, titolo: l.titolo }; if (l.video) o.video = l.video; else o.tipo = l.tipo || 'colori'; return o; }),
                   immagini: imm, nuoveFoto: foto, messaggio: 'Area riservata: ' + msg };
     if (ruotaCaricata) corpo.ruota = ruota.map(function (r) { return { foto: r.foto, titolo: r.titolo }; });
     if (videoCaricati) corpo.video = video.map(function (v) { return { foto: v.foto, titolo: v.titolo, video: v.video }; });
@@ -967,7 +981,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       .then(function (p) { var u = URL.createObjectURL(p.blob); return { b64: p.copertina.b64, anteprima: p.copertina.anteprima, video: p, videoUrl: u }; })
       : preparaFoto(f);
     pronto.then(function (p) {
-      fotoScelta = p; $('avanza').textContent = p.video ? 'Video pronto (' + (p.video.blob.size / 1048576).toFixed(1).replace('.', ',') + ' MB): scrivi il titolo e tocca «' + $('conferma').textContent + '».' : '';
+      fotoScelta = p; if (schSez.lista === 'lavori') $('tipi').hidden = !!p.video; $('avanza').textContent = p.video ? 'Video pronto (' + (p.video.blob.size / 1048576).toFixed(1).replace('.', ',') + ' MB): scrivi il titolo e tocca «' + $('conferma').textContent + '».' : '';
       mostraAnteprima(p.anteprima, p.videoUrl); $('anteprima').alt = 'Anteprima della foto';
     })
       .catch(function (err) { $('err-scheda').textContent = err.message; $('avanza').textContent = ''; if (nuovo) fotoScelta = null; })
@@ -984,6 +998,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     $('conferma').textContent = x ? 'Salva' : 'Aggiungi';
     $('titolo').value = x ? x.titolo : '';
     $('elimina').hidden = !x; $('elimina').textContent = 'Elimina'; $('elimina').classList.remove('conf');
+    mostraTipi(sez, x, x && x.video);
     $('err-scheda').textContent = '';
     var im = $('anteprima');
     if (x) { riserva(im, x.foto); mostraAnteprima(sorgente(x.foto), x.video ? sorgente(x.video) : null); im.alt = 'Foto attuale'; } else { mostraAnteprima(null); im.alt = ''; }
@@ -1025,13 +1040,14 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     scheda.close();
     if (!schX) { // foto o video nuovo: in fondo alla sezione, già selezionato per scegliere il posto
       var x = { foto: id, titolo: titolo }, l = elenco(schSez);
-      if (vid) x.video = vid;
+      if (vid) x.video = vid; else if (schSez.lista === 'lavori') x.tipo = tipoScelto();
       sel = { sez: schSez, x: x, nuovo: true, nuove: nuove, prima: l.slice() };
       l.push(x); mostraScelta('center'); return;
     }
     var x2 = schX;
     if (id) { x2.foto = id; if (vid) x2.video = vid; else delete x2.video; }
     x2.titolo = titolo;
+    if (schSez.lista === 'lavori') { if (x2.video) delete x2.tipo; else x2.tipo = tipoScelto(); }
     if (sel && sel.nuovo && sel.x === x2) { // ancora da salvare: si aggiorna e si continua a posizionarla
       if (nuove) sel.nuove = nuove;
       disegna(); barraScelta(); return;

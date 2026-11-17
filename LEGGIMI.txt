@@ -33,8 +33,9 @@ index.html               Home: prima schermata con la scritta «Rain Ink» al ne
                          per Google e i lettori di schermo), ruota 3D dei lavori (scelti
                          dall'area riservata), Video (striscia orizzontale di video verticali,
                          da data/video.json), Lo studio, Dove siamo (con la mappa animata)
-portfolio.html           Foto e video dei lavori tutti insieme, per ora senza suddivisioni
-                         (da decidere col cliente); a schermo intero le foto si ingrandiscono
+portfolio.html           Foto e video dei lavori divisi in gruppi con i pulsanti in alto:
+                         Tatuaggi a colori, Bianco e nero, Video, Dallo studio
+                         (es. portfolio.html#bn); a schermo intero le foto si ingrandiscono
                          e i video partono da soli
 studio.html              L'artista (#artista), Lo spazio (#studio), Igiene e sicurezza (#igiene)
 cura-del-tatuaggio.html  Cura del tatuaggio giorno per giorno, con la guida in PDF
@@ -622,3 +623,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    icone social, Privacy e cookie, Gestione cookie (in colonna sul cellulare).
                    Home: sfondo delle sezioni con un filo rosso al neon in cima a
                    ciascuna (proposta 16 di 30).
+                   Portfolio diviso in gruppi: Tatuaggi a colori, Bianco e nero, Video,
+                   Dallo studio. In data/lavori.json ogni foto ha «tipo» (colori, bn,
+                   studio); i video vanno da soli in Video. Nell'area riservata la scheda
+                   della foto ha la scelta del gruppo. Va RIPUBBLICATO il Worker (accetta
+                   il campo «tipo»): con quello vecchio un salvataggio toglie i gruppi.

@@ -1,19 +1,23 @@
 [
   {
     "foto": "images/lavori/tatuaggio-01-ritratto-biomeccanico.jpg",
-    "titolo": "Ritratto biomeccanico"
+    "titolo": "Ritratto biomeccanico",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-02-manica-con-volto-di-donna.jpg",
-    "titolo": "Manica con volto di donna"
+    "titolo": "Manica con volto di donna",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-03-composizione-a-colori.jpg",
-    "titolo": "Composizione a colori"
+    "titolo": "Composizione a colori",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-04-robot-viola.jpg",
-    "titolo": "Robot viola"
+    "titolo": "Robot viola",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/video-02-robot-viola.jpg",
@@ -22,7 +26,8 @@
   },
   {
     "foto": "images/lavori/tatuaggio-05-volpe.jpg",
-    "titolo": "Volpe"
+    "titolo": "Volpe",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/video-03-fiori-di-ciliegio.jpg",
@@ -31,35 +36,43 @@
   },
   {
     "foto": "images/lavori/tatuaggio-06-soldato-cartoon.jpg",
-    "titolo": "Soldato cartoon"
+    "titolo": "Soldato cartoon",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-07-personaggio-con-cappello.jpg",
-    "titolo": "Personaggio con cappello"
+    "titolo": "Personaggio con cappello",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-08-ragazza-in-rosso.jpg",
-    "titolo": "Ragazza in rosso"
+    "titolo": "Ragazza in rosso",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-09-drago-blu.jpg",
-    "titolo": "Drago blu"
+    "titolo": "Drago blu",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-10-renna-con-cappello-rosa.jpg",
-    "titolo": "Renna con cappello rosa"
+    "titolo": "Renna con cappello rosa",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-11-guerriero-tra-le-fiamme.jpg",
-    "titolo": "Guerriero tra le fiamme"
+    "titolo": "Guerriero tra le fiamme",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-12-personaggio-arancio.jpg",
-    "titolo": "Personaggio arancio"
+    "titolo": "Personaggio arancio",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-13-manica-in-bianco-e-nero.jpg",
-    "titolo": "Manica in bianco e nero"
+    "titolo": "Manica in bianco e nero",
+    "tipo": "bn"
   },
   {
     "foto": "images/lavori/video-04-samurai-in-bianco-e-nero.jpg",
@@ -68,51 +81,63 @@
   },
   {
     "foto": "images/lavori/tatuaggio-14-manica-a-colori.jpg",
-    "titolo": "Manica a colori"
+    "titolo": "Manica a colori",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-15-ganesha.jpg",
-    "titolo": "Ganesha"
+    "titolo": "Ganesha",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-16-cappello-rosso.jpg",
-    "titolo": "Cappello rosso"
+    "titolo": "Cappello rosso",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-17-re-scimmia.jpg",
-    "titolo": "Re scimmia"
+    "titolo": "Re scimmia",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-18-volto-con-nuvola-rossa.jpg",
-    "titolo": "Volto con nuvola rossa"
+    "titolo": "Volto con nuvola rossa",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-19-bacco.jpg",
-    "titolo": "Bacco"
+    "titolo": "Bacco",
+    "tipo": "bn"
   },
   {
     "foto": "images/lavori/tatuaggio-20-draghetto-viola.jpg",
-    "titolo": "Draghetto viola"
+    "titolo": "Draghetto viola",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-21-ritratto-femminile.jpg",
-    "titolo": "Ritratto femminile"
+    "titolo": "Ritratto femminile",
+    "tipo": "bn"
   },
   {
     "foto": "images/lavori/tatuaggio-22-ragazzo-dai-capelli-verdi.jpg",
-    "titolo": "Ragazzo dai capelli verdi"
+    "titolo": "Ragazzo dai capelli verdi",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-23-spalla-a-colori.jpg",
-    "titolo": "Spalla a colori"
+    "titolo": "Spalla a colori",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-24-principessa-con-draghetto.jpg",
-    "titolo": "Principessa con draghetto"
+    "titolo": "Principessa con draghetto",
+    "tipo": "bn"
   },
   {
     "foto": "images/lavori/tatuaggio-25-creatura-verde.jpg",
-    "titolo": "Creatura verde"
+    "titolo": "Creatura verde",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/video-05-nastro-rosso-e-onde.jpg",
@@ -121,59 +146,73 @@
   },
   {
     "foto": "images/lavori/tatuaggio-26-lupo-e-mani.jpg",
-    "titolo": "Lupo e mani"
+    "titolo": "Lupo e mani",
+    "tipo": "bn"
   },
   {
     "foto": "images/lavori/tatuaggio-27-guerriero-viola.jpg",
-    "titolo": "Guerriero viola"
+    "titolo": "Guerriero viola",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-28-geisha.jpg",
-    "titolo": "Geisha"
+    "titolo": "Geisha",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-29-profilo-di-donna.jpg",
-    "titolo": "Profilo di donna"
+    "titolo": "Profilo di donna",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-30-mani-e-mela.jpg",
-    "titolo": "Mani e mela"
+    "titolo": "Mani e mela",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-31-elfo-con-spada.jpg",
-    "titolo": "Elfo con spada"
+    "titolo": "Elfo con spada",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-32-lupo-cartoon.jpg",
-    "titolo": "Lupo cartoon"
+    "titolo": "Lupo cartoon",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-33-furgone-e-auto-d-epoca.jpg",
-    "titolo": "Furgone e auto d'epoca"
+    "titolo": "Furgone e auto d'epoca",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-34-manica-rossa.jpg",
-    "titolo": "Manica rossa"
+    "titolo": "Manica rossa",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-35-draghetto-in-volo.jpg",
-    "titolo": "Draghetto in volo"
+    "titolo": "Draghetto in volo",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-36-tucano.jpg",
-    "titolo": "Tucano"
+    "titolo": "Tucano",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-37-creatura-in-bianco-e-nero.jpg",
-    "titolo": "Creatura in bianco e nero"
+    "titolo": "Creatura in bianco e nero",
+    "tipo": "bn"
   },
   {
     "foto": "images/lavori/tatuaggio-38-donna-con-lanterna.jpg",
-    "titolo": "Donna con lanterna"
+    "titolo": "Donna con lanterna",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-39-donna-con-lanterna-di-lato.jpg",
-    "titolo": "Donna con lanterna, di lato"
+    "titolo": "Donna con lanterna, di lato",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/video-06-donna-con-lanterna.jpg",
@@ -182,19 +221,23 @@
   },
   {
     "foto": "images/lavori/tatuaggio-40-leone-guardiano.jpg",
-    "titolo": "Leone guardiano"
+    "titolo": "Leone guardiano",
+    "tipo": "bn"
   },
   {
     "foto": "images/lavori/tatuaggio-41-guerriero-dai-capelli-dorati.jpg",
-    "titolo": "Guerriero dai capelli dorati"
+    "titolo": "Guerriero dai capelli dorati",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-42-ragazza-col-cappuccio-rosso.jpg",
-    "titolo": "Ragazza col cappuccio rosso"
+    "titolo": "Ragazza col cappuccio rosso",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/tatuaggio-43-manica-a-colori-completa.jpg",
-    "titolo": "Manica a colori completa"
+    "titolo": "Manica a colori completa",
+    "tipo": "colori"
   },
   {
     "foto": "images/lavori/video-07-manica-a-colori-completa.jpg",
@@ -208,42 +251,52 @@
   },
   {
     "foto": "images/lavori/studio-01-preparazione-della-pelle.jpg",
-    "titolo": "Preparazione della pelle"
+    "titolo": "Preparazione della pelle",
+    "tipo": "studio"
   },
   {
     "foto": "images/lavori/studio-02-la-postazione.jpg",
-    "titolo": "La postazione"
+    "titolo": "La postazione",
+    "tipo": "studio"
   },
   {
     "foto": "images/lavori/studio-03-lo-stencil.jpg",
-    "titolo": "Lo stencil"
+    "titolo": "Lo stencil",
+    "tipo": "studio"
   },
   {
     "foto": "images/lavori/studio-04-lo-stencil-da-vicino.jpg",
-    "titolo": "Lo stencil, da vicino"
+    "titolo": "Lo stencil, da vicino",
+    "tipo": "studio"
   },
   {
     "foto": "images/lavori/studio-05-lo-stencil-sul-braccio.jpg",
-    "titolo": "Lo stencil sul braccio"
+    "titolo": "Lo stencil sul braccio",
+    "tipo": "studio"
   },
   {
     "foto": "images/lavori/studio-06-prima-di-iniziare.jpg",
-    "titolo": "Prima di iniziare"
+    "titolo": "Prima di iniziare",
+    "tipo": "studio"
   },
   {
     "foto": "images/lavori/studio-07-al-lavoro.jpg",
-    "titolo": "Al lavoro"
+    "titolo": "Al lavoro",
+    "tipo": "studio"
   },
   {
     "foto": "images/lavori/studio-08-al-lavoro-da-vicino.jpg",
-    "titolo": "Al lavoro, da vicino"
+    "titolo": "Al lavoro, da vicino",
+    "tipo": "studio"
   },
   {
     "foto": "images/lavori/studio-09-il-cliente-durante-la-seduta.jpg",
-    "titolo": "Il cliente durante la seduta"
+    "titolo": "Il cliente durante la seduta",
+    "tipo": "studio"
   },
   {
     "foto": "images/lavori/studio-10-concentrazione.jpg",
-    "titolo": "Concentrazione"
+    "titolo": "Concentrazione",
+    "tipo": "studio"
   }
 ]

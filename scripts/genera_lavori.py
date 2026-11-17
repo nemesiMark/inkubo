@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Genera i lavori di portfolio.html (da data/lavori.json: foto e video insieme, senza
-suddivisioni), la ruota 3D della home in index.html (da data/ruota.json, un elenco a sé),
+"""Genera i lavori di portfolio.html (da data/lavori.json: foto e video divisi in gruppi
+con data-cat: tatuaggi a colori, bianco e nero, video, dallo studio), la ruota 3D della home in index.html (da data/ruota.json, un elenco a sé),
 la sezione Video della home (data/video.json) e le altre immagini delle pagine
 (data/immagini.json: ogni <img data-slot="…"> prende foto e testo alternativo).
 Sono i file che il cliente modifica dall'area riservata.
@@ -21,6 +21,9 @@ import html, json, os, re, sys
 RADICE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INIZIO, FINE = "<!-- lavori:inizio -->", "<!-- lavori:fine -->"
 VIDEO_VALIDO = re.compile(r"^video/[a-z0-9][a-z0-9._-]{0,120}\.(mp4|webm)$")
+# gruppi del portfolio (i pulsanti in cima a portfolio.html): le foto hanno «tipo», i video sono sempre «video».
+# Stessi valori in area-riservata.html e nel Worker.
+TIPI_FOTO = ("colori", "bn", "studio")
 
 def att(t): return html.escape(t, quote=True)
 def txt(t): return html.escape(t, quote=False)
@@ -46,7 +49,10 @@ def carica(nome="lavori.json"):
         if video and not os.path.exists(os.path.join(RADICE, video)):
             # in locale di solito i video mancano: li scarica la pubblicazione
             print(f"nota: {video} non è in questa cartella (lo scarica la pubblicazione)", file=sys.stderr)
-        voci.append(dict(foto=foto, titolo=titolo, video=video, alt=f"{titolo}, Rain Ink Tattoo"))
+        tipo = "video" if video else str(l.get("tipo") or "").strip()
+        if tipo not in TIPI_FOTO and tipo != "video":
+            tipo = "colori"  # foto senza gruppo: va fra i tatuaggi a colori
+        voci.append(dict(foto=foto, titolo=titolo, video=video, tipo=tipo, alt=f"{titolo}, Rain Ink Tattoo"))
     return voci
 
 def portfolio(lavori):
@@ -54,12 +60,12 @@ def portfolio(lavori):
     for l in lavori:
         if l["video"]:
             righe.append(
-                f'                    <figure class="work rv is-video" data-video="{att(l["video"])}"><button type="button" aria-label="Guarda il video {att(l["titolo"])}">'
+                f'                    <figure class="work rv is-video" data-cat="video" data-video="{att(l["video"])}"><button type="button" aria-label="Guarda il video {att(l["titolo"])}">'
                 f'<span class="ph"><img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" loading="lazy"><span class="play" aria-hidden="true"></span></span></button>'
                 f'<figcaption><b>{txt(l["titolo"])}</b><span>Video</span></figcaption></figure>')
         else:
             righe.append(
-                f'                    <figure class="work rv"><button type="button" aria-label="Apri {att(l["titolo"])} a schermo intero">'
+                f'                    <figure class="work rv" data-cat="{l["tipo"]}"><button type="button" aria-label="Apri {att(l["titolo"])} a schermo intero">'
                 f'<span class="ph"><img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" loading="lazy"></span></button>'
                 f'<figcaption><b>{txt(l["titolo"])}</b></figcaption></figure>')
     return righe

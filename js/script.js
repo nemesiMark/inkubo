@@ -84,15 +84,68 @@ function timeline() {
 }
 
 /* ======================================================
-   PORTFOLIO: foto e video insieme (per ora senza filtri); a schermo intero
+   PORTFOLIO: pulsanti per gruppo (a colori, bianco e nero, video, dallo studio); a schermo intero
    la foto si ingrandisce dalla miniatura, il video parte da solo
    ====================================================== */
 function portfolio() {
-  var works = all('.work');
+  var bar = document.querySelector('.filters'), works = all('.work');
+  if (bar) {
+    var btns = all('button', bar), thumb = document.createElement('span'), tok = 0;
+    thumb.className = 'seg-thumb'; bar.insertBefore(thumb, bar.firstChild); bar.classList.add('has-thumb');
+    var atEnd = function () { bar.classList.toggle('at-end', bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 4); };
+    bar.addEventListener('scroll', atEnd, { passive: true }); window.addEventListener('resize', atEnd); atEnd();
+    var moveThumb = function (bt, instant) {
+      if (instant) thumb.style.transition = 'none';
+      thumb.style.width = bt.offsetWidth + 'px';
+      thumb.style.transform = 'translateX(' + bt.offsetLeft + 'px)';
+      if (instant) { void thumb.offsetWidth; thumb.style.transition = ''; }
+    };
+    var active = function () { return bar.querySelector('[aria-pressed="true"]') || btns[0]; };
+    moveThumb(active(), true);
+    window.addEventListener('resize', function () { moveThumb(active(), true); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveThumb(active(), true); });
+
+    var apply = function (f, animate) {
+      var my = ++tok;
+      var match = function (w) { return w.getAttribute('data-cat') === f; };
+      var out = works.filter(function (w) { return !w.hidden && !match(w); });
+      var inn = works.filter(function (w) { return w.hidden && match(w); });
+      var keep = works.filter(function (w) { return !w.hidden && match(w); });
+      if (!animate || !canAnimate) { works.forEach(function (w) { w.hidden = !match(w); }); return; }
+      Promise.all(out.map(function (w) {
+        return w.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.95)' }], { duration: 160, easing: 'ease-in' }).finished;
+      })).then(function () {
+        if (my !== tok) return;
+        var first = keep.map(function (w) { return w.getBoundingClientRect(); });
+        out.forEach(function (w) { w.hidden = true; });
+        inn.forEach(function (w) { w.hidden = false; });
+        keep.forEach(function (w, i) {
+          var a = first[i], b2 = w.getBoundingClientRect(), dx = a.left - b2.left, dy = a.top - b2.top;
+          if (dx || dy) w.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 400, easing: EASE });
+        });
+        inn.forEach(function (w, i) {
+          w.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }],
+            { duration: 400, delay: Math.min(i, 6) * 40, easing: EASE, fill: 'backwards' });
+        });
+      });
+    };
+    bar.addEventListener('click', function (e) {
+      var bt = e.target.closest('button'); if (!bt || bt.getAttribute('aria-pressed') === 'true') return;
+      btns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === bt)); });
+      moveThumb(bt);
+      bt.scrollIntoView({ block: 'nearest', inline: 'center', behavior: reduce ? 'auto' : 'smooth' });
+      apply(bt.getAttribute('data-f'), true);
+    });
+    /* gruppo già scelto dall'indirizzo, es. portfolio.html#bn; senza, il primo (a colori) */
+    var pre = location.hash && bar.querySelector('[data-f="' + location.hash.slice(1) + '"]');
+    if (pre) { btns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === pre)); }); moveThumb(pre, true); }
+    apply(active().getAttribute('data-f'), false);
+  }
+
   works.forEach(function (w) { var bt = w.querySelector('button'); if (bt) bt.addEventListener('click', function () { openLb(w); }); });
 
   function openLb(w) {
-    var list = works, i = list.indexOf(w), last = document.activeElement;
+    var list = works.filter(function (x) { return !x.hidden; }), i = list.indexOf(w), last = document.activeElement;
     var lb = document.createElement('div');
     lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Foto e video a schermo intero');
     lb.innerHTML = '<figure><img alt=""><video controls playsinline preload="auto" hidden></video><figcaption><span></span><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Precedente">←</button><button class="lb-n" type="button" aria-label="Successivo">→</button>';

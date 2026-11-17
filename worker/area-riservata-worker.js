@@ -32,6 +32,7 @@ const FILE_VIDEO = "data/video.json";
 const MAX_VIDEO_HOME = 30;
 const RELEASE_VIDEO = "video";
 const MAX_VIDEO_BYTES = 95 * 1024 * 1024;  // Cloudflare (piano gratuito) accetta richieste fino a 100 MB
+const TIPI_FOTO = ["colori", "bn", "studio"]; // gruppi del portfolio, uguali a scripts/genera_lavori.py
 const VIDEO_VALIDO = /^video\/[a-z0-9][a-z0-9._-]{0,120}\.(mp4|webm)$/;
 const FILE_IMMAGINI = "data/immagini.json";
 const FILE_RUOTA = "data/ruota.json";
@@ -175,7 +176,7 @@ async function leggiJson(env, percorso, sha) {
 /* ---------- salvataggio ---------- */
 
 /**
- * Corpo: { lavori: [ {foto, titolo, video?} ], immagini: [ {id, foto, alt} ] (facoltativo),
+ * Corpo: { lavori: [ {foto, titolo, video? | tipo?} ], immagini: [ {id, foto, alt} ] (facoltativo),
  *         ruota: [ {foto, titolo} ] (facoltativo: la ruota della home, indipendente dal portfolio),
  *         video: [ {foto, titolo, video} ] (facoltativo: la sezione Video della home),
  *         nuoveFoto: { "nuova:ID": "base64…" }, messaggio }
@@ -206,14 +207,17 @@ async function salva(request, env, cors) {
     blobFoto.push({ id, b64, est });
   }
 
-  // elenco: ogni campo controllato, testi ripuliti (per ora niente stili: foto e video insieme)
+  // elenco: ogni campo controllato, testi ripuliti; le foto hanno il gruppo del portfolio
+  // (tipo: colori, bn, studio), i video vanno sempre nel gruppo Video
   const lavori = corpo.lavori.map((l, i) => {
     const titolo = pulisci(l && l.titolo, 80);
     const foto = String((l && l.foto) || ""), video = String((l && l.video) || "");
     if (!titolo) throw errore(`Manca il titolo del lavoro n. ${i + 1}`, 400);
     if (!(foto in percorsi) && !FOTO_VALIDA.test(foto)) throw errore(`Foto non valida nel lavoro n. ${i + 1}`, 400);
     if (video && !VIDEO_VALIDO.test(video)) throw errore(`Video non valido nel lavoro n. ${i + 1}`, 400);
-    return video ? { foto, titolo, video } : { foto, titolo };
+    if (video) return { foto, titolo, video };
+    const tipo = TIPI_FOTO.includes(l && l.tipo) ? l.tipo : "colori";
+    return { foto, titolo, tipo };
   });
 
   // sezione Video della home: elenco a sé, ogni voce ha video, copertina e titolo
