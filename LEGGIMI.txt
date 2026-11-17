@@ -153,7 +153,10 @@ Guida: pulsante «Guida» in alto (dopo l'accesso). Spiega passo passo, con test
 schermate, come aggiungere, riordinare, rinominare ed eliminare le foto e come cambiare
 quelle fisse. Si apre da sola la prima volta che si entra da un dispositivo (ricordato
 nel browser con ar-guida-vista). Le schermate sono in images/guida/ (JPEG, prese dal
-computer a 1280×800, con gli anelli blu sui punti da cliccare; un clic le ingrandisce nella stessa pagina): se l'aspetto
+computer a 1280×800, con gli anelli blu sui punti da cliccare; un clic le ingrandisce nella stessa pagina)
+Ingrandita, i punti evidenziati lampeggiano: le loro posizioni (in % della schermata)
+stanno in data-punti su ogni immagine della guida; se si rifà una schermata vanno
+aggiornate anche quelle.: se l'aspetto
 dell'area riservata cambia molto vanno rifatte.
 La foto viene rimpicciolita nel telefono prima dell'invio (lato lungo 1600 px, JPEG
 qualità 85) e perde i dati EXIF, compresa la posizione GPS.
