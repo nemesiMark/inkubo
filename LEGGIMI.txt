@@ -620,3 +620,5 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Home: scritta Rain Ink e foto più in alto.
                    Footer semplificato come quello di Olimp: una sola riga con © ed email,
                    icone social, Privacy e cookie, Gestione cookie (in colonna sul cellulare).
+                   Home: sfondo delle sezioni con un filo rosso al neon in cima a
+                   ciascuna (proposta 16 di 30).

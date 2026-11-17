@@ -58,6 +58,11 @@ strong { color: var(--txt); font-weight: 600; }
 .wrap { width: min(1180px, 100% - 2 * clamp(16px, 4vw, 48px)); margin-inline: auto; }
 section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 .alt { background: linear-gradient(180deg, transparent, var(--bg2) 12%, var(--bg2) 88%, transparent); }
+/* Home: ogni sezione dopo la prima schermata si apre con un filo rosso al neon (proposta 16) */
+.home-page main > section:not(.hero) { background:
+  linear-gradient(90deg, transparent, rgba(255, 90, 74, .7), transparent) top / 100% 1px no-repeat,
+  radial-gradient(ellipse 50% 80px at 50% 0, rgba(255, 90, 74, .12), transparent) top / 100% 160px no-repeat,
+  var(--bg); }
 .sec-head { display: flex; justify-content: space-between; align-items: end; gap: 1.5rem 4rem; flex-wrap: wrap; margin-bottom: 3rem; }
 .sec-head h2 { margin: 0; }
 .sec-head > p { max-width: 40ch; }
