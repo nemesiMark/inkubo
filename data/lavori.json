@@ -1,15 +1,15 @@
 [
   {
-    "foto": "images/lavori/2026-11-17-ggg-rcralp.jpg",
-    "titolo": "ggg",
-    "stile": "blackwork",
-    "zona": ""
-  },
-  {
     "foto": "images/flash/mandala-blackwork.svg",
     "titolo": "Mandala",
     "stile": "blackwork",
     "zona": "Schiena"
+  },
+  {
+    "foto": "images/lavori/2026-11-17-ggg-rcralp.jpg",
+    "titolo": "ggg",
+    "stile": "blackwork",
+    "zona": ""
   },
   {
     "foto": "images/flash/geometria-dotwork.svg",
