@@ -2,8 +2,9 @@
  * Rain Ink Tattoo — servizio dell'area riservata (Cloudflare Worker).
  *
  * Fa da ponte fra la pagina area-riservata.html e il repository GitHub del sito:
- * controlla la password, poi legge e salva data/lavori.json (portfolio e ruota della home),
- * data/immagini.json (le altre immagini delle pagine) e le foto in images/lavori/
+ * controlla la password, poi legge e salva data/lavori.json (portfolio), data/ruota.json
+ * (ruota dei lavori della home), data/immagini.json (le altre immagini delle pagine) e le
+ * foto in images/lavori/
  * con un solo commit per ogni salvataggio. GitHub Actions ripubblica il sito da solo.
  *
  * Impostazioni del Worker (Cloudflare → Workers → questo Worker → Settings → Variables):
@@ -24,6 +25,8 @@
 const STILI = ["blackwork", "fine-line", "dotwork", "tradizionale", "giapponese", "realistico"];
 const FILE_LAVORI = "data/lavori.json";
 const FILE_IMMAGINI = "data/immagini.json";
+const FILE_RUOTA = "data/ruota.json";
+const MAX_RUOTA = 30;
 const CARTELLA_FOTO = "images/lavori/";
 const MAX_FOTO_BYTES = 4 * 1024 * 1024;   // dopo il ridimensionamento nel browser sono ~0,3–0,6 MB
 const MAX_FOTO_PER_SALVATAGGIO = 12;
@@ -140,15 +143,17 @@ async function ugualiCostante(a, b) {
 /* ---------- lettura ---------- */
 
 async function leggiLavori(env, cors) {
-  const { lavori, immagini } = await statoAttuale(env);
-  return json({ lavori, immagini }, 200, cors);
+  const { lavori, immagini, ruota } = await statoAttuale(env);
+  return json({ lavori, immagini, ruota }, 200, cors);
 }
 
 async function statoAttuale(env) {
   const ref = await gh(env, `git/ref/heads/${env.BRANCH}`);
   const sha = ref.object.sha;
-  const [lavori, immagini] = await Promise.all([leggiJson(env, FILE_LAVORI, sha), leggiJson(env, FILE_IMMAGINI, sha).catch(() => [])]);
-  return { sha, lavori: Array.isArray(lavori) ? lavori : [], immagini: Array.isArray(immagini) ? immagini : [] };
+  const [lavori, immagini, ruota] = await Promise.all([leggiJson(env, FILE_LAVORI, sha),
+    leggiJson(env, FILE_IMMAGINI, sha).catch(() => []), leggiJson(env, FILE_RUOTA, sha).catch(() => [])]);
+  const lista = (x) => Array.isArray(x) ? x : [];
+  return { sha, lavori: lista(lavori), immagini: lista(immagini), ruota: lista(ruota) };
 }
 
 async function leggiJson(env, percorso, sha) {
@@ -160,6 +165,7 @@ async function leggiJson(env, percorso, sha) {
 
 /**
  * Corpo: { lavori: [ {foto, titolo, stile, zona} ], immagini: [ {id, foto, alt} ] (facoltativo),
+ *         ruota: [ {foto, titolo} ] (facoltativo: la ruota della home, indipendente dal portfolio),
  *         nuoveFoto: { "nuova:ID": "base64…" }, messaggio }
  * Nel campo foto di una foto nuova c'è "nuova:ID": qui diventa il percorso vero della foto caricata.
  * Delle immagini delle pagine si cambiano solo foto e testo alternativo: quali sono, in che
@@ -198,6 +204,18 @@ async function salva(request, env, cors) {
     return { foto, titolo, stile, zona };
   });
 
+  // ruota della home: elenco a sé, solo foto e titolo
+  let ruota = null;
+  if (Array.isArray(corpo.ruota)) {
+    if (corpo.ruota.length > MAX_RUOTA) throw errore("Troppe foto nella ruota", 400);
+    ruota = corpo.ruota.map((r, i) => {
+      const titolo = pulisci(r && r.titolo, 80), foto = String((r && r.foto) || "");
+      if (!titolo) throw errore(`Manca il titolo della foto n. ${i + 1} della ruota`, 400);
+      if (!(foto in percorsi) && !FOTO_VALIDA.test(foto)) throw errore(`Foto non valida nella ruota (n. ${i + 1})`, 400);
+      return { foto, titolo };
+    });
+  }
+
   // immagini delle pagine: id → foto e testo alternativo scelti
   const scelte = {};
   if (Array.isArray(corpo.immagini)) for (const im of corpo.immagini) {
@@ -209,21 +227,22 @@ async function salva(request, env, cors) {
 
   const giorno = new Date().toISOString().slice(0, 10);
   for (const f of blobFoto) {
-    const lavoro = lavori.find((l) => l.foto === f.id);
+    const lavoro = lavori.find((l) => l.foto === f.id) || (ruota || []).find((r) => r.foto === f.id);
     const slot = Object.entries(scelte).find(([, v]) => v.foto === f.id);
     if (!lavoro && !slot) continue; // foto caricata ma non usata: si ignora
     const nome = `${giorno}-${slug(lavoro ? lavoro.titolo : slot[0])}-${casuale(6)}.${f.est}`;
     percorsi[f.id] = CARTELLA_FOTO + nome;
-    for (const l of lavori) if (l.foto === f.id) l.foto = percorsi[f.id];
+    for (const l of [...lavori, ...(ruota || [])]) if (l.foto === f.id) l.foto = percorsi[f.id];
     for (const v of Object.values(scelte)) if (v.foto === f.id) v.foto = percorsi[f.id];
   }
 
   // fino a 3 tentativi se nel frattempo il ramo è cambiato
   for (let tentativo = 0; tentativo < 3; tentativo++) {
-    const { sha, lavori: prima, immagini: immPrima } = await statoAttuale(env);
+    const { sha, lavori: prima, immagini: immPrima, ruota: ruotaPrima } = await statoAttuale(env);
     const immagini = immPrima.map((v) => scelte[v.id] ? { ...v, foto: scelte[v.id].foto, alt: scelte[v.id].alt || v.alt } : v);
-    const usate = new Set([...lavori, ...immagini].map((x) => x.foto));
-    const daCancellare = [...new Set([...prima, ...immPrima].map((l) => l && l.foto).filter((p) =>
+    const ruotaNuova = ruota || ruotaPrima;
+    const usate = new Set([...lavori, ...immagini, ...ruotaNuova].map((x) => x.foto));
+    const daCancellare = [...new Set([...prima, ...immPrima, ...ruotaPrima].map((l) => l && l.foto).filter((p) =>
       typeof p === "string" && p.startsWith(CARTELLA_FOTO) && FOTO_VALIDA.test(p) && !usate.has(p)))];
 
     const commit = await gh(env, `git/commits/${sha}`);
@@ -236,6 +255,8 @@ async function salva(request, env, cors) {
     albero.push({ path: FILE_LAVORI, mode: "100644", type: "blob", content: JSON.stringify(lavori, null, 2) + "\n" });
     if (immPrima.length && JSON.stringify(immagini) !== JSON.stringify(immPrima))
       albero.push({ path: FILE_IMMAGINI, mode: "100644", type: "blob", content: JSON.stringify(immagini, null, 2) + "\n" });
+    if (ruota && JSON.stringify(ruota) !== JSON.stringify(ruotaPrima))
+      albero.push({ path: FILE_RUOTA, mode: "100644", type: "blob", content: JSON.stringify(ruota, null, 2) + "\n" });
     for (const p of daCancellare) albero.push({ path: p, mode: "100644", type: "blob", sha: null });
 
     const nuovoAlbero = await gh(env, "git/trees", "POST", { base_tree: commit.tree.sha, tree: albero });
@@ -243,7 +264,7 @@ async function salva(request, env, cors) {
     const nuovoCommit = await gh(env, "git/commits", "POST", { message: messaggio, tree: nuovoAlbero.sha, parents: [sha] });
     try {
       await gh(env, `git/refs/heads/${env.BRANCH}`, "PATCH", { sha: nuovoCommit.sha, force: false });
-      return json({ lavori, immagini, commit: nuovoCommit.sha }, 200, cors);
+      return json({ lavori, immagini, ruota: ruotaNuova, commit: nuovoCommit.sha }, 200, cors);
     } catch (e) {
       if (e.stato !== 422) throw e; // 422: il ramo è andato avanti, si riprova sul nuovo stato
     }

@@ -28,8 +28,8 @@ STRUTTURA
 Dalla versione 6.0 tutto il sito è scuro, con i colori e i componenti della home scura
 (vedi ASPETTO).
 index.html               Home: prima schermata con la scritta «Rain Ink» al neon in
-                         profondità e il tatuatore in primo piano, ruota 3D dei lavori (uno
-                         per stile), Lo studio, Dove siamo (con la mappa animata),
+                         profondità e il tatuatore in primo piano, ruota 3D dei lavori (scelti
+                         dall'area riservata), Lo studio, Dove siamo (con la mappa animata),
                          riquadro «Hai già un'idea?»
 tatuaggi.html            I sei stili (blackwork, fine line, dotwork, tradizionale,
                          giapponese, realistico), uno per riga con ancora
@@ -127,20 +127,21 @@ AREA RISERVATA (FOTO GESTITE DAL CLIENTE)
 Il cliente cambia da solo le foto del sito da area-riservata.html (lucchetto in fondo
 alla navbar, non indicizzata): entra con una password e trova una scheda per ogni
 pagina, con le immagini nell'ordine in cui si vedono e una descrizione di dove stanno:
-- Home: prima schermata, ruota dei lavori (il primo lavoro di ogni stile del Portfolio;
-  toccandolo lo si modifica; il + in fondo aggiunge un lavoro in cima al Portfolio, così
-  entra nella ruota), lo studio.
+Le foto di ogni pagina sono indipendenti: cambiare un lavoro del Portfolio non tocca la
+Home, e viceversa.
+- Home: prima schermata, ruota dei lavori (un elenco a sé, data/ruota.json: solo foto e
+  titolo), lo studio.
 - Portfolio: i lavori divisi per stile (Blackwork, Dotwork, Fine line, Tradizionale,
-  Giapponese, Realistico), come i filtri del sito. Il riquadro tratteggiato con il + in
-  fondo a uno stile aggiunge un lavoro in quello stile: basta la foto e il titolo. Il
-  lavoro nuovo compare in fondo allo stile con il bordo rosso che lampeggia e una barra
-  in basso: lo si trascina dove si vuole (o «← Prima» / «Dopo →») e si tocca «Conferma
-  posizione»; per lasciarlo in fondo basta confermare subito. Si salva solo alla
-  conferma («Annulla» lo toglie). Tocco su un lavoro per modificarlo (titolo, stile,
-  zona) o eliminarlo; tenere premuto e trascinare per cambiare l'ordine dentro lo stile.
-  L'elenco in data/lavori.json resta uno solo: riordinando uno stile i suoi lavori si
-  scambiano fra i posti che già occupano, gli altri stili non si muovono. Il primo di
-  ogni stile ha «In home».
+  Giapponese, Realistico), come i filtri del sito.
+- Nella ruota e negli stili del Portfolio: tocco su una foto = la si seleziona; diventa
+  rossa e lampeggia, le altre diventano più chiare, e in basso compare una barra. Da lì
+  la si prende e la si trascina dove si vuole (solo la foto selezionata si muove), poi
+  «Conferma» salva il nuovo posto; «Annulla» la rimette dov'era; «Modifica o elimina»
+  apre la scheda (foto, titolo e, nel Portfolio, stile). Il riquadro + in fondo aggiunge
+  una foto: basta la foto e il titolo; compare in fondo già selezionata, la si sposta e
+  si tocca «Conferma e salva» (per lasciarla in fondo basta confermare subito).
+  Nel Portfolio l'elenco in data/lavori.json resta uno solo: riordinando uno stile i suoi
+  lavori si scambiano fra i posti che già occupano, gli altri stili non si muovono.
 - Tatuaggi, Piercing, Studio: le immagini fisse della pagina; «Cambia foto» e il testo
   che dice cosa si vede (per Google e per chi non vede).
 Dopo ogni salvataggio compare la finestra verde «Salvataggio riuscito correttamente»
@@ -159,6 +160,8 @@ File:
                          sul sito.
 - data/lavori.json       Elenco dei lavori: foto, titolo, stile, zona. L'ordine è quello
                          del portfolio.
+- data/ruota.json        Le foto della ruota della home (foto e titolo), nell'ordine in cui
+                         girano. Indipendente dal portfolio.
 - data/immagini.json     Le immagini fisse delle pagine: id, pagina, sezione, descrizione
                          (quello che il cliente legge nell'area riservata), foto e testo
                          alternativo. Nell'HTML ogni immagine gestita ha data-slot="id".
@@ -168,7 +171,8 @@ File:
                          non usa più nessuno vengono cancellate; images/flash, home,
                          studio e piercing non vengono mai toccate.
 - scripts/genera_lavori.py
-                         Scrive i lavori in portfolio.html e la ruota 3D in index.html
+                         Scrive i lavori in portfolio.html (da lavori.json) e la ruota 3D in
+                         index.html (da ruota.json)
                          fra <!-- lavori:inizio --> e <!-- lavori:fine --> (quel tratto non
                          si modifica a mano) e aggiorna src e alt delle <img data-slot>
                          da data/immagini.json. In locale, dopo aver cambiato i JSON:
@@ -534,3 +538,11 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    per aggiungere basta foto e titolo (dalla ruota della Home si sceglie
                    anche lo stile). Trascinamento più affidabile su telefono e computer.
                    Il Worker va incollato di nuovo su Cloudflare. style.css?v=42.
+6.4  (17/11/2026)  Area riservata: tocco su una foto per selezionarla (rossa che
+                   lampeggia, le altre più chiare), poi la si trascina dove si vuole e si
+                   conferma; tolti i tasti «Prima» / «Dopo». La ruota della home ora è un
+                   elenco a sé (nuovo data/ruota.json, solo foto e titolo): cambiare il
+                   Portfolio non tocca più la home e viceversa; tolto «In home». In home
+                   il titolo della ruota diventa «Portfolio / Lavori recenti» e sotto la
+                   foto si legge il titolo del lavoro. Il Worker va incollato di nuovo su
+                   Cloudflare. home.js?v=2.

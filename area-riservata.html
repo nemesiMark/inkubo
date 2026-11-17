@@ -121,8 +121,8 @@ input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0
 .stato button{border:0;background:none;color:inherit;text-decoration:underline;font-weight:500}
 
 .griglia{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;list-style:none;padding-bottom:48px}
-.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:grab;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
-  transition:box-shadow 200ms var(--ease),transform 200ms var(--ease)}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+  transition:box-shadow 200ms var(--ease),transform 200ms var(--ease),opacity 200ms ease}
 .card .ph{aspect-ratio:4/5;background:var(--paper);overflow:hidden}
 .card img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .card .tx{padding:10px 12px 12px}
@@ -142,15 +142,16 @@ input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0
 .card.sortable-chosen{box-shadow:0 18px 40px -12px rgba(0,0,0,.45);transform:scale(1.03);cursor:grabbing}
 .card.sortable-ghost{opacity:.35}
 .sortable-drag{opacity:.95!important;box-shadow:0 24px 50px -12px rgba(0,0,0,.5);cursor:grabbing}
-/* lavoro appena aggiunto, da posizionare: bordo rosso che lampeggia */
-.card.nuovo{scroll-margin:140px 0 240px;border-color:var(--red);box-shadow:0 0 0 3px var(--red);animation:lampeggia 1.1s ease-in-out infinite}
-.card.nuovo .n{background:var(--red);color:#fff}
+/* foto selezionata: bordo rosso che lampeggia, le altre più chiare */
+.card.scelta{scroll-margin:140px 0 220px;border-color:var(--red);box-shadow:0 0 0 3px var(--red);animation:lampeggia 1.1s ease-in-out infinite;cursor:grab;touch-action:none}
+.card.scelta .n{background:var(--red);color:#fff}
 @keyframes lampeggia{0%,100%{box-shadow:0 0 0 3px var(--red),0 0 0 0 rgba(196,55,42,.45)}50%{box-shadow:0 0 0 3px var(--red),0 0 0 12px rgba(196,55,42,0)}}
-@media (prefers-reduced-motion:reduce){.card.nuovo{box-shadow:0 0 0 3px var(--red)}}
-body.posizionando #portfolio-stili{padding-bottom:220px}
-body.posizionando .card:not(.nuovo){cursor:default}
-body.posizionando .aggiungi{display:none}
-/* barra per posizionare il lavoro nuovo */
+@media (prefers-reduced-motion:reduce){.card.scelta{box-shadow:0 0 0 3px var(--red)}}
+.slot{transition:box-shadow 200ms var(--ease),opacity 200ms ease}
+body.selezione .card:not(.scelta),body.selezione .aggiungi,body.selezione .slot{opacity:.3}
+body.selezione .card:not(.scelta){cursor:pointer}
+body.selezione #portfolio-stili,body.selezione .blocchi{padding-bottom:220px}
+/* barra della foto selezionata */
 .posiziona{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));z-index:25;width:min(560px,100% - 24px);transform:translateX(-50%);
   padding:16px;background:var(--ink);color:#fff;border-radius:18px;box-shadow:0 18px 50px -12px rgba(0,0,0,.5)}
 .posiziona[hidden]{display:none}
@@ -161,7 +162,7 @@ body.posizionando .aggiungi{display:none}
 .posiziona .btn:disabled{opacity:.35}
 .posiziona .btn.pri{background:var(--red);border-color:var(--red);margin-left:auto}
 .posiziona .btn.link{background:transparent;border-color:transparent;color:rgba(255,255,255,.75);padding:0 8px}
-@media (max-width:480px){.posiziona .btn.pri{flex-basis:100%;margin-left:0;order:3}.posiziona .riga .frecce{flex:1}}
+@media (max-width:480px){.posiziona .btn.pri{flex-basis:100%;margin-left:0;order:3}.posiziona .riga .btn:not(.pri):not(.link){flex:1}}
 
 /* card + in fondo a ogni sezione: stessa misura delle foto */
 .aggiungi{display:flex}
@@ -244,8 +245,8 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
       <p class="aiuto">La prima pagina del sito. Qui sotto le immagini nell'ordine in cui si vedono scorrendo.</p>
       <ol class="blocchi">
         <li><h2><span class="num">1</span> Prima schermata</h2><ul class="slots" data-slots="home-hero"></ul></li>
-        <li><h2><span class="num">2</span> Ruota dei lavori <small>dal Portfolio</small></h2>
-          <p class="aiuto">La ruota mostra da sola il primo lavoro di ogni stile del Portfolio. Tocca una foto per modificarla; il riquadro <b>+</b> aggiunge un lavoro nuovo in cima al Portfolio, così entra nella ruota al posto di quello dello stesso stile.</p>
+        <li><h2><span class="num">2</span> Ruota dei lavori</h2>
+          <p class="aiuto">Le foto che girano nella ruota della Home, nell'ordine in cui compaiono. Sono solo della Home: cambiarle qui non tocca il Portfolio, e viceversa. Tocca una foto per selezionarla e trascinarla dove vuoi; il riquadro <b>+</b> ne aggiunge una.</p>
           <ul class="griglia piccola" id="ruota"></ul></li>
         <li><h2><span class="num">3</span> Lo studio</h2><ul class="slots" data-slots="home-studio"></ul></li>
       </ol>
@@ -254,7 +255,7 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     <!-- PORTFOLIO -->
     <section class="pag" id="pag-portfolio.html" role="tabpanel" hidden>
       <div class="pag-head"><h1>Portfolio <small id="conta"></small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="portfolio.html">Vedi la pagina ↗</a></div>
-      <p class="aiuto">I lavori divisi per stile, come i filtri del Portfolio sul sito. Il riquadro <b>+</b> in fondo a uno stile aggiunge un lavoro in quello stile; tocca un lavoro per modificarlo; tieni premuto e trascina per cambiare l'ordine. Il primo di ogni stile («In home») compare anche nella ruota della Home.</p>
+      <p class="aiuto">I lavori divisi per stile, come i filtri del Portfolio sul sito. Sono solo di questa pagina: cambiarli qui non tocca la Home. Tocca un lavoro per selezionarlo: diventa rosso e lo puoi trascinare dove vuoi, modificare o eliminare. Il riquadro <b>+</b> in fondo a uno stile aggiunge un lavoro in quello stile.</p>
       <div id="portfolio-stili"></div>
     </section>
 
@@ -275,14 +276,13 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
       <ul class="slots" data-pagina="studio.html"></ul>
     </section>
   </div>
-  <div class="posiziona" id="posiziona" role="region" aria-label="Posiziona il lavoro nuovo" hidden>
-    <b id="pos-t"></b>
-    <p>Trascina la foto rossa dove vuoi (su telefono tienila premuta un attimo prima di muoverla), oppure usa le frecce. Se va bene così, conferma.</p>
+  <div class="posiziona" id="scelta" role="region" aria-label="Foto selezionata" hidden>
+    <b id="sc-t"></b>
+    <p>Prendila e trascinala dove vuoi in questa sezione. Quando hai finito tocca «Conferma».</p>
     <div class="riga">
-      <button class="btn link" type="button" id="pos-annulla">Annulla</button>
-      <button class="btn frecce" type="button" id="pos-prima" aria-label="Sposta prima">← Prima</button>
-      <button class="btn frecce" type="button" id="pos-dopo" aria-label="Sposta dopo">Dopo →</button>
-      <button class="btn pri" type="button" id="pos-ok">Conferma posizione</button>
+      <button class="btn link" type="button" id="sc-annulla">Annulla</button>
+      <button class="btn" type="button" id="sc-mod">Modifica o elimina</button>
+      <button class="btn pri" type="button" id="sc-ok">Conferma</button>
     </div>
   </div>
   <div class="esito" id="esito" role="status" aria-live="polite" hidden>
@@ -304,15 +304,6 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     <fieldset class="stili" id="stili">
       <legend>Stile</legend>
     </fieldset>
-    <div class="campo" id="campo-zona">
-      <label for="zona">Zona del corpo <span class="facoltativo">(facoltativa)</span></label>
-      <input type="text" id="zona" maxlength="60" placeholder="Es. Avambraccio">
-    </div>
-    <div class="ordine" id="ordine" hidden>
-      <span id="pos"></span>
-      <button class="btn" type="button" id="su">Sposta prima</button>
-      <button class="btn" type="button" id="giu">Sposta dopo</button>
-    </div>
     <p class="errore" id="err-scheda" role="alert"></p>
     <div class="azioni">
       <button class="btn del" type="button" id="elimina" hidden>Elimina</button>
@@ -374,9 +365,9 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   var NOME = {}; STILI.forEach(function (s) { NOME[s[0]] = s[1]; });
   var $ = function (id) { return document.getElementById(id); };
 
-  var lavori = [], immagini = [], anteprimeLocali = {}, token = null;
+  var lavori = [], ruota = [], ruotaCaricata = false, immagini = [], anteprimeLocali = {}, token = null;
   var PAGINE = [['index.html', 'Home'], ['portfolio.html', 'Portfolio'], ['tatuaggi.html', 'Tatuaggi'], ['piercing.html', 'Piercing'], ['studio.html', 'Studio']];
-  var ORDINE_RUOTA = ['blackwork', 'dotwork', 'fine-line', 'tradizionale', 'giapponese', 'realistico']; // come scripts/genera_lavori.py
+  var ORDINE_RUOTA = ['blackwork', 'dotwork', 'fine-line', 'tradizionale', 'giapponese', 'realistico']; // ordine dei filtri del Portfolio, come scripts/genera_lavori.py
   var mem = { get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
               set: function (k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
 
@@ -402,8 +393,8 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     $('esci').hidden = nome !== 'lavori';
     $('apri-pw').hidden = nome !== 'lavori';
   }
-  function esci() { token = null; mem.set('ar-token', null); lavori = []; mostraVista('login'); $('pw').value = ''; }
-  $('esci').onclick = function () { if (posiziona) confermaPosizione(); esci(); };
+  function esci() { token = null; mem.set('ar-token', null); lavori = []; ruota = []; mostraVista('login'); $('pw').value = ''; }
+  $('esci').onclick = function () { if (sel) confermaScelta(); esci(); };
   $('mostra').onclick = function () {
     var vis = $('pw').type === 'password'; $('pw').type = vis ? 'text' : 'password';
     this.textContent = vis ? 'Nascondi' : 'Mostra'; this.setAttribute('aria-pressed', vis);
@@ -420,7 +411,11 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
 
   function carica() {
     mostraVista('lavori'); stato('lav', 'Caricamento dei lavori…');
-    chiama('/lavori').then(function (d) { lavori = d.lavori || []; immagini = d.immagini || []; disegna(); stato('', ''); })
+    chiama('/lavori').then(function (d) {
+      lavori = d.lavori || []; immagini = d.immagini || [];
+      ruotaCaricata = Array.isArray(d.ruota); ruota = d.ruota || []; // senza il Worker aggiornato la ruota non si tocca
+      disegna(); stato('', '');
+    })
       .catch(function (err) { stato('err', err.message, carica); });
   }
 
@@ -430,11 +425,6 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   }
   function riserva(img, foto) { // foto appena caricata e non ancora pubblicata: la si prende dal repository
     img.onerror = function () { img.onerror = null; img.src = 'https://raw.githubusercontent.com/' + REPO + '/' + RAMO + '/' + foto.replace(/^\/+/, ''); };
-  }
-  function primiPerStile() {
-    var visti = {}, primi = {};
-    lavori.forEach(function (l, i) { if (!visti[l.stile]) { visti[l.stile] = 1; primi[i] = 1; } });
-    return primi;
   }
   /* ---------- schede delle pagine ---------- */
   var tabAttiva = mem.get('ar-tab') || 'index.html';
@@ -447,7 +437,7 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   });
   [].forEach.call(document.querySelectorAll('[data-vedi]'), function (a) { a.href = new URL(a.dataset.vedi, location.href).href; });
   function mostraPagina(id) {
-    if (posiziona && id !== 'portfolio.html') confermaPosizione(); // cambiando pagina il lavoro resta dov'è
+    if (sel) confermaScelta(); // cambiando pagina la foto selezionata resta dov'è
     if (!$('pag-' + id)) id = 'index.html';
     tabAttiva = id; mem.set('ar-tab', id);
     PAGINE.forEach(function (p) {
@@ -458,21 +448,33 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   }
   mostraPagina(tabAttiva);
 
-  function cartaLavoro(l, i, primi, conNumero, numero) { // numero: posto dentro il suo stile
-    var li = document.createElement('li'); li.className = 'card'; li.tabIndex = 0; li.dataset.i = i;
-    li.setAttribute('aria-label', (conNumero ? numero + '. ' : '') + l.titolo + ', ' + NOME[l.stile] + '. Premi Invio per modificare');
+  /* ---------- sezioni con foto da ordinare ----------
+     Ogni sezione è un pezzo di un elenco: uno stile del Portfolio (data/lavori.json) oppure la
+     ruota della Home (data/ruota.json). I due elenchi sono indipendenti: cambiare una foto del
+     Portfolio non tocca la Home e viceversa. In uno stile del Portfolio, riordinando, i suoi lavori
+     si scambiano fra i posti che già occupano nell'elenco, così gli altri stili non si muovono. */
+  var SEZ_RUOTA = { id: 'ruota', lista: 'ruota', stile: null, nome: 'Ruota dei lavori' };
+  var SEZ_STILI = ORDINE_RUOTA.map(function (st) { return { id: 'p-' + st, lista: 'lavori', stile: st, nome: NOME[st] }; });
+  function elenco(sez) { return sez.lista === 'ruota' ? ruota : lavori; }
+  function membri(sez) { var r = []; elenco(sez).forEach(function (x, i) { if (!sez.stile || x.stile === sez.stile) r.push(i); }); return r; }
+  function posto(sez, x) { return membri(sez).indexOf(elenco(sez).indexOf(x)) + 1; }
+
+  function cartaLavoro(sez, x, numero) {
+    var li = document.createElement('li'); li.className = 'card'; li.tabIndex = 0;
     var ph = document.createElement('div'); ph.className = 'ph';
-    var im = document.createElement('img'); im.alt = ''; im.loading = 'lazy'; riserva(im, l.foto); im.src = sorgente(l.foto);
+    var im = document.createElement('img'); im.alt = ''; im.loading = 'lazy'; riserva(im, x.foto); im.src = sorgente(x.foto);
     ph.appendChild(im); li.appendChild(ph);
-    if (conNumero) { var n = document.createElement('span'); n.className = 'n'; n.textContent = numero; li.appendChild(n); }
+    var n = document.createElement('span'); n.className = 'n'; n.textContent = numero; li.appendChild(n);
     var tx = document.createElement('div'); tx.className = 'tx';
-    var b = document.createElement('b'); b.textContent = l.titolo;
-    var s = document.createElement('span'); s.textContent = NOME[l.stile] + (l.zona ? ' · ' + l.zona : '');
+    var b = document.createElement('b'); b.textContent = x.titolo;
+    var s = document.createElement('span'); s.textContent = sez.stile ? NOME[x.stile] + (x.zona ? ' · ' + x.zona : '') : 'Home';
     tx.appendChild(b); tx.appendChild(s); li.appendChild(tx);
-    if (conNumero && primi[i]) { var h = document.createElement('span'); h.className = 'home'; h.textContent = 'In home'; li.appendChild(h); }
-    if (posiziona && l === posiziona.l) { li.classList.add('nuovo'); li.setAttribute('aria-label', 'Lavoro nuovo «' + l.titolo + '», posto ' + numero); }
-    li.onclick = function () { if (!trascinato && !posiziona) apriScheda(+li.dataset.i); };
-    li.onkeydown = function (e) { if (!posiziona && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); apriScheda(+li.dataset.i); } };
+    var scelta = sel && sel.x === x;
+    if (scelta) li.classList.add('scelta');
+    li.setAttribute('aria-label', numero + '. ' + x.titolo + (scelta ? ', selezionata: trascinala dove vuoi' : '. Premi Invio per selezionarla'));
+    function tocca() { if (trascinato || scelta) return; scegli(sez, x); }
+    li.onclick = tocca;
+    li.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tocca(); } };
     return li;
   }
   function cartaImmagine(v) {
@@ -487,17 +489,17 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     var bt = document.createElement('span'); bt.className = 'btn'; bt.textContent = 'Cambia foto';
     tx.appendChild(b); tx.appendChild(s); tx.appendChild(bt);
     li.appendChild(ph); li.appendChild(tx);
-    li.onclick = function () { apriImmagine(v.id); };
-    li.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); apriImmagine(v.id); } };
+    li.onclick = function () { if (sel) confermaScelta(); apriImmagine(v.id); };
+    li.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.onclick(); } };
     return li;
   }
   var PIU = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
-  function cartaAggiungi(testo, inCima, stile) {
+  function cartaAggiungi(testo, sez) {
     var li = document.createElement('li'); li.className = 'aggiungi';
     var b = document.createElement('button'); b.type = 'button';
     b.innerHTML = '<span class="croce">' + PIU + '</span>';
     var t = document.createElement('span'); t.textContent = testo; b.appendChild(t);
-    b.onclick = function () { nuovoLavoro(inCima, stile); };
+    b.onclick = function () { if (sel) confermaScelta(); nuovoLavoro(sez); };
     li.appendChild(b); return li;
   }
   function disegnaImmagini() {
@@ -507,61 +509,85 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
                                      : immagini.filter(function (v) { return v.pagina === ul.dataset.pagina; });
       scelte.forEach(function (v) { ul.appendChild(cartaImmagine(v)); });
     });
-    var r = $('ruota'), primi = primiPerStile(); r.innerHTML = '';
-    var perStile = {}; Object.keys(primi).forEach(function (i) { perStile[lavori[i].stile] = +i; });
-    ORDINE_RUOTA.forEach(function (st) { if (perStile[st] != null) r.appendChild(cartaLavoro(lavori[perStile[st]], perStile[st], primi, false, 1)); });
-    r.appendChild(cartaAggiungi('Aggiungi un lavoro alla ruota', true, null));
   }
 
-  // il Portfolio è diviso per stile; l'ordine di data/lavori.json resta uno solo: riordinando uno
-  // stile, i suoi lavori si scambiano fra i posti che già occupano nell'elenco
-  function indiciStile(st) { var r = []; lavori.forEach(function (l, i) { if (l.stile === st) r.push(i); }); return r; }
   var ordinatori = [], trascinato = false;
+  function disegnaSezione(sez, ul) {
+    ul.innerHTML = '';
+    var lista = elenco(sez);
+    membri(sez).forEach(function (i, k) { ul.appendChild(cartaLavoro(sez, lista[i], k + 1)); });
+    ul.appendChild(cartaAggiungi(sez.stile ? 'Aggiungi un lavoro ' + sez.nome : 'Aggiungi una foto alla ruota', sez));
+    ordinatori.push(new Sortable(ul, {
+      // si trascina solo la foto selezionata (le altre sono «filtrate»); trascinamento gestito da
+      // Sortable con il puntatore, uguale su telefono e computer
+      forceFallback: true, fallbackTolerance: 3, animation: 180, easing: 'cubic-bezier(.23,1,.32,1)',
+      scroll: true, bubbleScroll: true,
+      draggable: '.card', filter: '.card:not(.scelta), .aggiungi', preventOnFilter: false,
+      ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', fallbackClass: 'sortable-drag',
+      onStart: function () { trascinato = true; },
+      onMove: function (e) { return !e.related.classList.contains('aggiungi'); }, // il + resta in fondo
+      onEnd: function (e) {
+        setTimeout(function () { trascinato = false; }, 50);
+        if (e.oldDraggableIndex === e.newDraggableIndex) return;
+        var pos = membri(sez), voci = pos.map(function (i) { return lista[i]; });
+        var x = voci.splice(e.oldDraggableIndex, 1)[0]; voci.splice(e.newDraggableIndex, 0, x);
+        pos.forEach(function (i, k) { lista[i] = voci[k]; });
+        setTimeout(function () { disegna(); barraScelta(); }, 0); // si ridisegna dopo che Sortable ha finito
+      }
+    }));
+  }
   function disegna() {
     disegnaImmagini();
-    var box = $('portfolio-stili'), primi = primiPerStile();
     ordinatori.forEach(function (o) { o.destroy(); }); ordinatori = [];
-    box.innerHTML = '';
+    disegnaSezione(SEZ_RUOTA, $('ruota'));
+    var box = $('portfolio-stili'); box.innerHTML = '';
     $('conta').textContent = lavori.length ? '(' + lavori.length + ')' : '';
-    ORDINE_RUOTA.forEach(function (st) {
-      var idx = indiciStile(st);
-      var sez = document.createElement('section'); sez.className = 'sez-stile';
-      var h = document.createElement('h2'); h.textContent = NOME[st] + ' ';
-      var c = document.createElement('small'); c.textContent = idx.length === 1 ? '1 lavoro' : idx.length + ' lavori'; h.appendChild(c);
-      var ul = document.createElement('ul'); ul.className = 'griglia'; ul.dataset.stile = st;
-      idx.forEach(function (i, k) { ul.appendChild(cartaLavoro(lavori[i], i, primi, true, k + 1)); });
-      ul.appendChild(cartaAggiungi('Aggiungi un lavoro ' + NOME[st], false, st));
-      sez.appendChild(h); sez.appendChild(ul); box.appendChild(sez);
-      ordinatori.push(new Sortable(ul, {
-        // trascinamento gestito da Sortable con il puntatore (più affidabile su telefono e computer);
-        // su telefono serve una breve pressione, così si può ancora scorrere la pagina
-        forceFallback: true, fallbackTolerance: 4, delay: 200, delayOnTouchOnly: true, touchStartThreshold: 6,
-        animation: 180, easing: 'cubic-bezier(.23,1,.32,1)', scroll: true, bubbleScroll: true,
-        draggable: '.card', filter: '.aggiungi', preventOnFilter: false,
-        ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', fallbackClass: 'sortable-drag',
-        onStart: function () { trascinato = true; },
-        onMove: function (e) { return !e.related.classList.contains('aggiungi'); }, // il + resta in fondo
-        onEnd: function (e) {
-          setTimeout(function () { trascinato = false; }, 50);
-          if (e.oldDraggableIndex === e.newDraggableIndex) return;
-          var pos = indiciStile(st), elenco = pos.map(function (i) { return lavori[i]; });
-          var x = elenco.splice(e.oldDraggableIndex, 1)[0]; elenco.splice(e.newDraggableIndex, 0, x);
-          pos.forEach(function (i, k) { lavori[i] = elenco[k]; });
-          setTimeout(function () { // si ridisegna dopo che Sortable ha finito
-            disegna();
-            if (posiziona) { barraPosiziona(); return; } // si salva alla conferma
-            salvaPresto('Ordine dei lavori ' + NOME[st] + ' cambiato');
-          }, 0);
-        }
-      }));
+    SEZ_STILI.forEach(function (sez) {
+      var n = membri(sez).length;
+      var se = document.createElement('section'); se.className = 'sez-stile';
+      var h = document.createElement('h2'); h.textContent = sez.nome + ' ';
+      var c = document.createElement('small'); c.textContent = n === 1 ? '1 lavoro' : n + ' lavori'; h.appendChild(c);
+      var ul = document.createElement('ul'); ul.className = 'griglia';
+      se.appendChild(h); se.appendChild(ul); box.appendChild(se);
+      disegnaSezione(sez, ul);
     });
+    document.body.classList.toggle('selezione', !!sel);
   }
-  // sposta il lavoro all'indice i di un posto dentro il suo stile; restituisce il nuovo indice
-  function spostaInStile(i, d) {
-    var pos = indiciStile(lavori[i].stile), k = pos.indexOf(i), j = pos[k + d];
-    if (j == null) return i;
-    var t = lavori[i]; lavori[i] = lavori[j]; lavori[j] = t; return j;
+
+  /* ---------- foto selezionata: rossa che lampeggia, le altre più chiare; si trascina e si conferma ---------- */
+  var sel = null; // { sez, x, nuovo, nuove: foto da inviare, prima: copia dell'elenco per «Annulla» }
+  function scegli(sez, x) {
+    if (sel) confermaScelta();
+    sel = { sez: sez, x: x, nuovo: false, nuove: null, prima: elenco(sez).slice() };
+    mostraScelta('nearest');
   }
+  function mostraScelta(blocco) {
+    $('scelta').hidden = false; disegna(); barraScelta();
+    var c = document.querySelector('.card.scelta');
+    if (c) c.scrollIntoView({ block: blocco });
+  }
+  function barraScelta() {
+    if (!sel) return;
+    $('sc-t').textContent = '«' + sel.x.titolo + '» · posto ' + posto(sel.sez, sel.x) + ' di ' + membri(sel.sez).length + ' in ' + sel.sez.nome;
+    $('sc-ok').textContent = sel.nuovo ? 'Conferma e salva' : 'Conferma';
+  }
+  function cambiato(s) { var l = elenco(s.sez); return s.nuovo || l.length !== s.prima.length || l.some(function (x, i) { return x !== s.prima[i]; }); }
+  function fineScelta() { sel = null; $('scelta').hidden = true; disegna(); }
+  function confermaScelta() {
+    if (!sel) return;
+    var s = sel, n = posto(s.sez, s.x), mod = cambiato(s); fineScelta();
+    if (mod) salva((s.nuovo ? 'Aggiunto «' : 'Spostato «') + s.x.titolo + '» (' + s.sez.nome + ', posto ' + n + ')', s.nuove);
+  }
+  function annullaScelta() {
+    if (!sel) return;
+    var l = elenco(sel.sez); l.length = 0; sel.prima.forEach(function (x) { l.push(x); });
+    fineScelta();
+  }
+  $('sc-ok').onclick = confermaScelta;
+  $('sc-annulla').onclick = annullaScelta;
+  $('sc-mod').onclick = function () { apriScheda(sel.sez, sel.x); };
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && sel && !document.querySelector('dialog[open]')) annullaScelta(); });
+  window.addEventListener('beforeunload', function (e) { if (sel && cambiato(sel)) { e.preventDefault(); e.returnValue = ''; } });
 
   /* ---------- salvataggio ---------- */
   var timer = null, inCorso = false, inAttesa = null, fotoInAttesa = {};
@@ -584,14 +610,17 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     if (inCorso) { inAttesa = msg; return Promise.resolve(); }
     inCorso = true; stato('lav', 'Salvataggio…');
     var foto = fotoInAttesa; fotoInAttesa = {};
-    var inviati = lavori.map(function (l) { return l.foto; });
+    var inviati = lavori.map(function (l) { return l.foto; }), inviatiR = ruota.map(function (r) { return r.foto; });
     var imm = immagini.map(function (v) { return { id: v.id, foto: v.foto, alt: v.alt }; });
-    return chiama('/salva', { lavori: lavori, immagini: imm, nuoveFoto: foto, messaggio: 'Area riservata: ' + msg }).then(function (d) {
+    var corpo = { lavori: lavori, immagini: imm, nuoveFoto: foto, messaggio: 'Area riservata: ' + msg };
+    if (ruotaCaricata) corpo.ruota = ruota.map(function (r) { return { foto: r.foto, titolo: r.titolo }; });
+    return chiama('/salva', corpo).then(function (d) {
       // le foto nuove ricevono il nome definitivo; si aggiorna l'elenco attuale (che nel frattempo può
       // essere stato riordinato) e si tiene l'anteprima locale finché il sito non pubblica la foto
       var nomi = {};
       inviati.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.lavori[i]) nomi[f] = d.lavori[i].foto; });
-      lavori.forEach(function (l) { var n = nomi[l.foto]; if (n) { anteprimeLocali[n] = anteprimeLocali[l.foto]; l.foto = n; } });
+      if (corpo.ruota && d.ruota) inviatiR.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.ruota[i]) nomi[f] = d.ruota[i].foto; });
+      lavori.concat(ruota).forEach(function (l) { var n = nomi[l.foto]; if (n) { anteprimeLocali[n] = anteprimeLocali[l.foto]; l.foto = n; } });
       (d.immagini || []).forEach(function (srv) {
         var loc = immagini.filter(function (v) { return v.id === srv.id; })[0];
         if (loc && loc.foto.indexOf('nuova:') === 0 && imm.some(function (x) { return x.id === srv.id && x.foto === loc.foto; })) {
@@ -631,115 +660,81 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     });
   }
 
-  /* ---------- scheda ---------- */
-  var scheda = $('scheda'), indice = -1, fotoScelta = null, confermaElimina = false;
+  /* ---------- scheda: nuova foto o modifica ---------- */
+  var scheda = $('scheda'), schSez = null, schX = null, fotoScelta = null, confermaElimina = false;
   STILI.forEach(function (s) {
     var l = document.createElement('label'), r = document.createElement('input'), sp = document.createElement('span');
     r.type = 'radio'; r.name = 'stile'; r.value = s[0]; sp.textContent = s[1];
     l.appendChild(r); l.appendChild(sp); $('stili').appendChild(l);
   });
 
-  var nuovoInCima = false, nuovoStile = null; // dalla ruota della home: in cima, così entra nella ruota; da uno stile del Portfolio: in fondo a quello stile
-  function nuovoLavoro(inCima, stile) { nuovoInCima = inCima; nuovoStile = stile || null; indice = -1; $('file').value = ''; $('file').click(); }
+  function nuovoLavoro(sez) { schSez = sez; schX = null; $('file').value = ''; $('file').click(); }
   $('cambia').onclick = function () { $('file').value = ''; $('file').click(); };
   $('file').onchange = function () {
     var f = this.files && this.files[0]; if (!f) return;
     if (dimg.open) { fotoImmagine(f); return; }
-    var nuovo = indice === -1 && !scheda.open;
-    if (nuovo) { apriScheda(-1); }
+    var nuovo = !schX && !scheda.open;
+    if (nuovo) apriScheda(schSez, null);
     $('err-scheda').textContent = ''; $('conferma').disabled = true; $('anteprima').removeAttribute('src'); $('anteprima').alt = 'Preparazione della foto…';
     preparaFoto(f).then(function (p) { fotoScelta = p; $('anteprima').src = p.anteprima; $('anteprima').alt = 'Anteprima della foto'; })
       .catch(function (err) { $('err-scheda').textContent = err.message; if (nuovo) fotoScelta = null; })
       .then(function () { $('conferma').disabled = false; });
   };
 
-  function apriScheda(i) {
-    indice = i; fotoScelta = null; confermaElimina = false;
-    var l = i >= 0 ? lavori[i] : { titolo: '', stile: nuovoStile || '', zona: '', foto: '' };
-    $('scheda-t').textContent = i >= 0 ? 'Modifica lavoro' : 'Nuovo lavoro' + (nuovoStile ? ' · ' + NOME[nuovoStile] : '');
-    // lavoro nuovo: basta il titolo (lo stile è quello della sezione); dalla ruota si sceglie lo stile
-    $('stili').hidden = i < 0 && !!nuovoStile;
-    $('campo-zona').hidden = i < 0;
-    $('conferma').textContent = i >= 0 ? 'Salva' : 'Aggiungi';
-    $('titolo').value = l.titolo; $('zona').value = l.zona || '';
-    [].forEach.call(document.querySelectorAll('input[name=stile]'), function (r) { r.checked = r.value === l.stile; });
-    $('elimina').hidden = i < 0; $('elimina').textContent = 'Elimina'; $('elimina').classList.remove('conf');
-    $('ordine').hidden = i < 0; aggiornaPosizione();
+  // per una foto nuova basta il titolo; modificando un lavoro del Portfolio si può cambiare anche lo stile
+  function apriScheda(sez, x) {
+    schSez = sez; schX = x; fotoScelta = null; confermaElimina = false;
+    var nuovo = !x || (sel && sel.nuovo && sel.x === x);
+    $('scheda-t').textContent = (nuovo ? (sez.stile ? 'Nuovo lavoro · ' : 'Nuova foto · ') : 'Modifica · ') + sez.nome;
+    $('stili').hidden = !x || nuovo || !sez.stile;
+    $('conferma').textContent = x ? 'Salva' : 'Aggiungi';
+    $('titolo').value = x ? x.titolo : '';
+    [].forEach.call(document.querySelectorAll('input[name=stile]'), function (r) { r.checked = !!x && r.value === x.stile; });
+    $('elimina').hidden = !x; $('elimina').textContent = 'Elimina'; $('elimina').classList.remove('conf');
     $('err-scheda').textContent = '';
     var im = $('anteprima');
-    if (l.foto) { riserva(im, l.foto); im.src = sorgente(l.foto); im.alt = 'Foto del lavoro'; } else { im.removeAttribute('src'); im.alt = ''; }
+    if (x) { riserva(im, x.foto); im.src = sorgente(x.foto); im.alt = 'Foto attuale'; } else { im.removeAttribute('src'); im.alt = ''; }
     if (!scheda.open) scheda.showModal();
     $('titolo').focus();
   }
-  function aggiornaPosizione() {
-    if (indice < 0) return;
-    var pos = indiciStile(lavori[indice].stile), k = pos.indexOf(indice);
-    $('pos').textContent = 'Posto ' + (k + 1) + ' di ' + pos.length + ' in ' + NOME[lavori[indice].stile];
-    $('su').disabled = k === 0; $('giu').disabled = k === pos.length - 1;
-  }
-  function sposta(d) {
-    var j = spostaInStile(indice, d); if (j === indice) return; indice = j;
-    aggiornaPosizione(); disegna(); salvaPresto('Ordine dei lavori cambiato');
-  }
-  $('su').onclick = function () { sposta(-1); };
-  $('giu').onclick = function () { sposta(1); };
   $('annulla').onclick = function () { scheda.close(); };
   $('elimina').onclick = function () {
     if (!confermaElimina) { confermaElimina = true; this.textContent = 'Sì, elimina'; this.classList.add('conf'); return; }
-    var via = lavori.splice(indice, 1)[0]; scheda.close(); disegna(); salva('Eliminato «' + via.titolo + '»');
+    scheda.close();
+    if (sel && sel.nuovo && sel.x === schX) { annullaScelta(); return; } // mai salvata: basta toglierla
+    var l = elenco(schSez), i = l.indexOf(schX); if (i < 0) return;
+    if (sel && sel.x === schX) { sel = null; $('scelta').hidden = true; }
+    l.splice(i, 1); disegna(); salva('Eliminato «' + schX.titolo + '» (' + schSez.nome + ')');
   };
   $('f-lavoro').onsubmit = function (e) {
     e.preventDefault();
-    var titolo = $('titolo').value.trim(), zona = indice < 0 ? '' : $('zona').value.trim(), r = document.querySelector('input[name=stile]:checked');
-    var err = indice < 0 && !fotoScelta ? 'Scegli una foto' : !titolo ? 'Scrivi un titolo' : !r ? 'Scegli lo stile' : '';
+    var titolo = $('titolo').value.trim(), r = document.querySelector('input[name=stile]:checked');
+    var err = !schX && !fotoScelta ? 'Scegli una foto' : !titolo ? 'Scrivi un titolo' : '';
     if (err) { $('err-scheda').textContent = err; if (!titolo && fotoScelta) $('titolo').focus(); return; }
-    var nuove = null, l = indice >= 0 ? lavori[indice] : {};
+    var nuove = null, id = null;
     if (fotoScelta) {
-      var id = 'nuova:' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-      anteprimeLocali[id] = fotoScelta.anteprima; nuove = {}; nuove[id] = fotoScelta.b64; l.foto = id;
+      id = 'nuova:' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      anteprimeLocali[id] = fotoScelta.anteprima; nuove = {}; nuove[id] = fotoScelta.b64;
     }
-    l.titolo = titolo; l.zona = zona; l.stile = r.value;
-    if (indice < 0 && !nuovoInCima) { // dal Portfolio: va in fondo e il cliente sceglie dove metterlo
-      lavori.push(l); scheda.close();
-      iniziaPosiziona(l, nuove); return;
+    scheda.close();
+    if (!schX) { // foto nuova: in fondo alla sezione, già selezionata per scegliere il posto
+      var x = { foto: id, titolo: titolo }, l = elenco(schSez);
+      if (schSez.stile) { x.stile = schSez.stile; x.zona = ''; }
+      sel = { sez: schSez, x: x, nuovo: true, nuove: nuove, prima: l.slice() };
+      l.push(x); mostraScelta('center'); return;
     }
-    if (indice < 0) lavori.unshift(l);
-    scheda.close(); disegna();
-    salva((indice < 0 ? 'Aggiunto «' : 'Modificato «') + titolo + '»', nuove);
+    var x2 = schX;
+    if (id) x2.foto = id;
+    x2.titolo = titolo;
+    if (sel && sel.nuovo && sel.x === x2) { // ancora da salvare: si aggiorna e si continua a posizionarla
+      if (nuove) sel.nuove = nuove;
+      disegna(); barraScelta(); return;
+    }
+    if (schSez.stile && r) x2.stile = r.value;
+    if (sel) { sel = null; $('scelta').hidden = true; }
+    disegna();
+    salva('Modificato «' + titolo + '» (' + schSez.nome + ')', nuove);
   };
-
-  /* ---------- posizionare il lavoro appena aggiunto ---------- */
-  var posiziona = null; // { l: lavoro nuovo, nuove: foto da inviare }
-  function iniziaPosiziona(l, nuove) {
-    posiziona = { l: l, nuove: nuove };
-    document.body.classList.add('posizionando'); $('posiziona').hidden = false;
-    disegna(); barraPosiziona();
-    var c = document.querySelector('#portfolio-stili .card.nuovo');
-    if (c) c.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
-  }
-  function barraPosiziona() {
-    var pos = indiciStile(posiziona.l.stile), k = pos.indexOf(lavori.indexOf(posiziona.l));
-    $('pos-t').textContent = '«' + posiziona.l.titolo + '» è al posto ' + (k + 1) + ' di ' + pos.length + ' in ' + NOME[posiziona.l.stile] + (k === pos.length - 1 ? ' (in fondo)' : '');
-    $('pos-prima').disabled = k === 0; $('pos-dopo').disabled = k === pos.length - 1;
-  }
-  function spostaNuovo(d) {
-    spostaInStile(lavori.indexOf(posiziona.l), d); disegna(); barraPosiziona();
-    var c = document.querySelector('#portfolio-stili .card.nuovo'); if (c) c.scrollIntoView({ block: 'nearest' });
-  }
-  function finePosiziona() { posiziona = null; document.body.classList.remove('posizionando'); $('posiziona').hidden = true; disegna(); }
-  function confermaPosizione() {
-    if (!posiziona) return;
-    var p = posiziona, n = indiciStile(p.l.stile).indexOf(lavori.indexOf(p.l)) + 1; finePosiziona();
-    salva('Aggiunto «' + p.l.titolo + '» (' + NOME[p.l.stile] + ', posto ' + n + ')', p.nuove);
-  }
-  $('pos-prima').onclick = function () { spostaNuovo(-1); };
-  $('pos-dopo').onclick = function () { spostaNuovo(1); };
-  $('pos-ok').onclick = confermaPosizione;
-  $('pos-annulla').onclick = function () {
-    var i = lavori.indexOf(posiziona.l); if (i >= 0) lavori.splice(i, 1);
-    finePosiziona();
-  };
-  window.addEventListener('beforeunload', function (e) { if (posiziona) { e.preventDefault(); e.returnValue = ''; } });
 
   /* ---------- immagini delle pagine ---------- */
   var dimg = $('d-img'), immAperta = null, fotoImm = null;

@@ -1,7 +1,7 @@
 /* Rain Ink Tattoo — home
    Prima schermata in profondità (la scritta al neon e il tatuatore si spostano col mouse
-   e scorrendo) e ruota 3D dei lavori, uno per stile, con l'immagine a tutto schermo.
-   Le facce della ruota le scrive scripts/genera_lavori.py da data/lavori.json. */
+   e scorrendo) e ruota 3D dei lavori scelti dal cliente, con l'immagine a tutto schermo.
+   Le facce della ruota le scrive scripts/genera_lavori.py da data/ruota.json. */
 (function () {
 'use strict';
 var still = matchMedia('(prefers-reduced-motion: reduce)').matches,
@@ -18,7 +18,7 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
       angle = 0, target = 0, idx = -1, R = 0, dragging = false, sx = 0, sa = 0, moved = 0, hover = false, seen = false, last = Date.now();
   var dots = faces.map(function (f, k) {
     var d = document.createElement('button'); d.type = 'button';
-    d.setAttribute('aria-label', f.dataset.name + ': ' + f.dataset.title);
+    d.setAttribute('aria-label', f.dataset.name + (f.dataset.title ? ': ' + f.dataset.title : ''));
     d.addEventListener('click', function () { var cur = Math.round(-target / STEP), off = ((k - cur) % N + N) % N; if (off > N / 2) off -= N; step(off); });
     dotsBox.appendChild(d); return d;
   });
@@ -32,7 +32,7 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
     faces.forEach(function (f, k) { f.classList.toggle('front', k === i); });
     name.classList.add('swap');
     setTimeout(function () {
-      name.querySelector('small').textContent = pad(i + 1) + ' / ' + pad(N) + ' · ' + faces[i].dataset.title;
+      name.querySelector('small').textContent = pad(i + 1) + ' / ' + pad(N) + (faces[i].dataset.title ? ' · ' + faces[i].dataset.title : '');
       name.querySelector('b').textContent = faces[i].dataset.name;
       name.classList.remove('swap');
     }, still ? 0 : 180);

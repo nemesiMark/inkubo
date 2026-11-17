@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Genera i lavori di portfolio.html, la ruota della home (index.html) e le altre immagini
-delle pagine (data/immagini.json: ogni <img data-slot="…"> prende foto e testo alternativo)
-partendo da data/lavori.json, il file che il cliente modifica dall'area riservata.
-Nella home scrive le facce della ruota 3D (un lavoro per stile).
+"""Genera i lavori di portfolio.html (da data/lavori.json), la ruota 3D della home in index.html
+(da data/ruota.json, un elenco a sé: cambiare una foto del portfolio non tocca la home) e le
+altre immagini delle pagine (data/immagini.json: ogni <img data-slot="…"> prende foto e testo
+alternativo). Sono i file che il cliente modifica dall'area riservata.
 
 Uso:  python3 scripts/genera_lavori.py           (scrive i file)
       python3 scripts/genera_lavori.py --check   (esce con errore se i file non sono aggiornati)
@@ -12,7 +12,7 @@ Tocca solo il testo fra i segnaposto <!-- lavori:inizio --> e <!-- lavori:fine -
 import html, json, os, re, sys
 
 RADICE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STILI = [  # ordine dei filtri e della ruota in home; uguale ad area-riservata.html
+STILI = [  # ordine dei filtri del portfolio; uguale ad area-riservata.html
     ("blackwork", "Blackwork"), ("dotwork", "Dotwork"), ("fine-line", "Fine line"),
     ("tradizionale", "Tradizionale"), ("giapponese", "Giapponese"), ("realistico", "Realistico"),
 ]
@@ -51,13 +51,25 @@ def portfolio(lavori):
             f'<figcaption><b>{txt(l["titolo"])}</b><span>{txt(sotto)}</span></figcaption></figure>')
     return righe
 
-def home(lavori):
-    # ruota 3D della home: per ogni stile il primo lavoro dell'elenco (quello più in alto nel pannello)
-    scelti = [next(l for l in lavori if l["stile"] == s) for s, _ in STILI if any(l["stile"] == s for l in lavori)]
+def carica_ruota():
+    # ruota 3D della home: data/ruota.json, nell'ordine scelto dal cliente (solo foto e titolo)
+    with open(os.path.join(RADICE, "data", "ruota.json"), encoding="utf-8") as f:
+        dati = json.load(f)
+    ruota = []
+    for n, r in enumerate(dati, 1):
+        foto = str(r.get("foto") or "").strip().lstrip("/")
+        titolo = str(r.get("titolo") or "").strip()
+        if not foto or not titolo or not os.path.exists(os.path.join(RADICE, foto)):
+            print(f"avviso: foto n. {n} della ruota saltata (manca la foto o il titolo)", file=sys.stderr)
+            continue
+        ruota.append(dict(foto=foto, titolo=titolo))
+    return ruota
+
+def home(ruota):
     return [
-        f'                        <figure class="face" data-name="{att(l["nome"])}" data-title="{att(l["titolo"])}">'
-        f'<img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" draggable="false"></figure>'
-        for l in scelti]
+        f'                        <figure class="face" data-name="{att(r["titolo"])}" data-title="">'
+        f'<img src="{att(r["foto"])}" alt="{att(r["titolo"] + ", tatuaggio di Rain Ink")}" width="800" height="1000" draggable="false"></figure>'
+        for r in ruota]
 
 def immagini(controlla):
     # ogni voce di data/immagini.json aggiorna src e alt dell'<img data-slot="id"> nella sua pagina
@@ -120,6 +132,6 @@ def sostituisci(nome, righe, controlla):
 if __name__ == "__main__":
     controlla = "--check" in sys.argv
     lavori = carica()
-    ok = sostituisci("portfolio.html", portfolio(lavori), controlla) & sostituisci("index.html", home(lavori), controlla)
+    ok = sostituisci("portfolio.html", portfolio(lavori), controlla) & sostituisci("index.html", home(carica_ruota()), controlla)
     ok = immagini(controlla) & ok
     sys.exit(0 if ok else 1)
