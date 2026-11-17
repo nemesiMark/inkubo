@@ -628,3 +628,6 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    studio); i video vanno da soli in Video. Nell'area riservata la scheda
                    della foto ha la scelta del gruppo. Va RIPUBBLICATO il Worker (accetta
                    il campo «tipo»): con quello vecchio un salvataggio toglie i gruppi.
+                   Area riservata: il Portfolio è diviso negli stessi quattro gruppi del
+                   sito, ognuno con il suo + e il riordino dentro il gruppo; da «Modifica»
+                   una foto si può spostare in un altro gruppo.
