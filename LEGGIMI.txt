@@ -611,7 +611,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    voce «Video» nella guida. Il Worker va incollato di nuovo su
                    Cloudflare. style.css?v=44, script.js?v=21.
                    Prima schermata: scritta «Rain Ink» più bassa (scaleY .7, stessa
-                   larghezza); foto a colori, scontornata (images/lavori/hero-tatuatore.png,
-                   fatta col ritaglio automatico di macOS dalla foto «Concentrazione»):
-                   il volto e il busto del cliente sono tolti e i bordi sfumano nel nero.
-                   style.css?v=45.
+                   larghezza) davanti alla foto; foto studio-07 «Al lavoro» in bianco e nero a
+                   tutta larghezza (images/lavori/hero-studio.jpg, ritagliata a destra
+                   per togliere il cliente), sotto la scritta e sfumata in alto nel
+                   nero; niente più scontornatura. style.css?v=49.

@@ -367,11 +367,10 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
   0%, 100% { opacity: .5; } 7% { opacity: .18; } 8% { opacity: .5; } 9% { opacity: .12; } 11% { opacity: .5; }
   41% { opacity: .5; } 42% { opacity: .25; } 43% { opacity: .5; } 70% { opacity: .5; } 71% { opacity: .08; } 74% { opacity: .08; } 75% { opacity: .5; } 77% { opacity: .3; } 78% { opacity: .5; } }
 @keyframes flickerFar { 0%, 100% { opacity: .55; } 7% { opacity: .2; } 8% { opacity: .55; } 9% { opacity: .15; } 11% { opacity: .55; } 71% { opacity: .1; } 75% { opacity: .55; } }
-.hero .l-figure { place-items: end center; } /* la foto al centro */
-.l-figure img { height: 118svh; min-height: 730px; width: auto; max-width: none; transform: translateY(24svh); /* tatuatore scontornato, al centro sotto la scritta */
-  filter: drop-shadow(0 0 50px rgba(0, 0, 0, .9));
-  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 70%, transparent 96%); mask-image: linear-gradient(180deg, #000 0, #000 70%, transparent 96%); }
-.hero .shade { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0, 0, 0, .7) 100%), linear-gradient(180deg, transparent 70%, var(--bg) 100%); }
+.hero .l-figure { inset: 25svh -24px -24px; display: block; } /* foto dello studio a tutta larghezza, sotto la scritta */
+.l-figure img { width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 52% 18%; filter: grayscale(1) contrast(1.12) brightness(.8);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 24%); mask-image: linear-gradient(180deg, transparent 0, #000 24%); }
+.hero .shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 70%, var(--bg) 100%), radial-gradient(ellipse at 50% 60%, transparent 50%, rgba(0, 0, 0, .6) 100%); }
 
 /* HOME: ruota 3D dei lavori, uno per stile (le facce le scrive scripts/genera_lavori.py) */
 .wheel { --w: clamp(260px, 40vw, 540px); position: relative; height: calc(var(--w) * 1.25 + 60px); perspective: 1500px; perspective-origin: 50% 40%;
@@ -511,7 +510,6 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
   .style-row > .ph, .split > .ph { max-width: 460px; }
   .zones { grid-template-columns: 1fr; }
   .word { font-size: 34vw; white-space: normal; text-align: center; line-height: .82; }
-  .l-figure img { height: 78svh; min-height: 0; transform: translateY(18svh); }
   .wheel { --w: min(76vw, 380px); }
   .map { height: 440px; }
   .loc-list li { grid-template-columns: 1fr; gap: .3rem; }
