@@ -130,13 +130,17 @@ pagina, con le immagini nell'ordine in cui si vedono e una descrizione di dove s
 - Home: prima schermata, ruota dei lavori (il primo lavoro di ogni stile del Portfolio;
   toccandolo lo si modifica; il + in fondo aggiunge un lavoro in cima al Portfolio, così
   entra nella ruota), lo studio.
-- Portfolio: tutti i lavori in griglia; il riquadro tratteggiato con il + in fondo ne
-  aggiunge uno (foto, titolo, stile e zona). Il lavoro nuovo compare in fondo con il
-  bordo rosso che lampeggia e una barra in basso: lo si trascina dove si vuole (o si usano
-  «← Prima» / «Dopo →») e si tocca «Conferma posizione»; per lasciarlo in fondo basta
-  confermare subito. Si salva solo alla conferma («Annulla» lo toglie). Tocco su un
-  lavoro per modificarlo o eliminarlo, tenere premuto e trascinare per cambiare
-  l'ordine. Il primo di ogni stile ha «In home».
+- Portfolio: i lavori divisi per stile (Blackwork, Dotwork, Fine line, Tradizionale,
+  Giapponese, Realistico), come i filtri del sito. Il riquadro tratteggiato con il + in
+  fondo a uno stile aggiunge un lavoro in quello stile: basta la foto e il titolo. Il
+  lavoro nuovo compare in fondo allo stile con il bordo rosso che lampeggia e una barra
+  in basso: lo si trascina dove si vuole (o «← Prima» / «Dopo →») e si tocca «Conferma
+  posizione»; per lasciarlo in fondo basta confermare subito. Si salva solo alla
+  conferma («Annulla» lo toglie). Tocco su un lavoro per modificarlo (titolo, stile,
+  zona) o eliminarlo; tenere premuto e trascinare per cambiare l'ordine dentro lo stile.
+  L'elenco in data/lavori.json resta uno solo: riordinando uno stile i suoi lavori si
+  scambiano fra i posti che già occupano, gli altri stili non si muovono. Il primo di
+  ogni stile ha «In home».
 - Tatuaggi, Piercing, Studio: le immagini fisse della pagina; «Cambia foto» e il testo
   che dice cosa si vede (per Google e per chi non vede).
 Dopo ogni salvataggio compare la finestra verde «Salvataggio riuscito correttamente»
@@ -526,4 +530,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    correttamente», con la X per chiuderla.
                    Il lavoro aggiunto dal Portfolio lampeggia in rosso finché il
                    cliente non sceglie dove metterlo e tocca «Conferma posizione».
+                   Portfolio dell'area riservata diviso per stile, con un + per stile:
+                   per aggiungere basta foto e titolo (dalla ruota della Home si sceglie
+                   anche lo stile). Trascinamento più affidabile su telefono e computer.
                    Il Worker va incollato di nuovo su Cloudflare. style.css?v=42.

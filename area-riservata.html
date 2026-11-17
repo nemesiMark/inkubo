@@ -126,6 +126,12 @@ input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0
 .card .ph{aspect-ratio:4/5;background:var(--paper);overflow:hidden}
 .card img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .card .tx{padding:10px 12px 12px}
+.sez-stile{padding:18px 0 6px;border-top:1px solid var(--line)}
+.sez-stile:first-child{border-top:0}
+.sez-stile h2{font:700 19px/1.2 var(--head);margin-bottom:12px;display:flex;align-items:baseline;gap:8px}
+.sez-stile h2 small{font:500 14px Inter;color:var(--mute);font-variant-numeric:tabular-nums}
+.sez-stile .griglia{padding-bottom:12px}
+#portfolio-stili{padding-bottom:48px}
 .griglia.piccola{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;padding-bottom:0}
 .griglia.piccola .card{cursor:pointer}
 .card b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -135,12 +141,13 @@ input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0
 @media (hover:hover) and (pointer:fine){.card:hover{box-shadow:0 10px 30px -12px rgba(0,0,0,.3)}}
 .card.sortable-chosen{box-shadow:0 18px 40px -12px rgba(0,0,0,.45);transform:scale(1.03);cursor:grabbing}
 .card.sortable-ghost{opacity:.35}
+.sortable-drag{opacity:.95!important;box-shadow:0 24px 50px -12px rgba(0,0,0,.5);cursor:grabbing}
 /* lavoro appena aggiunto, da posizionare: bordo rosso che lampeggia */
 .card.nuovo{scroll-margin:140px 0 240px;border-color:var(--red);box-shadow:0 0 0 3px var(--red);animation:lampeggia 1.1s ease-in-out infinite}
 .card.nuovo .n{background:var(--red);color:#fff}
 @keyframes lampeggia{0%,100%{box-shadow:0 0 0 3px var(--red),0 0 0 0 rgba(196,55,42,.45)}50%{box-shadow:0 0 0 3px var(--red),0 0 0 12px rgba(196,55,42,0)}}
 @media (prefers-reduced-motion:reduce){.card.nuovo{box-shadow:0 0 0 3px var(--red)}}
-body.posizionando .griglia{padding-bottom:220px}
+body.posizionando #portfolio-stili{padding-bottom:220px}
 body.posizionando .card:not(.nuovo){cursor:default}
 body.posizionando .aggiungi{display:none}
 /* barra per posizionare il lavoro nuovo */
@@ -247,8 +254,8 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     <!-- PORTFOLIO -->
     <section class="pag" id="pag-portfolio.html" role="tabpanel" hidden>
       <div class="pag-head"><h1>Portfolio <small id="conta"></small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="portfolio.html">Vedi la pagina ↗</a></div>
-      <p class="aiuto">Tutti i lavori, nell'ordine in cui compaiono sul sito. Il riquadro <b>+</b> in fondo ne aggiunge uno, tocca un lavoro per modificarlo, tieni premuto e trascina per cambiare l'ordine. Il primo di ogni stile («In home») compare anche nella ruota della Home.</p>
-      <ul class="griglia" id="griglia"></ul>
+      <p class="aiuto">I lavori divisi per stile, come i filtri del Portfolio sul sito. Il riquadro <b>+</b> in fondo a uno stile aggiunge un lavoro in quello stile; tocca un lavoro per modificarlo; tieni premuto e trascina per cambiare l'ordine. Il primo di ogni stile («In home») compare anche nella ruota della Home.</p>
+      <div id="portfolio-stili"></div>
     </section>
 
     <!-- PAGINE CON IMMAGINI FISSE -->
@@ -270,7 +277,7 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   </div>
   <div class="posiziona" id="posiziona" role="region" aria-label="Posiziona il lavoro nuovo" hidden>
     <b id="pos-t"></b>
-    <p>Tieni premuta la foto rossa e trascinala dove vuoi, oppure usa le frecce. Se va bene così, conferma.</p>
+    <p>Trascina la foto rossa dove vuoi (su telefono tienila premuta un attimo prima di muoverla), oppure usa le frecce. Se va bene così, conferma.</p>
     <div class="riga">
       <button class="btn link" type="button" id="pos-annulla">Annulla</button>
       <button class="btn frecce" type="button" id="pos-prima" aria-label="Sposta prima">← Prima</button>
@@ -297,7 +304,7 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     <fieldset class="stili" id="stili">
       <legend>Stile</legend>
     </fieldset>
-    <div class="campo">
+    <div class="campo" id="campo-zona">
       <label for="zona">Zona del corpo <span class="facoltativo">(facoltativa)</span></label>
       <input type="text" id="zona" maxlength="60" placeholder="Es. Avambraccio">
     </div>
@@ -451,19 +458,19 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   }
   mostraPagina(tabAttiva);
 
-  function cartaLavoro(l, i, primi, conNumero) {
+  function cartaLavoro(l, i, primi, conNumero, numero) { // numero: posto dentro il suo stile
     var li = document.createElement('li'); li.className = 'card'; li.tabIndex = 0; li.dataset.i = i;
-    li.setAttribute('aria-label', (conNumero ? (i + 1) + '. ' : '') + l.titolo + ', ' + NOME[l.stile] + '. Premi Invio per modificare');
+    li.setAttribute('aria-label', (conNumero ? numero + '. ' : '') + l.titolo + ', ' + NOME[l.stile] + '. Premi Invio per modificare');
     var ph = document.createElement('div'); ph.className = 'ph';
     var im = document.createElement('img'); im.alt = ''; im.loading = 'lazy'; riserva(im, l.foto); im.src = sorgente(l.foto);
     ph.appendChild(im); li.appendChild(ph);
-    if (conNumero) { var n = document.createElement('span'); n.className = 'n'; n.textContent = i + 1; li.appendChild(n); }
+    if (conNumero) { var n = document.createElement('span'); n.className = 'n'; n.textContent = numero; li.appendChild(n); }
     var tx = document.createElement('div'); tx.className = 'tx';
     var b = document.createElement('b'); b.textContent = l.titolo;
     var s = document.createElement('span'); s.textContent = NOME[l.stile] + (l.zona ? ' · ' + l.zona : '');
     tx.appendChild(b); tx.appendChild(s); li.appendChild(tx);
     if (conNumero && primi[i]) { var h = document.createElement('span'); h.className = 'home'; h.textContent = 'In home'; li.appendChild(h); }
-    if (posiziona && l === posiziona.l) { li.classList.add('nuovo'); li.setAttribute('aria-label', 'Lavoro nuovo «' + l.titolo + '», posizione ' + (i + 1) + ' di ' + lavori.length); }
+    if (posiziona && l === posiziona.l) { li.classList.add('nuovo'); li.setAttribute('aria-label', 'Lavoro nuovo «' + l.titolo + '», posto ' + numero); }
     li.onclick = function () { if (!trascinato && !posiziona) apriScheda(+li.dataset.i); };
     li.onkeydown = function (e) { if (!posiziona && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); apriScheda(+li.dataset.i); } };
     return li;
@@ -485,12 +492,12 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     return li;
   }
   var PIU = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
-  function cartaAggiungi(testo, inCima) {
+  function cartaAggiungi(testo, inCima, stile) {
     var li = document.createElement('li'); li.className = 'aggiungi';
     var b = document.createElement('button'); b.type = 'button';
     b.innerHTML = '<span class="croce">' + PIU + '</span>';
     var t = document.createElement('span'); t.textContent = testo; b.appendChild(t);
-    b.onclick = function () { nuovoLavoro(inCima); };
+    b.onclick = function () { nuovoLavoro(inCima, stile); };
     li.appendChild(b); return li;
   }
   function disegnaImmagini() {
@@ -502,38 +509,59 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     });
     var r = $('ruota'), primi = primiPerStile(); r.innerHTML = '';
     var perStile = {}; Object.keys(primi).forEach(function (i) { perStile[lavori[i].stile] = +i; });
-    ORDINE_RUOTA.forEach(function (st) { if (perStile[st] != null) r.appendChild(cartaLavoro(lavori[perStile[st]], perStile[st], primi, false)); });
-    r.appendChild(cartaAggiungi('Aggiungi un lavoro alla ruota', true));
+    ORDINE_RUOTA.forEach(function (st) { if (perStile[st] != null) r.appendChild(cartaLavoro(lavori[perStile[st]], perStile[st], primi, false, 1)); });
+    r.appendChild(cartaAggiungi('Aggiungi un lavoro alla ruota', true, null));
   }
 
+  // il Portfolio è diviso per stile; l'ordine di data/lavori.json resta uno solo: riordinando uno
+  // stile, i suoi lavori si scambiano fra i posti che già occupano nell'elenco
+  function indiciStile(st) { var r = []; lavori.forEach(function (l, i) { if (l.stile === st) r.push(i); }); return r; }
+  var ordinatori = [], trascinato = false;
   function disegna() {
     disegnaImmagini();
-    var g = $('griglia'), primi = primiPerStile();
-    g.innerHTML = '';
+    var box = $('portfolio-stili'), primi = primiPerStile();
+    ordinatori.forEach(function (o) { o.destroy(); }); ordinatori = [];
+    box.innerHTML = '';
     $('conta').textContent = lavori.length ? '(' + lavori.length + ')' : '';
-    lavori.forEach(function (l, i) {
-      var li = cartaLavoro(l, i, primi, true);
-      g.appendChild(li);
+    ORDINE_RUOTA.forEach(function (st) {
+      var idx = indiciStile(st);
+      var sez = document.createElement('section'); sez.className = 'sez-stile';
+      var h = document.createElement('h2'); h.textContent = NOME[st] + ' ';
+      var c = document.createElement('small'); c.textContent = idx.length === 1 ? '1 lavoro' : idx.length + ' lavori'; h.appendChild(c);
+      var ul = document.createElement('ul'); ul.className = 'griglia'; ul.dataset.stile = st;
+      idx.forEach(function (i, k) { ul.appendChild(cartaLavoro(lavori[i], i, primi, true, k + 1)); });
+      ul.appendChild(cartaAggiungi('Aggiungi un lavoro ' + NOME[st], false, st));
+      sez.appendChild(h); sez.appendChild(ul); box.appendChild(sez);
+      ordinatori.push(new Sortable(ul, {
+        // trascinamento gestito da Sortable con il puntatore (più affidabile su telefono e computer);
+        // su telefono serve una breve pressione, così si può ancora scorrere la pagina
+        forceFallback: true, fallbackTolerance: 4, delay: 200, delayOnTouchOnly: true, touchStartThreshold: 6,
+        animation: 180, easing: 'cubic-bezier(.23,1,.32,1)', scroll: true, bubbleScroll: true,
+        draggable: '.card', filter: '.aggiungi', preventOnFilter: false,
+        ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', fallbackClass: 'sortable-drag',
+        onStart: function () { trascinato = true; },
+        onMove: function (e) { return !e.related.classList.contains('aggiungi'); }, // il + resta in fondo
+        onEnd: function (e) {
+          setTimeout(function () { trascinato = false; }, 50);
+          if (e.oldDraggableIndex === e.newDraggableIndex) return;
+          var pos = indiciStile(st), elenco = pos.map(function (i) { return lavori[i]; });
+          var x = elenco.splice(e.oldDraggableIndex, 1)[0]; elenco.splice(e.newDraggableIndex, 0, x);
+          pos.forEach(function (i, k) { lavori[i] = elenco[k]; });
+          setTimeout(function () { // si ridisegna dopo che Sortable ha finito
+            disegna();
+            if (posiziona) { barraPosiziona(); return; } // si salva alla conferma
+            salvaPresto('Ordine dei lavori ' + NOME[st] + ' cambiato');
+          }, 0);
+        }
+      }));
     });
-    g.appendChild(cartaAggiungi(lavori.length ? 'Aggiungi un lavoro' : 'Aggiungi il primo lavoro', false));
   }
-
-  // riordino: tieni premuto e trascina (su telefono serve una breve pressione, così si può ancora scorrere)
-  var trascinato = false;
-  new Sortable($('griglia'), {
-    animation: 180, easing: 'cubic-bezier(.23,1,.32,1)', delay: 220, delayOnTouchOnly: true, touchStartThreshold: 6,
-    draggable: '.card', filter: '.aggiungi', preventOnFilter: false, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
-    onStart: function () { trascinato = true; },
-    onMove: function (e) { return !e.related.classList.contains('aggiungi'); }, // il + resta in fondo
-    onEnd: function (e) {
-      setTimeout(function () { trascinato = false; }, 50);
-      if (e.oldDraggableIndex === e.newDraggableIndex) return;
-      var x = lavori.splice(e.oldDraggableIndex, 1)[0]; lavori.splice(e.newDraggableIndex, 0, x);
-      disegna();
-      if (posiziona) { barraPosiziona(); return; } // si salva alla conferma
-      salvaPresto('Ordine dei lavori cambiato');
-    }
-  });
+  // sposta il lavoro all'indice i di un posto dentro il suo stile; restituisce il nuovo indice
+  function spostaInStile(i, d) {
+    var pos = indiciStile(lavori[i].stile), k = pos.indexOf(i), j = pos[k + d];
+    if (j == null) return i;
+    var t = lavori[i]; lavori[i] = lavori[j]; lavori[j] = t; return j;
+  }
 
   /* ---------- salvataggio ---------- */
   var timer = null, inCorso = false, inAttesa = null, fotoInAttesa = {};
@@ -611,8 +639,8 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     l.appendChild(r); l.appendChild(sp); $('stili').appendChild(l);
   });
 
-  var nuovoInCima = false; // dalla ruota della home: in cima, così entra nella ruota; dal Portfolio: in fondo
-  function nuovoLavoro(inCima) { nuovoInCima = inCima; indice = -1; $('file').value = ''; $('file').click(); }
+  var nuovoInCima = false, nuovoStile = null; // dalla ruota della home: in cima, così entra nella ruota; da uno stile del Portfolio: in fondo a quello stile
+  function nuovoLavoro(inCima, stile) { nuovoInCima = inCima; nuovoStile = stile || null; indice = -1; $('file').value = ''; $('file').click(); }
   $('cambia').onclick = function () { $('file').value = ''; $('file').click(); };
   $('file').onchange = function () {
     var f = this.files && this.files[0]; if (!f) return;
@@ -627,8 +655,11 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
 
   function apriScheda(i) {
     indice = i; fotoScelta = null; confermaElimina = false;
-    var l = i >= 0 ? lavori[i] : { titolo: '', stile: '', zona: '', foto: '' };
-    $('scheda-t').textContent = i >= 0 ? 'Modifica lavoro' : 'Nuovo lavoro';
+    var l = i >= 0 ? lavori[i] : { titolo: '', stile: nuovoStile || '', zona: '', foto: '' };
+    $('scheda-t').textContent = i >= 0 ? 'Modifica lavoro' : 'Nuovo lavoro' + (nuovoStile ? ' · ' + NOME[nuovoStile] : '');
+    // lavoro nuovo: basta il titolo (lo stile è quello della sezione); dalla ruota si sceglie lo stile
+    $('stili').hidden = i < 0 && !!nuovoStile;
+    $('campo-zona').hidden = i < 0;
     $('conferma').textContent = i >= 0 ? 'Salva' : 'Aggiungi';
     $('titolo').value = l.titolo; $('zona').value = l.zona || '';
     [].forEach.call(document.querySelectorAll('input[name=stile]'), function (r) { r.checked = r.value === l.stile; });
@@ -642,12 +673,12 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   }
   function aggiornaPosizione() {
     if (indice < 0) return;
-    $('pos').textContent = 'Posizione ' + (indice + 1) + ' di ' + lavori.length;
-    $('su').disabled = indice === 0; $('giu').disabled = indice === lavori.length - 1;
+    var pos = indiciStile(lavori[indice].stile), k = pos.indexOf(indice);
+    $('pos').textContent = 'Posto ' + (k + 1) + ' di ' + pos.length + ' in ' + NOME[lavori[indice].stile];
+    $('su').disabled = k === 0; $('giu').disabled = k === pos.length - 1;
   }
   function sposta(d) {
-    var j = indice + d; if (j < 0 || j >= lavori.length) return;
-    var x = lavori.splice(indice, 1)[0]; lavori.splice(j, 0, x); indice = j;
+    var j = spostaInStile(indice, d); if (j === indice) return; indice = j;
     aggiornaPosizione(); disegna(); salvaPresto('Ordine dei lavori cambiato');
   }
   $('su').onclick = function () { sposta(-1); };
@@ -659,7 +690,7 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   };
   $('f-lavoro').onsubmit = function (e) {
     e.preventDefault();
-    var titolo = $('titolo').value.trim(), zona = $('zona').value.trim(), r = document.querySelector('input[name=stile]:checked');
+    var titolo = $('titolo').value.trim(), zona = indice < 0 ? '' : $('zona').value.trim(), r = document.querySelector('input[name=stile]:checked');
     var err = indice < 0 && !fotoScelta ? 'Scegli una foto' : !titolo ? 'Scrivi un titolo' : !r ? 'Scegli lo stile' : '';
     if (err) { $('err-scheda').textContent = err; if (!titolo && fotoScelta) $('titolo').focus(); return; }
     var nuove = null, l = indice >= 0 ? lavori[indice] : {};
@@ -683,24 +714,23 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
     posiziona = { l: l, nuove: nuove };
     document.body.classList.add('posizionando'); $('posiziona').hidden = false;
     disegna(); barraPosiziona();
-    var c = document.querySelector('#griglia .card.nuovo');
+    var c = document.querySelector('#portfolio-stili .card.nuovo');
     if (c) c.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
   }
   function barraPosiziona() {
-    var i = lavori.indexOf(posiziona.l);
-    $('pos-t').textContent = '«' + posiziona.l.titolo + '» è al posto ' + (i + 1) + ' di ' + lavori.length + (i === lavori.length - 1 ? ' (in fondo)' : '');
-    $('pos-prima').disabled = i === 0; $('pos-dopo').disabled = i === lavori.length - 1;
+    var pos = indiciStile(posiziona.l.stile), k = pos.indexOf(lavori.indexOf(posiziona.l));
+    $('pos-t').textContent = '«' + posiziona.l.titolo + '» è al posto ' + (k + 1) + ' di ' + pos.length + ' in ' + NOME[posiziona.l.stile] + (k === pos.length - 1 ? ' (in fondo)' : '');
+    $('pos-prima').disabled = k === 0; $('pos-dopo').disabled = k === pos.length - 1;
   }
   function spostaNuovo(d) {
-    var i = lavori.indexOf(posiziona.l), j = i + d; if (j < 0 || j >= lavori.length) return;
-    lavori.splice(i, 1); lavori.splice(j, 0, posiziona.l); disegna(); barraPosiziona();
-    var c = document.querySelector('#griglia .card.nuovo'); if (c) c.scrollIntoView({ block: 'nearest' });
+    spostaInStile(lavori.indexOf(posiziona.l), d); disegna(); barraPosiziona();
+    var c = document.querySelector('#portfolio-stili .card.nuovo'); if (c) c.scrollIntoView({ block: 'nearest' });
   }
   function finePosiziona() { posiziona = null; document.body.classList.remove('posizionando'); $('posiziona').hidden = true; disegna(); }
   function confermaPosizione() {
     if (!posiziona) return;
-    var p = posiziona, n = lavori.indexOf(p.l) + 1; finePosiziona();
-    salva('Aggiunto «' + p.l.titolo + '» al posto ' + n, p.nuove);
+    var p = posiziona, n = indiciStile(p.l.stile).indexOf(lavori.indexOf(p.l)) + 1; finePosiziona();
+    salva('Aggiunto «' + p.l.titolo + '» (' + NOME[p.l.stile] + ', posto ' + n + ')', p.nuove);
   }
   $('pos-prima').onclick = function () { spostaNuovo(-1); };
   $('pos-dopo').onclick = function () { spostaNuovo(1); };
