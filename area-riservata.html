@@ -624,12 +624,11 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   }
   $('sv-ok').onclick = function () { dsv.close(); };
   dsv.addEventListener('cancel', function (e) { if (svAttivo) e.preventDefault(); }); // durante il salvataggio non si chiude
-  function salvaPresto(msg) { clearTimeout(timer); stato('lav', 'Modifiche da salvare…'); timer = setTimeout(function () { salva(msg); }, 1200); }
   function salva(msg, nuove) {
     clearTimeout(timer);
     if (nuove) Object.assign(fotoInAttesa, nuove);
     if (inCorso) { inAttesa = msg; return Promise.resolve(); }
-    inCorso = true; stato('lav', 'Salvataggio…'); inizioSalva();
+    inCorso = true; inizioSalva(); // l'avanzamento si vede solo nella finestra di salvataggio
     var foto = fotoInAttesa; fotoInAttesa = {};
     var inviati = lavori.map(function (l) { return l.foto; }), inviatiR = ruota.map(function (r) { return r.foto; });
     var imm = immagini.map(function (v) { return { id: v.id, foto: v.foto, alt: v.alt }; });
@@ -649,11 +648,9 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
         }
       });
       disegna();
-      stato('ok', 'Salvato');
       return true;
     }).catch(function (err) {
       Object.assign(fotoInAttesa, foto);
-      stato('err', 'Non salvato: ' + err.message, function () { salva(msg); });
       return err;
     }).then(function (esito) {
       inCorso = false;
