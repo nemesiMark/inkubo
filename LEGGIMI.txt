@@ -28,7 +28,9 @@ STRUTTURA
 Dalla versione 6.0 tutto il sito è scuro, con i colori e i componenti della home scura
 (vedi ASPETTO).
 index.html               Home: prima schermata con la scritta «Rain Ink» al neon in
-                         profondità e il tatuatore in primo piano, ruota 3D dei lavori (scelti
+                         profondità subito sotto la navbar e il tatuatore in primo piano
+                         al centro (nessun testo né pulsante sopra; il titolo h1 resta solo
+                         per Google e i lettori di schermo), ruota 3D dei lavori (scelti
                          dall'area riservata), Lo studio, Dove siamo (con la mappa animata),
                          riquadro «Hai già un'idea?»
 tatuaggi.html            I sei stili (blackwork, fine line, dotwork, tradizionale,
@@ -579,3 +581,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    eliminare e cambiare le foto fisse, con schermate da computer in
                    images/guida/.
                    Su telefono «Cambia password» diventa «Password».
+                   Home, prima schermata: tolti il testo «Tatuaggi su misura a Montelupone»
+                   e il pulsante «Prenota una consulenza» (il titolo resta nascosto per
+                   Google), scritta «Rain Ink» spostata in alto subito sotto la navbar,
+                   foto del tatuatore al centro e più in basso, con la testa sotto la
+                   scritta. style.css?v=43.
