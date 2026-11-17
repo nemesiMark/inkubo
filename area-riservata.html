@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Area riservata – Rain Ink Tattoo</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#fbfbfd">
+<!-- indirizzo del Worker Cloudflare (vedi LEGGIMI, AREA RISERVATA) e repository del sito -->
+<meta name="ar-api" content="INSERIRE-INDIRIZZO-WORKER">
+<meta name="ar-repo" content="nemesiMark/inkubo">
+<meta name="ar-branch" content="main">
+<link rel="icon" type="image/svg+xml" href="images/comune/favicon.svg">
+<link rel="apple-touch-icon" href="images/comune/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Inter+Tight:wght@600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbfbfd; --card:#fff; --ink:#1d1d1f; --mute:#6e6e73; --line:rgba(0,0,0,.1); --paper:#efe6d3;
+  --red:#c4372a; --red-d:#a82c21; --ok:#2e7d4f;
+  --ease:cubic-bezier(.23,1,.32,1);
+  --head:"Inter Tight",Inter,-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+body{font:400 16px/1.5 Inter,-apple-system,BlinkMacSystemFont,sans-serif;color:var(--ink);background:var(--bg);min-height:100svh;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+[hidden]{display:none!important}
+.wrap{width:min(1100px,100% - 32px);margin-inline:auto}
+
+/* barra in alto */
+.top{position:sticky;top:0;z-index:10;background:rgba(251,251,253,.86);backdrop-filter:saturate(1.6) blur(16px);-webkit-backdrop-filter:saturate(1.6) blur(16px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:60px}
+.top img{height:30px;width:auto}
+.top .t{font-weight:500;color:var(--mute);font-size:14px;padding-left:12px;border-left:1px solid var(--line)}
+.top .esci{margin-left:auto}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:500;font-size:15px;
+  transition:transform 140ms var(--ease),background-color 150ms ease,border-color 150ms ease}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--red);border-color:var(--red);color:#fff}
+.btn.pri:disabled{opacity:.5;cursor:default}
+.btn.del{color:var(--red);border-color:rgba(196,55,42,.35)}
+.btn.del.conf{background:var(--red);color:#fff}
+.btn.link{border:0;background:none;padding:0 6px;color:var(--mute)}
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{border-color:rgba(0,0,0,.25)}
+  .btn.pri:hover{background:var(--red-d);border-color:var(--red-d)}
+  .btn.link:hover{color:var(--ink)}
+}
+
+/* accesso */
+.login{min-height:calc(100svh - 61px);display:grid;place-items:center;padding:32px 16px}
+.login form{width:min(380px,100%);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px 24px;box-shadow:0 20px 50px -24px rgba(0,0,0,.25)}
+.login h1{font:700 26px/1.15 var(--head);letter-spacing:-.01em;margin-bottom:6px}
+.login p{color:var(--mute);font-size:15px;margin-bottom:22px}
+label{display:block;font-size:14px;font-weight:500;margin-bottom:6px}
+.campo{position:relative;margin-bottom:18px}
+input[type=text],input[type=password]{width:100%;min-height:48px;padding:0 14px;border:1px solid rgba(0,0,0,.18);border-radius:12px;background:#fff;font-size:16px}
+input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0,.08)}
+.campo .mostra{position:absolute;right:6px;bottom:6px;min-height:36px;padding:0 10px;border:0;background:none;color:var(--mute);font-size:14px}
+.errore{color:var(--red);font-size:14px;min-height:20px;margin:-6px 0 12px}
+.login .btn.pri{width:100%;min-height:50px;font-size:16px}
+
+/* elenco */
+.head{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:28px 0 6px}
+.head h1{font:700 clamp(26px,4vw,34px)/1.1 var(--head);letter-spacing:-.01em}
+.head h1 small{font:500 15px Inter;color:var(--mute);margin-left:8px;font-variant-numeric:tabular-nums}
+.aiuto{color:var(--mute);font-size:14px;padding-bottom:18px}
+.stato{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--mute);min-height:24px}
+.stato::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.7}
+.stato.ok{color:var(--ok)} .stato.err{color:var(--red)} .stato.lav{color:var(--mute)}
+.stato.lav::before{animation:pulsa 1s ease-in-out infinite}
+@keyframes pulsa{50%{opacity:.2}}
+.stato:empty::before{display:none}
+.stato button{border:0;background:none;color:inherit;text-decoration:underline;font-weight:500}
+
+.griglia{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;list-style:none;padding-bottom:120px}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:grab;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+  transition:box-shadow 200ms var(--ease),transform 200ms var(--ease)}
+.card .ph{aspect-ratio:4/5;background:var(--paper);overflow:hidden}
+.card img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.card .tx{padding:10px 12px 12px}
+.card b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card span{display:block;color:var(--mute);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .n{position:absolute;top:8px;left:8px;min-width:26px;height:26px;padding:0 7px;border-radius:13px;background:rgba(255,255,255,.92);font:600 13px/26px Inter;text-align:center;font-variant-numeric:tabular-nums;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.card .home{position:absolute;top:8px;right:8px;height:26px;padding:0 9px;border-radius:13px;background:var(--ink);color:#fff;font:500 12px/26px Inter}
+@media (hover:hover) and (pointer:fine){.card:hover{box-shadow:0 10px 30px -12px rgba(0,0,0,.3)}}
+.card.sortable-chosen{box-shadow:0 18px 40px -12px rgba(0,0,0,.45);transform:scale(1.03);cursor:grabbing}
+.card.sortable-ghost{opacity:.35}
+.vuoto{grid-column:1/-1;text-align:center;color:var(--mute);padding:60px 16px;border:1.5px dashed rgba(0,0,0,.2);border-radius:16px}
+
+/* tasto + */
+.piu{position:fixed;right:max(20px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));z-index:20;width:64px;height:64px;border-radius:50%;border:0;background:var(--red);color:#fff;
+  display:grid;place-items:center;box-shadow:0 10px 26px -6px rgba(0,0,0,.45);transition:transform 160ms var(--ease),background-color 150ms ease}
+.piu svg{width:30px;height:30px}
+.piu:active{transform:scale(.94)}
+@media (hover:hover) and (pointer:fine){.piu:hover{background:var(--red-d)}}
+
+/* scheda di aggiunta / modifica */
+dialog{margin:auto;width:min(460px,100% - 24px);max-height:calc(100svh - 24px);border:0;border-radius:20px;padding:0;background:var(--card);color:var(--ink);box-shadow:0 30px 80px -20px rgba(0,0,0,.5);overflow:auto;
+  opacity:0;transform:scale(.96);transition:opacity 220ms var(--ease),transform 220ms var(--ease),overlay 220ms allow-discrete,display 220ms allow-discrete}
+dialog[open]{opacity:1;transform:none}
+@starting-style{dialog[open]{opacity:0;transform:scale(.96)}}
+dialog::backdrop{background:rgba(0,0,0,.45);opacity:0;transition:opacity 220ms var(--ease),overlay 220ms allow-discrete,display 220ms allow-discrete}
+dialog[open]::backdrop{opacity:1}
+@starting-style{dialog[open]::backdrop{opacity:0}}
+dialog form{padding:20px}
+dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
+.anteprima{position:relative;aspect-ratio:4/5;max-height:46svh;margin:0 auto 16px;border-radius:14px;overflow:hidden;background:var(--paper)}
+.anteprima img{width:100%;height:100%;object-fit:cover;display:block}
+.anteprima .cambia{position:absolute;right:10px;bottom:10px;min-height:38px;background:rgba(255,255,255,.95)}
+.stili{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;border:0}
+.stili legend{font-size:14px;font-weight:500;margin-bottom:8px}
+.stili label{margin:0;font-weight:500}
+.stili input{position:absolute;opacity:0;pointer-events:none}
+.stili span{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:20px;border:1px solid rgba(0,0,0,.18);font-size:15px;cursor:pointer;transition:background-color 150ms ease,color 150ms ease,border-color 150ms ease}
+.stili input:checked+span{background:var(--ink);border-color:var(--ink);color:#fff}
+.stili input:focus-visible+span{outline:2px solid var(--red);outline-offset:2px}
+.facoltativo{color:var(--mute);font-weight:400}
+.ordine{display:flex;align-items:center;gap:8px;margin:-4px 0 18px;font-size:14px;color:var(--mute)}
+.ordine .btn{min-height:36px;padding:0 12px;font-size:14px}
+.azioni{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;padding-top:4px}
+.azioni .btn.del{margin-right:auto}
+@media (max-width:480px){.azioni .btn{flex:1}.azioni .btn.del{flex-basis:100%;order:3;margin:0}}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-property:opacity,background-color,color!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <img src="images/comune/logo-rainink-scuro.svg" alt="Rain Ink Tattoo" width="504" height="128">
+    <span class="t">Area riservata</span>
+    <button class="btn link esci" type="button" id="esci" hidden>Esci</button>
+  </div>
+</header>
+
+<!-- accesso -->
+<main class="login" id="vista-login">
+  <form id="f-login" novalidate>
+    <h1>Area riservata</h1>
+    <p>Entra per aggiungere, cambiare o riordinare le foto dei tuoi lavori.</p>
+    <div class="campo">
+      <label for="pw">Password</label>
+      <input type="password" id="pw" autocomplete="current-password" required>
+      <button class="mostra" type="button" id="mostra" aria-pressed="false">Mostra</button>
+    </div>
+    <p class="errore" id="err-login" role="alert"></p>
+    <button class="btn pri" type="submit" id="entra">Entra</button>
+  </form>
+</main>
+
+<!-- elenco dei lavori -->
+<main id="vista-lavori" hidden>
+  <div class="wrap">
+    <div class="head">
+      <h1>I tuoi lavori <small id="conta"></small></h1>
+      <p class="stato" id="stato" aria-live="polite"></p>
+    </div>
+    <p class="aiuto">Tocca un lavoro per modificarlo. Tieni premuto e trascina per cambiare l'ordine: il primo di ogni stile compare anche in home.</p>
+    <ul class="griglia" id="griglia"></ul>
+  </div>
+  <button class="piu" type="button" id="piu" aria-label="Aggiungi un lavoro">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+  <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" hidden>
+</main>
+
+<dialog id="scheda" aria-labelledby="scheda-t">
+  <form id="f-lavoro" method="dialog" novalidate>
+    <h2 id="scheda-t">Nuovo lavoro</h2>
+    <div class="anteprima"><img id="anteprima" alt=""><button class="btn cambia" type="button" id="cambia">Cambia foto</button></div>
+    <div class="campo">
+      <label for="titolo">Titolo</label>
+      <input type="text" id="titolo" maxlength="80" required placeholder="Es. Falena notturna">
+    </div>
+    <fieldset class="stili" id="stili">
+      <legend>Stile</legend>
+    </fieldset>
+    <div class="campo">
+      <label for="zona">Zona del corpo <span class="facoltativo">(facoltativa)</span></label>
+      <input type="text" id="zona" maxlength="60" placeholder="Es. Avambraccio">
+    </div>
+    <div class="ordine" id="ordine" hidden>
+      <span id="pos"></span>
+      <button class="btn" type="button" id="su">Sposta prima</button>
+      <button class="btn" type="button" id="giu">Sposta dopo</button>
+    </div>
+    <p class="errore" id="err-scheda" role="alert"></p>
+    <div class="azioni">
+      <button class="btn del" type="button" id="elimina" hidden>Elimina</button>
+      <button class="btn" type="button" id="annulla">Annulla</button>
+      <button class="btn pri" type="submit" id="conferma">Aggiungi</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="js/vendor/sortable/Sortable.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  var meta = function (n) { var m = document.querySelector('meta[name="' + n + '"]'); return m ? m.content : ''; };
+  var API = meta('ar-api').replace(/\/+$/, ''), REPO = meta('ar-repo'), RAMO = meta('ar-branch') || 'main';
+  var STILI = [['blackwork', 'Blackwork'], ['fine-line', 'Fine line'], ['dotwork', 'Dotwork'], ['tradizionale', 'Tradizionale'], ['giapponese', 'Giapponese'], ['realistico', 'Realistico']];
+  var NOME = {}; STILI.forEach(function (s) { NOME[s[0]] = s[1]; });
+  var $ = function (id) { return document.getElementById(id); };
+
+  var lavori = [], anteprimeLocali = {}, token = null;
+  var mem = { get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+              set: function (k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+
+  /* ---------- chiamate al servizio ---------- */
+  function chiama(percorso, corpo) {
+    return fetch(API + percorso, {
+      method: corpo ? 'POST' : 'GET',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { Authorization: 'Bearer ' + token } : {}),
+      body: corpo ? JSON.stringify(corpo) : undefined
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) {
+        if (r.status === 401 && percorso !== '/login') { esci(); throw new Error('Accesso scaduto, entra di nuovo'); }
+        if (!r.ok) throw new Error(d.errore || 'Errore ' + r.status);
+        return d;
+      });
+    }, function () { throw new Error('Nessuna connessione, riprova'); });
+  }
+
+  /* ---------- accesso ---------- */
+  function mostraVista(nome) {
+    $('vista-login').hidden = nome !== 'login';
+    $('vista-lavori').hidden = nome !== 'lavori';
+    $('esci').hidden = nome !== 'lavori';
+  }
+  function esci() { token = null; mem.set('ar-token', null); lavori = []; mostraVista('login'); $('pw').value = ''; }
+  $('esci').onclick = esci;
+  $('mostra').onclick = function () {
+    var vis = $('pw').type === 'password'; $('pw').type = vis ? 'text' : 'password';
+    this.textContent = vis ? 'Nascondi' : 'Mostra'; this.setAttribute('aria-pressed', vis);
+  };
+  $('f-login').onsubmit = function (e) {
+    e.preventDefault();
+    var pw = $('pw').value; if (!pw) { $('err-login').textContent = 'Scrivi la password'; $('pw').focus(); return; }
+    $('entra').disabled = true; $('entra').textContent = 'Controllo…'; $('err-login').textContent = '';
+    chiama('/login', { password: pw }).then(function (d) {
+      token = d.token; mem.set('ar-token', { token: d.token, scade: d.scade }); carica();
+    }).catch(function (err) { $('err-login').textContent = err.message; $('pw').select(); })
+      .then(function () { $('entra').disabled = false; $('entra').textContent = 'Entra'; });
+  };
+
+  function carica() {
+    mostraVista('lavori'); stato('lav', 'Caricamento dei lavori…');
+    chiama('/lavori').then(function (d) { lavori = d.lavori || []; disegna(); stato('', ''); })
+      .catch(function (err) { stato('err', err.message, carica); });
+  }
+
+  /* ---------- elenco ---------- */
+  function sorgente(foto) {
+    return anteprimeLocali[foto] || foto.replace(/^\/+/, '');
+  }
+  function riserva(img, foto) { // foto appena caricata e non ancora pubblicata: la si prende dal repository
+    img.onerror = function () { img.onerror = null; img.src = 'https://raw.githubusercontent.com/' + REPO + '/' + RAMO + '/' + foto.replace(/^\/+/, ''); };
+  }
+  function primiPerStile() {
+    var visti = {}, primi = {};
+    lavori.forEach(function (l, i) { if (!visti[l.stile]) { visti[l.stile] = 1; primi[i] = 1; } });
+    return primi;
+  }
+  function disegna() {
+    var g = $('griglia'), primi = primiPerStile();
+    g.innerHTML = '';
+    $('conta').textContent = lavori.length ? '(' + lavori.length + ')' : '';
+    if (!lavori.length) {
+      var v = document.createElement('li'); v.className = 'vuoto';
+      v.textContent = 'Ancora nessun lavoro. Tocca il tasto + per aggiungere la prima foto.';
+      g.appendChild(v); return;
+    }
+    lavori.forEach(function (l, i) {
+      var li = document.createElement('li'); li.className = 'card'; li.tabIndex = 0; li.dataset.i = i;
+      li.setAttribute('aria-label', (i + 1) + '. ' + l.titolo + ', ' + NOME[l.stile] + '. Premi Invio per modificare');
+      var ph = document.createElement('div'); ph.className = 'ph';
+      var im = document.createElement('img'); im.alt = ''; im.loading = 'lazy'; riserva(im, l.foto); im.src = sorgente(l.foto);
+      ph.appendChild(im);
+      var n = document.createElement('span'); n.className = 'n'; n.textContent = i + 1;
+      var tx = document.createElement('div'); tx.className = 'tx';
+      var b = document.createElement('b'); b.textContent = l.titolo;
+      var s = document.createElement('span'); s.textContent = NOME[l.stile] + (l.zona ? ' · ' + l.zona : '');
+      tx.appendChild(b); tx.appendChild(s);
+      li.appendChild(ph); li.appendChild(n); li.appendChild(tx);
+      if (primi[i]) { var h = document.createElement('span'); h.className = 'home'; h.textContent = 'In home'; li.appendChild(h); }
+      li.onclick = function () { if (!trascinato) apriScheda(+li.dataset.i); };
+      li.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); apriScheda(+li.dataset.i); } };
+      g.appendChild(li);
+    });
+  }
+
+  // riordino: tieni premuto e trascina (su telefono serve una breve pressione, così si può ancora scorrere)
+  var trascinato = false;
+  new Sortable($('griglia'), {
+    animation: 180, easing: 'cubic-bezier(.23,1,.32,1)', delay: 220, delayOnTouchOnly: true, touchStartThreshold: 6,
+    filter: '.vuoto', ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
+    onStart: function () { trascinato = true; },
+    onEnd: function (e) {
+      setTimeout(function () { trascinato = false; }, 50);
+      if (e.oldIndex === e.newIndex) return;
+      var x = lavori.splice(e.oldIndex, 1)[0]; lavori.splice(e.newIndex, 0, x);
+      disegna(); salvaPresto('Ordine dei lavori cambiato');
+    }
+  });
+
+  /* ---------- salvataggio ---------- */
+  var timer = null, inCorso = false, inAttesa = null, fotoInAttesa = {};
+  function stato(tipo, testo, riprova) {
+    var el = $('stato'); el.className = 'stato ' + tipo; el.textContent = testo;
+    if (riprova) { var b = document.createElement('button'); b.type = 'button'; b.textContent = 'Riprova'; b.onclick = riprova; el.appendChild(document.createTextNode(' ')); el.appendChild(b); }
+  }
+  function salvaPresto(msg) { clearTimeout(timer); stato('lav', 'Modifiche da salvare…'); timer = setTimeout(function () { salva(msg); }, 1200); }
+  function salva(msg, nuove) {
+    clearTimeout(timer);
+    if (nuove) Object.assign(fotoInAttesa, nuove);
+    if (inCorso) { inAttesa = msg; return Promise.resolve(); }
+    inCorso = true; stato('lav', 'Salvataggio…');
+    var foto = fotoInAttesa; fotoInAttesa = {};
+    var inviati = lavori.map(function (l) { return l.foto; });
+    return chiama('/salva', { lavori: lavori, nuoveFoto: foto, messaggio: 'Area riservata: ' + msg }).then(function (d) {
+      // le foto nuove ricevono il nome definitivo; si aggiorna l'elenco attuale (che nel frattempo può
+      // essere stato riordinato) e si tiene l'anteprima locale finché il sito non pubblica la foto
+      var nomi = {};
+      inviati.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.lavori[i]) nomi[f] = d.lavori[i].foto; });
+      lavori.forEach(function (l) { var n = nomi[l.foto]; if (n) { anteprimeLocali[n] = anteprimeLocali[l.foto]; l.foto = n; } });
+      disegna();
+      stato('ok', 'Salvato. Sul sito tra circa un minuto');
+    }).catch(function (err) {
+      Object.assign(fotoInAttesa, foto);
+      stato('err', 'Non salvato: ' + err.message, function () { salva(msg); });
+    }).then(function () {
+      inCorso = false;
+      if (inAttesa) { var m = inAttesa; inAttesa = null; salva(m); }
+    });
+  }
+
+  /* ---------- foto: ridimensionata nel telefono prima dell'invio ---------- */
+  function preparaFoto(file) {
+    return new Promise(function (ok, ko) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var max = 1600, k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (blob) {
+          if (!blob) return ko(new Error('Foto non leggibile'));
+          var r = new FileReader();
+          r.onload = function () { ok({ b64: String(r.result).split(',')[1], anteprima: URL.createObjectURL(blob) }); };
+          r.onerror = function () { ko(new Error('Foto non leggibile')); };
+          r.readAsDataURL(blob);
+        }, 'image/jpeg', 0.85); // il nuovo file non contiene i dati EXIF (né la posizione GPS)
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); ko(new Error('Questo formato non si apre qui: usa una foto JPG o PNG')); };
+      img.src = url;
+    });
+  }
+
+  /* ---------- scheda ---------- */
+  var scheda = $('scheda'), indice = -1, fotoScelta = null, confermaElimina = false;
+  STILI.forEach(function (s) {
+    var l = document.createElement('label'), r = document.createElement('input'), sp = document.createElement('span');
+    r.type = 'radio'; r.name = 'stile'; r.value = s[0]; sp.textContent = s[1];
+    l.appendChild(r); l.appendChild(sp); $('stili').appendChild(l);
+  });
+
+  $('piu').onclick = function () { indice = -1; $('file').value = ''; $('file').click(); };
+  $('cambia').onclick = function () { $('file').value = ''; $('file').click(); };
+  $('file').onchange = function () {
+    var f = this.files && this.files[0]; if (!f) return;
+    var nuovo = indice === -1 && !scheda.open;
+    if (nuovo) { apriScheda(-1); }
+    $('err-scheda').textContent = ''; $('conferma').disabled = true; $('anteprima').removeAttribute('src'); $('anteprima').alt = 'Preparazione della foto…';
+    preparaFoto(f).then(function (p) { fotoScelta = p; $('anteprima').src = p.anteprima; $('anteprima').alt = 'Anteprima della foto'; })
+      .catch(function (err) { $('err-scheda').textContent = err.message; if (nuovo) fotoScelta = null; })
+      .then(function () { $('conferma').disabled = false; });
+  };
+
+  function apriScheda(i) {
+    indice = i; fotoScelta = null; confermaElimina = false;
+    var l = i >= 0 ? lavori[i] : { titolo: '', stile: '', zona: '', foto: '' };
+    $('scheda-t').textContent = i >= 0 ? 'Modifica lavoro' : 'Nuovo lavoro';
+    $('conferma').textContent = i >= 0 ? 'Salva' : 'Aggiungi';
+    $('titolo').value = l.titolo; $('zona').value = l.zona || '';
+    [].forEach.call(document.querySelectorAll('input[name=stile]'), function (r) { r.checked = r.value === l.stile; });
+    $('elimina').hidden = i < 0; $('elimina').textContent = 'Elimina'; $('elimina').classList.remove('conf');
+    $('ordine').hidden = i < 0; aggiornaPosizione();
+    $('err-scheda').textContent = '';
+    var im = $('anteprima');
+    if (l.foto) { riserva(im, l.foto); im.src = sorgente(l.foto); im.alt = 'Foto del lavoro'; } else { im.removeAttribute('src'); im.alt = ''; }
+    if (!scheda.open) scheda.showModal();
+    $('titolo').focus();
+  }
+  function aggiornaPosizione() {
+    if (indice < 0) return;
+    $('pos').textContent = 'Posizione ' + (indice + 1) + ' di ' + lavori.length;
+    $('su').disabled = indice === 0; $('giu').disabled = indice === lavori.length - 1;
+  }
+  function sposta(d) {
+    var j = indice + d; if (j < 0 || j >= lavori.length) return;
+    var x = lavori.splice(indice, 1)[0]; lavori.splice(j, 0, x); indice = j;
+    aggiornaPosizione(); disegna(); salvaPresto('Ordine dei lavori cambiato');
+  }
+  $('su').onclick = function () { sposta(-1); };
+  $('giu').onclick = function () { sposta(1); };
+  $('annulla').onclick = function () { scheda.close(); };
+  $('elimina').onclick = function () {
+    if (!confermaElimina) { confermaElimina = true; this.textContent = 'Sì, elimina'; this.classList.add('conf'); return; }
+    var via = lavori.splice(indice, 1)[0]; scheda.close(); disegna(); salva('Eliminato «' + via.titolo + '»');
+  };
+  $('f-lavoro').onsubmit = function (e) {
+    e.preventDefault();
+    var titolo = $('titolo').value.trim(), zona = $('zona').value.trim(), r = document.querySelector('input[name=stile]:checked');
+    var err = indice < 0 && !fotoScelta ? 'Scegli una foto' : !titolo ? 'Scrivi un titolo' : !r ? 'Scegli lo stile' : '';
+    if (err) { $('err-scheda').textContent = err; if (!titolo && fotoScelta) $('titolo').focus(); return; }
+    var nuove = null, l = indice >= 0 ? lavori[indice] : {};
+    if (fotoScelta) {
+      var id = 'nuova:' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      anteprimeLocali[id] = fotoScelta.anteprima; nuove = {}; nuove[id] = fotoScelta.b64; l.foto = id;
+    }
+    l.titolo = titolo; l.zona = zona; l.stile = r.value;
+    if (indice < 0) lavori.unshift(l);
+    scheda.close(); disegna();
+    salva((indice < 0 ? 'Aggiunto «' : 'Modificato «') + titolo + '»', nuove);
+  };
+
+  /* ---------- avvio ---------- */
+  if (!API || API.indexOf('INSERIRE') === 0) {
+    $('err-login').textContent = 'Area riservata non ancora attivata.'; $('entra').disabled = true;
+  } else {
+    var t = mem.get('ar-token');
+    if (t && t.token && t.scade > Date.now() / 1000) { token = t.token; carica(); } else mostraVista('login');
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+[
+  {
+    "foto": "images/flash/falena-blackwork.svg",
+    "titolo": "Falena notturna",
+    "stile": "blackwork",
+    "zona": "Avambraccio"
+  },
+  {
+    "foto": "images/flash/mandala-blackwork.svg",
+    "titolo": "Mandala",
+    "stile": "blackwork",
+    "zona": "Schiena"
+  },
+  {
+    "foto": "images/flash/geometria-dotwork.svg",
+    "titolo": "Fiore della vita",
+    "stile": "dotwork",
+    "zona": "Polpaccio"
+  },
+  {
+    "foto": "images/flash/ramo-fine-line.svg",
+    "titolo": "Ramo e luna",
+    "stile": "fine-line",
+    "zona": "Costole"
+  },
+  {
+    "foto": "images/flash/fasi-lunari-fine-line.svg",
+    "titolo": "Fasi lunari",
+    "stile": "fine-line",
+    "zona": "Schiena alta"
+  },
+  {
+    "foto": "images/flash/pugnale-cuore-tradizionale.svg",
+    "titolo": "Pugnale e cuore",
+    "stile": "tradizionale",
+    "zona": "Braccio"
+  },
+  {
+    "foto": "images/flash/serpente-tradizionale.svg",
+    "titolo": "Serpente",
+    "stile": "tradizionale",
+    "zona": "Coscia"
+  },
+  {
+    "foto": "images/flash/onda-giapponese.svg",
+    "titolo": "Onda e sole",
+    "stile": "giapponese",
+    "zona": "Spalla"
+  },
+  {
+    "foto": "images/flash/koi-giapponese.svg",
+    "titolo": "Koi",
+    "stile": "giapponese",
+    "zona": "Polpaccio"
+  },
+  {
+    "foto": "images/flash/sakura-giapponese.svg",
+    "titolo": "Ramo di ciliegio",
+    "stile": "giapponese",
+    "zona": "Spalla"
+  },
+  {
+    "foto": "images/flash/fuji-giapponese.svg",
+    "titolo": "Monte Fuji",
+    "stile": "giapponese",
+    "zona": "Avambraccio"
+  },
+  {
+    "foto": "images/flash/peonia-giapponese.svg",
+    "titolo": "Peonia",
+    "stile": "giapponese",
+    "zona": "Coscia"
+  },
+  {
+    "foto": "images/flash/momiji-giapponese.svg",
+    "titolo": "Foglie d'acero",
+    "stile": "giapponese",
+    "zona": "Fianco"
+  },
+  {
+    "foto": "images/flash/occhio-realistico.svg",
+    "titolo": "Occhio",
+    "stile": "realistico",
+    "zona": "Avambraccio"
+  }
+]

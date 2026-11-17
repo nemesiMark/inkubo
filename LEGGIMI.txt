@@ -204,6 +204,53 @@ si cambia SEDE in js/mappa.js (longitudine, latitudine); confini semplificati da
 OpenStreetMap, salvati nello stesso file.
 
 
+AREA RISERVATA (FOTO GESTITE DAL CLIENTE)
+-----------------------------------------
+Il cliente aggiunge, cambia, riordina ed elimina i lavori del portfolio da solo, da
+area-riservata.html (non collegata dal menu, non indicizzata): entra con una password,
+vede i lavori in griglia, aggiunge con il tasto + (sceglie la foto, scrive titolo, stile
+e zona) e cambia l'ordine tenendo premuta una foto e trascinandola. Il primo lavoro di
+ogni stile compare anche in home («In home» sulla scheda). Dopo ogni salvataggio il
+sito si aggiorna da solo in circa un minuto.
+La foto viene rimpicciolita nel telefono prima dell'invio (lato lungo 1600 px, JPEG
+qualità 85) e perde i dati EXIF, compresa la posizione GPS.
+File:
+- area-riservata.html    La pagina del cliente. In testa: <meta name="ar-api"> con
+                         l'indirizzo del Worker (oggi INSERIRE-INDIRIZZO-WORKER: finché
+                         resta così la pagina dice «non ancora attivata»).
+- worker/area-riservata-worker.js
+                         Il servizio che sta in mezzo (Cloudflare Worker, gratuito):
+                         controlla la password e salva su GitHub, un solo commit per ogni
+                         salvataggio. Non contiene chiavi: stanno nelle impostazioni del
+                         Worker (vedi le istruzioni in testa al file). Non viene pubblicato
+                         sul sito.
+- data/lavori.json       Elenco dei lavori: foto, titolo, stile, zona. L'ordine è quello
+                         del portfolio.
+- images/lavori/         Foto caricate dal cliente. Quelle tolte dall'elenco vengono
+                         cancellate; i disegni di images/flash non vengono mai toccati.
+- scripts/genera_lavori.py
+                         Scrive i lavori in portfolio.html e «Lavori recenti» in index.html
+                         fra <!-- lavori:inizio --> e <!-- lavori:fine --> (quel tratto non
+                         si modifica a mano). In locale, dopo aver cambiato lavori.json:
+                           python3 scripts/genera_lavori.py   (--check per solo controllo)
+- .github/workflows/pubblica.yml
+                         A ogni modifica del ramo main GitHub Actions esegue lo script e
+                         pubblica il sito. GitHub Pages va impostato su «GitHub Actions».
+- js/vendor/sortable/    SortableJS 1.15.6 (licenza MIT): trascinamento per riordinare.
+Attivazione (una volta sola):
+1. GitHub → Settings → Developer settings → Fine-grained tokens: token solo per il
+   repository inkubo, permesso «Contents: Read and write».
+2. Cloudflare (account gratuito) → Workers → crea un Worker, incolla il contenuto di
+   worker/area-riservata-worker.js e pubblica.
+3. Nel Worker, Settings → Variables: secret ADMIN_PASSWORD, SESSION_SECRET (stringa
+   casuale lunga), GITHUB_TOKEN; testo REPO = nemesiMark/inkubo, BRANCH = main,
+   ORIGINS = https://nemesimark.github.io
+4. In area-riservata.html mettere l'indirizzo del Worker in <meta name="ar-api">.
+5. Al cliente: indirizzo della pagina (da aggiungere alla schermata Home del telefono)
+   e password. Per cambiare password si cambia ADMIN_PASSWORD; per far uscire tutti
+   si cambia SESSION_SECRET.
+
+
 DATI DA SOSTITUIRE PRIMA DI PUBBLICARE
 --------------------------------------
 Veri (dalla pagina Facebook, versione 2.4): Rain Ink Tattoo di Matteo Quattrini,
@@ -220,8 +267,8 @@ footer, in Dove siamo, in Privacy e nei dati per Google in testa a index.html):
   simulato (compare il messaggio di conferma ma non parte nessuna email)
 - da verificare col cliente: attestato regionale, ritocco incluso, consulenza
   gratuita, acconto, tempi di risposta, guest spot, metodi di pagamento
-- i disegni sono provvisori: il portfolio va riempito con le foto dei tatuaggi veri
-  (stesso nome di file oppure aggiornando i nomi nelle pagine)
+- i disegni sono provvisori: il portfolio va riempito con le foto dei tatuaggi veri,
+  che il cliente può caricare da solo (vedi AREA RISERVATA)
 
 
 VERSIONI
@@ -498,3 +545,9 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    test.html, la pagina con le 30 proposte di restyling da mostrare al
                    cliente, con «← Torna al sito» in alto. test.html non viene
                    indicizzata dai motori di ricerca (noindex) e non è nella sitemap.
+5.3  (17/11/2026)  Area riservata per il cliente (area-riservata.html): entra con una
+                   password, aggiunge lavori con il tasto +, li modifica o elimina e ne
+                   cambia l'ordine trascinandoli. Un Cloudflare Worker salva su GitHub
+                   (data/lavori.json, foto in images/lavori) e GitHub Actions rigenera
+                   portfolio e «Lavori recenti» della home e pubblica il sito (vedi
+                   AREA RISERVATA). Aspetto delle pagine pubbliche invariato.
