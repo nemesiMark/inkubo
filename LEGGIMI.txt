@@ -613,7 +613,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Tolta la pagina Piercing (piercing.html, images/piercing/, voce della
                    navbar, scheda dell'area riservata e sitemap); nel footer «Tatuaggi di
                    Matteo Quattrini».
-                   Navbar: nuova voce «Dove siamo» (dopo FAQ) che porta alla sezione
+                   Navbar: nuova voce «Dove siamo» (prima di FAQ) che porta alla sezione
                    della home (index.html#dove).
                    Tolta la pagina Tatuaggi (tatuaggi.html, voce della navbar, scheda
                    dell'area riservata e sitemap); le sue sei foto restano nel portfolio.
