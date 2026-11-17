@@ -557,6 +557,6 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    in rosso, «Riprova» e «Chiudi»).
                    Nuovo aspetto dell'area riservata, stile «Cantiere»: cemento grigio,
                    nero e arancio di sicurezza (testo scuro sull'arancio), titoli in
-                   Oswald maiuscolo, testo in Work Sans, angoli quasi vivi e una fascia
-                   a strisce arancio e nere sotto la barra in alto. Il sito pubblico
+                   Oswald maiuscolo, testo in Work Sans, angoli quasi vivi e una linea
+                   arancio sotto la barra in alto. Il sito pubblico
                    non cambia.
