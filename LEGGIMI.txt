@@ -555,3 +555,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    si completa quando GitHub ha davvero salvato; poi «Salvataggio
                    riuscito correttamente» con il tasto «OK» (se non riesce: messaggio
                    in rosso, «Riprova» e «Chiudi»).
+                   Nuovo aspetto dell'area riservata, stile «Cantiere»: cemento grigio,
+                   nero e arancio di sicurezza (testo scuro sull'arancio), titoli in
+                   Oswald maiuscolo, testo in Work Sans, angoli quasi vivi e una fascia
+                   a strisce arancio e nere sotto la barra in alto. Il sito pubblico
+                   non cambia.
