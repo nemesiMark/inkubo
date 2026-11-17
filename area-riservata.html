@@ -301,9 +301,6 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
       <label for="titolo">Titolo</label>
       <input type="text" id="titolo" maxlength="80" required placeholder="Es. Falena notturna">
     </div>
-    <fieldset class="stili" id="stili">
-      <legend>Stile</legend>
-    </fieldset>
     <p class="errore" id="err-scheda" role="alert"></p>
     <div class="azioni">
       <button class="btn del" type="button" id="elimina" hidden>Elimina</button>
@@ -662,11 +659,6 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
 
   /* ---------- scheda: nuova foto o modifica ---------- */
   var scheda = $('scheda'), schSez = null, schX = null, fotoScelta = null, confermaElimina = false;
-  STILI.forEach(function (s) {
-    var l = document.createElement('label'), r = document.createElement('input'), sp = document.createElement('span');
-    r.type = 'radio'; r.name = 'stile'; r.value = s[0]; sp.textContent = s[1];
-    l.appendChild(r); l.appendChild(sp); $('stili').appendChild(l);
-  });
 
   function nuovoLavoro(sez) { schSez = sez; schX = null; $('file').value = ''; $('file').click(); }
   $('cambia').onclick = function () { $('file').value = ''; $('file').click(); };
@@ -681,15 +673,13 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
       .then(function () { $('conferma').disabled = false; });
   };
 
-  // per una foto nuova basta il titolo; modificando un lavoro del Portfolio si può cambiare anche lo stile
+  // nella scheda solo foto e titolo: lo stile è quello della sezione in cui si trova la foto
   function apriScheda(sez, x) {
     schSez = sez; schX = x; fotoScelta = null; confermaElimina = false;
     var nuovo = !x || (sel && sel.nuovo && sel.x === x);
     $('scheda-t').textContent = (nuovo ? (sez.stile ? 'Nuovo lavoro · ' : 'Nuova foto · ') : 'Modifica · ') + sez.nome;
-    $('stili').hidden = !x || nuovo || !sez.stile;
     $('conferma').textContent = x ? 'Salva' : 'Aggiungi';
     $('titolo').value = x ? x.titolo : '';
-    [].forEach.call(document.querySelectorAll('input[name=stile]'), function (r) { r.checked = !!x && r.value === x.stile; });
     $('elimina').hidden = !x; $('elimina').textContent = 'Elimina'; $('elimina').classList.remove('conf');
     $('err-scheda').textContent = '';
     var im = $('anteprima');
@@ -708,7 +698,7 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
   };
   $('f-lavoro').onsubmit = function (e) {
     e.preventDefault();
-    var titolo = $('titolo').value.trim(), r = document.querySelector('input[name=stile]:checked');
+    var titolo = $('titolo').value.trim();
     var err = !schX && !fotoScelta ? 'Scegli una foto' : !titolo ? 'Scrivi un titolo' : '';
     if (err) { $('err-scheda').textContent = err; if (!titolo && fotoScelta) $('titolo').focus(); return; }
     var nuove = null, id = null;
@@ -730,7 +720,6 @@ dialog h2{font:700 21px/1.2 var(--head);margin-bottom:14px}
       if (nuove) sel.nuove = nuove;
       disegna(); barraScelta(); return;
     }
-    if (schSez.stile && r) x2.stile = r.value;
     if (sel) { sel = null; $('scelta').hidden = true; }
     disegna();
     salva('Modificato «' + titolo + '» (' + schSez.nome + ')', nuove);

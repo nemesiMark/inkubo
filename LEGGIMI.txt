@@ -137,7 +137,7 @@ Home, e viceversa.
   rossa e lampeggia, le altre diventano più chiare, e in basso compare una barra. Da lì
   la si prende e la si trascina dove si vuole (solo la foto selezionata si muove), poi
   «Conferma» salva il nuovo posto; «Annulla» la rimette dov'era; «Modifica o elimina»
-  apre la scheda (foto, titolo e, nel Portfolio, stile). Il riquadro + in fondo aggiunge
+  apre la scheda (solo foto e titolo). Il riquadro + in fondo aggiunge
   una foto: basta la foto e il titolo; compare in fondo già selezionata, la si sposta e
   si tocca «Conferma e salva» (per lasciarla in fondo basta confermare subito).
   Nel Portfolio l'elenco in data/lavori.json resta uno solo: riordinando uno stile i suoi
@@ -545,4 +545,5 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Portfolio non tocca più la home e viceversa; tolto «In home». In home
                    il titolo della ruota diventa «Portfolio / Lavori recenti» e sotto la
                    foto si legge il titolo del lavoro. Il Worker va incollato di nuovo su
-                   Cloudflare. home.js?v=2.
+                   Cloudflare. home.js?v=2. Nella scheda di una foto restano solo foto e
+                   titolo (tolti stile, zona e «Sposta prima / dopo»).
