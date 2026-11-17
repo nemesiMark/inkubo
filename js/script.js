@@ -1,248 +1,103 @@
-/* Rain Ink Tattoo — script del sito */
+/* Rain Ink Tattoo — script comune a tutte le pagine
+   Navbar 3D, comparsa allo scorrimento, cura del tatuaggio, portfolio (filtri e foto a
+   schermo intero), FAQ, invio del modulo dei contatti. */
 (function () {
 'use strict';
-var R = document.documentElement;
 var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-var EASE = 'cubic-bezier(.16, 1, .3, 1)';
+var fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+var EASE = 'cubic-bezier(.23, 1, .32, 1)';
 var canAnimate = !reduce && !!Element.prototype.animate;
 function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 function all(sel, root) { return [].slice.call((root || document).querySelectorAll(sel)); }
 
 /* ======================================================
-   NAVBAR (come nel sito Olimp)
+   NAVBAR 3D: panino su telefono, più bassa scorrendo, si inclina col mouse
    ====================================================== */
-var h = document.querySelector('header'), nav = document.getElementById('nav'), b = document.querySelector('.burger');
-var home = document.body.classList.contains('home-page');
-function barFill() {
-  if (!h) return;
-  h.classList.toggle('solid', window.scrollY > 40);
-  /* Home: la barra si riempie man mano nei primi 160 px di scorrimento; col menu a panino aperto è piena. */
-  if (home) h.style.setProperty('--fill', nav && nav.classList.contains('open') ? 1 : clamp(window.scrollY / 160).toFixed(3));
-}
-if (nav && b) {
-  b.addEventListener('click', function () { var o = nav.classList.toggle('open'); b.setAttribute('aria-expanded', o); barFill(); });
-  var dds = all('.dd', nav);
-  var closeAll = function () { dds.forEach(function (it) { it.classList.remove('open'); it.querySelector(':scope > a').setAttribute('aria-expanded', 'false'); }); };
-  dds.forEach(function (item) {
-    var t = item.querySelector(':scope > a');
-    t.setAttribute('aria-expanded', 'false');
-    /* Su telefono, tablet e schermi senza mouse il primo tocco apre il menu invece di cambiare pagina. */
-    t.addEventListener('click', function (e) {
-      if (matchMedia('(max-width:1100px)').matches || matchMedia('(hover:none)').matches) {
-        e.preventDefault();
-        var o = !item.classList.contains('open');
-        item.classList.toggle('open', o); t.setAttribute('aria-expanded', String(o));
-      }
-    });
-    item.addEventListener('keydown', function (e) { if (e.key === 'Escape') { item.classList.remove('open'); t.setAttribute('aria-expanded', 'false'); t.focus(); } });
-  });
-  document.addEventListener('click', function (e) { if (!nav.contains(e.target)) closeAll(); });
-  all('a[href]', nav).forEach(function (a) {
-    a.addEventListener('click', function () { if (!a.matches('.dd > a')) { nav.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); closeAll(); barFill(); } });
-  });
-}
-
-/* ======================================================
-   MOVIMENTI LEGATI ALLO SCORRIMENTO
-   Ogni effetto registra una funzione che riceve l'altezza dello schermo;
-   girano tutte insieme una volta per fotogramma mentre si scorre.
-   ====================================================== */
-var onScrollFns = [barFill], onResizeFns = [], ticking = false;
-function runScroll() { ticking = false; var vh = window.innerHeight; onScrollFns.forEach(function (f) { f(vh); }); }
-function requestRun() { if (!ticking) { ticking = true; requestAnimationFrame(runScroll); } }
-window.addEventListener('scroll', requestRun, { passive: true });
-window.addEventListener('resize', function () { onResizeFns.forEach(function (f) { f(); }); requestRun(); });
-window.addEventListener('pageshow', requestRun);
-window.addEventListener('load', function () { onResizeFns.forEach(function (f) { f(); }); requestRun(); });
-
-/* Prima schermata: scorrendo l'inchiostro e il nome rimpiccioliscono e sfumano */
-function heroOut() {
-  var hero = document.querySelector('.hero');
-  if (!hero || reduce) return;
-  onScrollFns.push(function () {
-    hero.style.setProperty('--p', clamp(window.scrollY / (hero.offsetHeight * .85)).toFixed(3));
-  });
-}
-
-/* Frase manifesto: le parole si accendono una alla volta */
-function words() {
-  all('.words').forEach(function (el) {
-    if (reduce) return;
-    var ws = [];
-    (function split(node) {
-      [].slice.call(node.childNodes).forEach(function (n) {
-        if (n.nodeType === 3) {
-          var frag = document.createDocumentFragment();
-          n.textContent.split(/(\s+)/).forEach(function (t) {
-            if (!t) return;
-            if (/^\s+$/.test(t)) { frag.appendChild(document.createTextNode(t)); return; }
-            var s = document.createElement('span'); s.className = 'w'; s.textContent = t; frag.appendChild(s); ws.push(s);
-          });
-          node.replaceChild(frag, n);
-        } else if (n.nodeType === 1) split(n);
-      });
-    })(el);
-    onScrollFns.push(function (vh) {
-      var r = el.getBoundingClientRect(), c = r.top + r.height / 2;
-      var p = clamp((vh * .92 - c) / (vh * .55)), k = Math.round(p * ws.length);
-      ws.forEach(function (w, i) { w.classList.toggle('on', i < k); });
-    });
-  });
-}
-
-/* Immagini che si aprono dal riquadro stretto e si assestano */
-function clipZoom() {
-  all('.cz').forEach(function (el) {
-    if (reduce) return;
-    el.style.setProperty('--p', 0);
-    onScrollFns.push(function (vh) {
-      var r = el.getBoundingClientRect();
-      el.style.setProperty('--p', clamp((vh - r.top) / (vh * .8)).toFixed(3));
-    });
-  });
-}
-
-/* Stili in home: la sezione si blocca e le schede scorrono in orizzontale */
-function hscroll() {
-  var sec = document.querySelector('.hs'); if (!sec) return;
-  var track = sec.querySelector('.hs-track'), bar = sec.querySelector('.hs-bar'), dist = 0, on = false;
-  function measure() {
-    on = !reduce && window.innerWidth > 860 && window.innerHeight >= 680;
-    sec.classList.toggle('hs-on', on);
-    track.style.transform = '';
-    if (!on) return;
-    var last = track.lastElementChild, pad = parseFloat(getComputedStyle(track).paddingLeft) || 0;
-    dist = Math.max(0, last.offsetLeft + last.offsetWidth + pad - track.clientWidth);
-    sec.style.setProperty('--hs-dist', dist + 'px');
+function navbar() {
+  var nav = document.getElementById('nav3d'); if (!nav) return;
+  var slab = nav.querySelector('.slab'), burger = nav.querySelector('.burger');
+  function setOpen(o) {
+    nav.classList.toggle('open', o);
+    burger.setAttribute('aria-expanded', String(o));
+    burger.setAttribute('aria-label', o ? 'Chiudi il menu' : 'Apri il menu');
   }
-  function setBar(p) { if (bar) bar.style.setProperty('--p', p.toFixed(4)); }
-  onResizeFns.push(measure);
-  measure();
-  onScrollFns.push(function () {
-    if (!on) return;
-    var p = dist ? clamp(-sec.getBoundingClientRect().top / dist) : 0;
-    track.style.transform = 'translate3d(' + (-p * dist).toFixed(1) + 'px,0,0)';
-    setBar(p);
-  });
-  /* senza blocco (telefono): la barra segue lo scorrimento col dito */
-  track.addEventListener('scroll', function () { if (!on) { var m = track.scrollWidth - track.clientWidth; setBar(m > 0 ? track.scrollLeft / m : 0); } }, { passive: true });
-}
+  burger.addEventListener('click', function () { setOpen(!nav.classList.contains('open')); });
+  all('.links a', nav).forEach(function (a) { a.addEventListener('click', function () { setOpen(false); }); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && nav.classList.contains('open')) { setOpen(false); burger.focus(); } });
+  document.addEventListener('click', function (e) { if (!nav.contains(e.target)) setOpen(false); });
 
-/* Come funziona: le schede si impilano, quella sotto rimpicciolisce */
-function stack() {
-  var cards = all('.stack-card'); if (cards.length < 2 || reduce) return;
-  onScrollFns.push(function (vh) {
-    cards.forEach(function (c, i) {
-      var next = cards[i + 1];
-      if (!next) return;
-      var top = parseFloat(getComputedStyle(c).top) || 0;
-      var p = clamp(1 - (next.getBoundingClientRect().top - top) / (vh * .7));
-      c.style.setProperty('--s', (1 - p * .06).toFixed(4));
-      c.style.setProperty('--dim', p.toFixed(3));
-    });
-  });
-}
+  var small = function () { nav.classList.toggle('small', window.scrollY > 40); };
+  window.addEventListener('scroll', small, { passive: true }); small();
 
-/* Hai già un'idea?: il rosso si apre a cerchio e il titolo cresce */
-function ctaCircle() {
-  all('.cta-band').forEach(function (el) {
-    if (reduce) return;
-    el.style.setProperty('--p', 0);
-    onScrollFns.push(function (vh) {
-      var r = el.getBoundingClientRect();
-      el.style.setProperty('--p', clamp((vh - r.top) / (vh * .85)).toFixed(3));
-    });
+  if (!fine || reduce) return;
+  slab.addEventListener('mousemove', function (e) {
+    var r = slab.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    slab.style.setProperty('--ry', ((x - .5) * 6).toFixed(2) + 'deg');
+    slab.style.setProperty('--rx', ((.5 - y) * 14).toFixed(2) + 'deg');
+    slab.style.setProperty('--mx', (x * 100) + '%'); slab.style.setProperty('--my', (y * 100) + '%');
+    slab.style.setProperty('--glow', 1);
   });
-}
-
-/* Cura del tatuaggio: la linea si riempie e i punti si accendono */
-function timeline() {
-  var tl = document.querySelector('.timeline'); if (!tl) return;
-  var steps = all(':scope > li', tl);
-  if (reduce) { steps.forEach(function (s) { s.classList.add('on'); }); return; }
-  onScrollFns.push(function (vh) {
-    var r = tl.getBoundingClientRect(), line = vh * .6;
-    tl.style.setProperty('--p', clamp((line - r.top) / r.height).toFixed(4));
-    steps.forEach(function (s) { s.classList.toggle('on', s.getBoundingClientRect().top < line); });
+  slab.addEventListener('mouseleave', function () {
+    slab.style.setProperty('--rx', '0deg'); slab.style.setProperty('--ry', '0deg'); slab.style.setProperty('--glow', 0);
   });
 }
 
 /* ======================================================
-   ELEMENTI CHE COMPAIONO (rv, rv-pop, rv-tilt): salgono sfocati e si mettono a fuoco,
-   uno dopo l'altro. Finito il movimento le classi si tolgono, così restano liberi
-   gli effetti al passaggio del mouse.
+   COMPARSA: gli elementi .rv salgono di poco e si accendono, uno dopo l'altro.
+   Finito il movimento la classe si toglie, così restano liberi gli effetti al passaggio.
    ====================================================== */
 function reveal() {
-  var els = all('.rv');
-  if (!els.length) return;
-  var done = function (e) { e.classList.remove('rv', 'rv-pop', 'rv-tilt', 'in'); e.style.removeProperty('--rv-d'); };
+  var els = all('.rv'); if (!els.length) return;
+  var done = function (e) { e.classList.remove('rv', 'in'); e.style.removeProperty('--rv-d'); };
   if (reduce || !('IntersectionObserver' in window)) { els.forEach(done); return; }
   var io = new IntersectionObserver(function (es) {
     var k = 0;
     es.forEach(function (e) {
       if (!e.isIntersecting) return;
       io.unobserve(e.target);
-      var d = Math.min(k++, 7) * 90;
+      var d = Math.min(k++, 5) * 70;
       e.target.style.setProperty('--rv-d', d + 'ms');
       e.target.classList.add('in');
-      setTimeout(function () { done(e.target); }, d + 1300);
+      setTimeout(function () { done(e.target); }, d + 600);
     });
-  }, { rootMargin: '0px 0px -8% 0px', threshold: .1 });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: .12 });
   els.forEach(function (e) { io.observe(e); });
 }
 
 /* ======================================================
-   CAROSELLO: frecce tonde, pallini, schede ai lati attenuate
+   CURA DEL TATUAGGIO: la linea si riempie e i punti si accendono scorrendo
    ====================================================== */
-function carousels() {
-  all('[data-car]').forEach(function (c) {
-    var track = c.querySelector('.car-track'), items = [].slice.call(track.children);
-    var prev = c.querySelector('.car-prev'), next = c.querySelector('.car-next'), dotsBox = c.querySelector('.car-dots');
-    var step = function () { return items[1] ? items[1].offsetLeft - items[0].offsetLeft : track.clientWidth; };
-    var go = function (i) { track.scrollTo({ left: items[Math.max(0, Math.min(items.length - 1, i))].offsetLeft - items[0].offsetLeft, behavior: reduce ? 'auto' : 'smooth' }); };
-    var dots = items.map(function (it, i) {
-      var d = document.createElement('button');
-      d.type = 'button'; d.setAttribute('aria-label', 'Vai al disegno ' + (i + 1));
-      d.addEventListener('click', function () { go(i); });
-      dotsBox.appendChild(d); return d;
-    });
-    var page = function () { var pad = parseFloat(getComputedStyle(track).paddingLeft) || 0; return Math.max(1, Math.floor((track.clientWidth - pad * 2 + 20) / step())); };
-    var cur = function () { return Math.round(track.scrollLeft / step()); };
-    prev.addEventListener('click', function () { go(cur() - page()); });
-    next.addEventListener('click', function () { go(cur() + page()); });
-    function update() {
-      var i = Math.min(items.length - 1, cur()), max = track.scrollWidth - track.clientWidth;
-      dots.forEach(function (d, k) { d.setAttribute('aria-current', String(k === i)); });
-      prev.disabled = track.scrollLeft < 4;
-      next.disabled = track.scrollLeft > max - 4;
-    }
-    var t = false;
-    track.addEventListener('scroll', function () { if (!t) { t = true; requestAnimationFrame(function () { t = false; update(); }); } }, { passive: true });
-    window.addEventListener('resize', update);
-    update();
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('vis', e.intersectionRatio > .6); }); }, { root: track, threshold: [0, .6, 1] });
-      items.forEach(function (it) { io.observe(it); });
-    } else items.forEach(function (it) { it.classList.add('vis'); });
-  });
+function timeline() {
+  var tl = document.querySelector('.timeline'); if (!tl) return;
+  var steps = all(':scope > li', tl);
+  if (reduce) { steps.forEach(function (s) { s.classList.add('on'); }); return; }
+  var t = false;
+  function run() {
+    t = false;
+    var vh = window.innerHeight, r = tl.getBoundingClientRect(), line = vh * .6;
+    tl.style.setProperty('--p', clamp((line - r.top) / r.height).toFixed(4));
+    steps.forEach(function (s) { s.classList.toggle('on', s.getBoundingClientRect().top < line); });
+  }
+  window.addEventListener('scroll', function () { if (!t) { t = true; requestAnimationFrame(run); } }, { passive: true });
+  window.addEventListener('resize', run);
+  run();
 }
 
 /* ======================================================
-   PORTFOLIO: filtro a pillola con indicatore che scivola, foto che si riordinano
-   in movimento, foto a schermo intero che si ingrandisce dalla miniatura
+   PORTFOLIO: filtro con indicatore che scivola, foto che si riordinano,
+   foto a schermo intero che si ingrandisce dalla miniatura
    ====================================================== */
 function portfolio() {
   var bar = document.querySelector('.filters'), works = all('.work');
   if (bar) {
     var btns = all('button', bar), thumb = document.createElement('span'), tok = 0;
     thumb.className = 'seg-thumb'; bar.insertBefore(thumb, bar.firstChild); bar.classList.add('has-thumb');
-    // su telefono la sfumatura a destra sparisce quando il filtro è scorso fino in fondo
     var atEnd = function () { bar.classList.toggle('at-end', bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 4); };
     bar.addEventListener('scroll', atEnd, { passive: true }); window.addEventListener('resize', atEnd); atEnd();
     var moveThumb = function (bt, instant) {
       if (instant) thumb.style.transition = 'none';
       thumb.style.width = bt.offsetWidth + 'px';
-      thumb.style.transform = 'translateX(' + (bt.offsetLeft - 4) + 'px)';
+      thumb.style.transform = 'translateX(' + bt.offsetLeft + 'px)';
       if (instant) { void thumb.offsetWidth; thumb.style.transition = ''; }
     };
     var active = function () { return bar.querySelector('[aria-pressed="true"]') || btns[0]; };
@@ -258,7 +113,7 @@ function portfolio() {
       var keep = works.filter(function (w) { return !w.hidden && match(w); });
       if (!animate || !canAnimate) { works.forEach(function (w) { w.hidden = !match(w); }); return; }
       Promise.all(out.map(function (w) {
-        return w.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.92)' }], { duration: 220, easing: 'ease-in' }).finished;
+        return w.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.95)' }], { duration: 160, easing: 'ease-in' }).finished;
       })).then(function () {
         if (my !== tok) return;
         var first = keep.map(function (w) { return w.getBoundingClientRect(); });
@@ -266,11 +121,11 @@ function portfolio() {
         inn.forEach(function (w) { w.hidden = false; });
         keep.forEach(function (w, i) {
           var a = first[i], b2 = w.getBoundingClientRect(), dx = a.left - b2.left, dy = a.top - b2.top;
-          if (dx || dy) w.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 700, easing: EASE });
+          if (dx || dy) w.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 400, easing: EASE });
         });
         inn.forEach(function (w, i) {
-          w.animate([{ opacity: 0, transform: 'translateY(30px) scale(.94)', filter: 'blur(8px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }],
-            { duration: 800, delay: 80 + i * 60, easing: EASE, fill: 'backwards' });
+          w.animate([{ opacity: 0, transform: 'translateY(16px)' }, { opacity: 1, transform: 'none' }],
+            { duration: 400, delay: Math.min(i, 6) * 40, easing: EASE, fill: 'backwards' });
         });
       });
     };
@@ -292,7 +147,7 @@ function portfolio() {
     var list = works.filter(function (x) { return !x.hidden; }), i = list.indexOf(w), last = document.activeElement;
     var lb = document.createElement('div');
     lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Foto a schermo intero');
-    lb.innerHTML = '<figure><img alt=""><figcaption><span></span><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">×</button><button class="lb-p" type="button" aria-label="Foto precedente">‹</button><button class="lb-n" type="button" aria-label="Foto successiva">›</button>';
+    lb.innerHTML = '<figure><img alt=""><figcaption><span></span><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Foto precedente">←</button><button class="lb-n" type="button" aria-label="Foto successiva">→</button>';
     var im = lb.querySelector('img'), cap = lb.querySelector('figcaption span'), sub = lb.querySelector('figcaption small');
     function fill(n) {
       i = (n + list.length) % list.length;
@@ -300,18 +155,17 @@ function portfolio() {
       im.src = src.getAttribute('src'); im.alt = src.alt;
       cap.textContent = fc.querySelector('b').textContent; sub.textContent = fc.querySelector('span').textContent;
     }
-    /* la foto parte dalla posizione della miniatura e si ingrandisce al centro */
     function zoomFrom(el, reverse) {
       if (!canAnimate) return null;
       var a = el.querySelector('img').getBoundingClientRect(), z = im.getBoundingClientRect();
       if (!z.width || !a.width) return null;
       var from = 'translate(' + (a.left + a.width / 2 - z.left - z.width / 2) + 'px,' + (a.top + a.height / 2 - z.top - z.height / 2) + 'px) scale(' + (a.width / z.width) + ')';
-      var k = [{ transform: from, borderRadius: '18px' }, { transform: 'none' }];
-      return im.animate(reverse ? k.reverse() : k, { duration: reverse ? 450 : 650, easing: EASE, fill: 'forwards' });
+      var k = [{ transform: from }, { transform: 'none' }];
+      return im.animate(reverse ? k.reverse() : k, { duration: reverse ? 250 : 380, easing: EASE, fill: 'forwards' });
     }
     function show(n, dir) {
       fill(n);
-      if (canAnimate) im.animate([{ opacity: 0, transform: 'translateX(' + (dir * 40) + 'px)', filter: 'blur(6px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }], { duration: 550, easing: EASE });
+      if (canAnimate) im.animate([{ opacity: 0, transform: 'translateX(' + (dir * 30) + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: EASE });
     }
     function key(e) {
       if (e.key === 'Escape') close();
@@ -327,12 +181,15 @@ function portfolio() {
       var end = function () { lb.remove(); document.body.style.overflow = ''; if (last && last.focus) last.focus(); };
       var anim = zoomFrom(list[i], true);
       lb.classList.add('out');
-      if (anim) anim.finished.then(end, end); else setTimeout(end, 300);
+      if (anim) anim.finished.then(end, end); else setTimeout(end, 250);
     }
     lb.querySelector('.lb-x').addEventListener('click', close);
     lb.querySelector('.lb-p').addEventListener('click', function () { show(i - 1, -1); });
     lb.querySelector('.lb-n').addEventListener('click', function () { show(i + 1, 1); });
     lb.addEventListener('click', function (e) { if (e.target === lb || e.target.tagName === 'FIGURE') close(); });
+    var sx = 0;
+    lb.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend', function (e) { var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); });
     document.addEventListener('keydown', key);
     fill(i);
     document.body.appendChild(lb); document.body.style.overflow = 'hidden';
@@ -354,11 +211,11 @@ function faq() {
       e.preventDefault();
       if (anim) anim.cancel();
       if (d.open) {
-        anim = c.animate([{ height: c.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 380, easing: EASE });
+        anim = c.animate([{ height: c.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 220, easing: EASE });
         anim.onfinish = function () { d.open = false; anim = null; };
       } else {
         d.open = true;
-        anim = c.animate([{ height: '0px', opacity: 0, transform: 'translateY(-8px)' }, { height: c.offsetHeight + 'px', opacity: 1, transform: 'none' }], { duration: 520, easing: EASE });
+        anim = c.animate([{ height: '0px', opacity: 0 }, { height: c.offsetHeight + 'px', opacity: 1 }], { duration: 300, easing: EASE });
         anim.onfinish = function () { anim = null; };
       }
     });
@@ -366,7 +223,7 @@ function faq() {
 }
 
 /* ======================================================
-   MODULO DI PRENOTAZIONE
+   MODULO DEI CONTATTI
    Invio con Web3Forms senza lasciare la pagina. Finché nel modulo c'è la chiave
    provvisoria (INSERIRE-CHIAVE-WEB3FORMS) l'invio è solo simulato, per le prove.
    ====================================================== */
@@ -389,7 +246,7 @@ function bookingForm() {
   var msg = document.createElement('p'); msg.className = 'form-msg'; msg.setAttribute('role', 'status'); msg.hidden = true; f.appendChild(msg);
   var done = function () {
     f.reset(); sb.disabled = false; sb.textContent = sbText; msg.hidden = true;
-    thanks('Richiesta inviata', 'Grazie! Abbiamo ricevuto il tuo messaggio e ti risponderemo il prima possibile.');
+    thanks('Richiesta inviata', 'Grazie! Abbiamo ricevuto il tuo messaggio: ti rispondiamo entro due giorni lavorativi.');
   };
   f.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -406,18 +263,11 @@ function bookingForm() {
   });
 }
 
-heroOut();
-words();
-clipZoom();
-hscroll();
-stack();
-ctaCircle();
-timeline();
+navbar();
 reveal();
-carousels();
+timeline();
 portfolio();
 faq();
 bookingForm();
-runScroll();
 var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
 })();

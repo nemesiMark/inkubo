@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Genera i lavori di portfolio.html e la selezione della home (index.html)
-partendo da data/lavori.json, il file che il cliente modifica con Pages CMS.
+partendo da data/lavori.json, il file che il cliente modifica dall'area riservata.
+Nella home scrive le facce della ruota 3D (un lavoro per stile).
 
 Uso:  python3 scripts/genera_lavori.py           (scrive i file)
       python3 scripts/genera_lavori.py --check   (esce con errore se i file non sono aggiornati)
@@ -10,7 +11,7 @@ Tocca solo il testo fra i segnaposto <!-- lavori:inizio --> e <!-- lavori:fine -
 import html, json, os, sys
 
 RADICE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STILI = [  # ordine dei filtri e della home; il nome deve combaciare con .pages.yml
+STILI = [  # ordine dei filtri e della ruota in home; uguale ad area-riservata.html
     ("blackwork", "Blackwork"), ("dotwork", "Dotwork"), ("fine-line", "Fine line"),
     ("tradizionale", "Tradizionale"), ("giapponese", "Giapponese"), ("realistico", "Realistico"),
 ]
@@ -50,13 +51,12 @@ def portfolio(lavori):
     return righe
 
 def home(lavori):
-    # per ogni stile, il primo lavoro dell'elenco (quello più in alto nel pannello)
+    # ruota 3D della home: per ogni stile il primo lavoro dell'elenco (quello più in alto nel pannello)
     scelti = [next(l for l in lavori if l["stile"] == s) for s, _ in STILI if any(l["stile"] == s for l in lavori)]
     return [
-        f'                    <a class="hp-work rv rv-pop" href="portfolio.html#{l["stile"]}" style="--rv-d:{(i % 3) * 0.08:.2f}s">'
-        f'<span class="ph"><img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" loading="lazy"></span>'
-        f'<span class="cap"><b>{txt(l["titolo"])}</b><span>{l["nome"]}</span></span></a>'
-        for i, l in enumerate(scelti)]
+        f'                        <figure class="face" data-name="{att(l["nome"])}" data-title="{att(l["titolo"])}">'
+        f'<img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" draggable="false"></figure>'
+        for l in scelti]
 
 def sostituisci(nome, righe, controlla):
     percorso = os.path.join(RADICE, nome)
