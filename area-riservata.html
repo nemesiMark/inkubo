@@ -156,6 +156,13 @@ body.selezione #portfolio-stili,body.selezione .blocchi{padding-bottom:220px}
 .posiziona{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));z-index:25;width:min(560px,100% - 24px);transform:translateX(-50%);
   padding:16px;background:var(--ink);color:#fff;border-radius:18px;box-shadow:0 18px 50px -12px rgba(0,0,0,.5)}
 .posiziona[hidden]{display:none}
+.posiziona.avvisa{animation:avvisa 420ms ease-in-out 3}
+.posiziona.avvisa #sc-annulla,.posiziona.avvisa #sc-ok{animation:avvisa-btn 420ms ease-in-out 3}
+@keyframes avvisa{0%,100%{box-shadow:0 18px 50px -12px rgba(0,0,0,.5),0 0 0 0 rgba(255,106,0,0)}50%{box-shadow:0 18px 50px -12px rgba(0,0,0,.5),0 0 0 8px rgba(255,106,0,.85)}}
+@keyframes avvisa-btn{0%,100%{transform:none}50%{transform:scale(1.07)}}
+body.avvisata #sc-p{color:#fff;font-weight:600}
+body.bloccata.selezione .card:not(.scelta),body.bloccata .aggiungi button,body.bloccata .tab{cursor:not-allowed}
+@media (prefers-reduced-motion:reduce){.posiziona.avvisa{animation:none;box-shadow:0 0 0 4px var(--acc)}}
 .posiziona b{display:block;font-weight:600;font-size:16px;line-height:1.3}
 .posiziona p{color:rgba(255,255,255,.75);font-size:14px;margin:4px 0 12px}
 .posiziona .riga{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -360,7 +367,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   </div>
   <div class="posiziona" id="scelta" role="region" aria-label="Foto selezionata" hidden>
     <b id="sc-t"></b>
-    <p>Prendila e trascinala dove vuoi in questa sezione. Quando hai finito tocca «Conferma».</p>
+    <p id="sc-p">Prendila e trascinala dove vuoi in questa sezione. Quando hai finito tocca «Conferma».</p>
     <div class="riga">
       <button class="btn link" type="button" id="sc-annulla">Annulla</button>
       <button class="btn" type="button" id="sc-mod">Modifica o elimina</button>
@@ -463,7 +470,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       <h3 id="g-riordinare-t">Riordinare le foto</h3>
       <div class="g-passo"><span class="num">1</span><p>Clicca la foto da spostare: si accende in arancio e le altre diventano più chiare.</p><a href="images/guida/scegli.jpg" class="g-zoom" data-punti="21.09,23.79,14.22,36.00" aria-label="Ingrandisci la schermata"><img src="images/guida/scegli.jpg" alt="Una foto selezionata in arancio, le altre più chiare" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <div class="g-passo"><span class="num">2</span><p><b>Tieni premuto il clic sulla foto e trascinala</b> dove vuoi, dentro la stessa sezione. Il numero in alto a sinistra indica il posto. Poi clicca <b>Conferma</b>.</p><a href="images/guida/spostata.jpg" class="g-zoom" data-punti="6.56,23.79,14.22,36.00;61.55,89.75,9.55,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/spostata.jpg" alt="La foto spostata al posto 1 e il pulsante Conferma" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
-      <p class="g-nota">Hai cambiato idea? Clicca <b>Annulla</b> e la foto torna dov'era, senza salvare nulla.</p>
+      <p class="g-nota">Hai cambiato idea? Clicca <b>Annulla</b> e la foto torna dov'era, senza salvare nulla. Finché non scegli <b>Conferma</b> o <b>Annulla</b> il resto della pagina è bloccato: se clicchi altrove, la barra in basso lampeggia per ricordartelo.</p>
     </section>
     <section class="g-sez" id="g-rinominare" aria-labelledby="g-rinominare-t">
       <h3 id="g-rinominare-t">Rinominare una foto</h3>
@@ -707,9 +714,29 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     if (!sel) return;
     $('sc-t').textContent = '«' + sel.x.titolo + '» · posto ' + posto(sel.sez, sel.x) + ' di ' + membri(sel.sez).length + ' in ' + sel.sez.nome;
     $('sc-ok').textContent = sel.nuovo ? 'Conferma e salva' : 'Conferma';
+    document.body.classList.toggle('bloccata', cambiato(sel));
   }
   function cambiato(s) { var l = elenco(s.sez); return s.nuovo || l.length !== s.prima.length || l.some(function (x, i) { return x !== s.prima[i]; }); }
-  function fineScelta() { sel = null; $('scelta').hidden = true; disegna(); }
+  function fineScelta() {
+    sel = null; $('scelta').hidden = true; document.body.classList.remove('bloccata', 'avvisata');
+    $('scelta').classList.remove('avvisa'); $('sc-p').textContent = TESTO_SCELTA; disegna();
+  }
+  /* foto spostata (o nuova) e non ancora confermata: fuori dalla barra non si tocca nulla,
+     la barra lampeggia per ricordare di scegliere «Annulla» o «Conferma» */
+  var TESTO_SCELTA = $('sc-p').textContent;
+  function avvisaScelta() {
+    var b = $('scelta');
+    b.classList.remove('avvisa'); void b.offsetWidth; b.classList.add('avvisa'); // riparte ogni volta
+    document.body.classList.add('avvisata');
+    $('sc-p').textContent = sel.nuovo ? 'Prima di fare altro scegli: «Conferma e salva» per tenerla qui, «Annulla» per toglierla.'
+      : 'Prima di fare altro scegli: «Conferma» per salvare il nuovo posto, «Annulla» per rimetterla dov\'era.';
+  }
+  document.addEventListener('click', function (e) {
+    if (!sel || trascinato || !cambiato(sel) || document.querySelector('dialog[open]')) return;
+    var t = e.target;
+    if (t.closest && (t.closest('#scelta') || t.closest('.card.scelta'))) return;
+    e.preventDefault(); e.stopPropagation(); avvisaScelta();
+  }, true);
   function confermaScelta() {
     if (!sel) return;
     var s = sel, n = posto(s.sez, s.x), mod = cambiato(s); fineScelta();

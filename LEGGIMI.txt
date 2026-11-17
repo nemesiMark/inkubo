@@ -141,6 +141,10 @@ Home, e viceversa.
   apre la scheda (solo foto e titolo). Il riquadro + in fondo aggiunge
   una foto: basta la foto e il titolo; compare in fondo già selezionata, la si sposta e
   si tocca «Conferma e salva» (per lasciarla in fondo basta confermare subito).
+  Dopo uno spostamento (o con una foto nuova) il resto della pagina è bloccato finché
+  non si sceglie «Conferma» o «Annulla»: un clic altrove non salva e non seleziona
+  altro, fa solo lampeggiare la barra in basso con l'avviso di scegliere. Se la foto
+  è solo selezionata e non ancora spostata, toccarne un'altra cambia la selezione.
   Nel Portfolio l'elenco in data/lavori.json resta uno solo: riordinando uno stile i suoi
   lavori si scambiano fra i posti che già occupano, gli altri stili non si muovono.
 - Tatuaggi, Piercing, Studio: le immagini fisse della pagina; «Cambia foto» e il testo
