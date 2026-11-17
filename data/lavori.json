@@ -54,16 +54,16 @@
     "zona": "Polpaccio"
   },
   {
-    "foto": "images/flash/sakura-giapponese.svg",
-    "titolo": "Ramo di ciliegio",
-    "stile": "giapponese",
-    "zona": "Spalla"
-  },
-  {
     "foto": "images/flash/fuji-giapponese.svg",
     "titolo": "Monte Fuji",
     "stile": "giapponese",
     "zona": "Avambraccio"
+  },
+  {
+    "foto": "images/flash/sakura-giapponese.svg",
+    "titolo": "Ramo di ciliegio",
+    "stile": "giapponese",
+    "zona": "Spalla"
   },
   {
     "foto": "images/flash/peonia-giapponese.svg",
