@@ -361,14 +361,6 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     </section>
 
     <!-- PAGINE CON IMMAGINI FISSE -->
-    <section class="pag" id="pag-tatuaggi.html" role="tabpanel" hidden>
-      <div class="pag-head"><h1>Tatuaggi <small>tatuaggi.html</small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="tatuaggi.html">Vedi la pagina ↗</a></div>
-      <ul class="slots" data-pagina="tatuaggi.html"></ul>
-    </section>
-    <section class="pag" id="pag-piercing.html" role="tabpanel" hidden>
-      <div class="pag-head"><h1>Piercing <small>piercing.html</small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="piercing.html">Vedi la pagina ↗</a></div>
-      <ul class="slots" data-pagina="piercing.html"></ul>
-    </section>
     <section class="pag" id="pag-studio.html" role="tabpanel" hidden>
       <div class="pag-head"><h1>Studio <small>studio.html</small></h1><a class="vedi" target="_blank" rel="noopener" data-vedi="studio.html">Vedi la pagina ↗</a></div>
       <ul class="slots" data-pagina="studio.html"></ul>
@@ -502,7 +494,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     </section>
     <section class="g-sez" id="g-fisse" aria-labelledby="g-fisse-t">
       <h3 id="g-fisse-t">Cambiare le foto fisse</h3>
-      <div class="g-passo"><span class="num">1</span><p>Nelle pagine <b>Tatuaggi</b>, <b>Piercing</b>, <b>Studio</b> e nella <b>Home</b> ci sono foto con un posto fisso: clicca <b>Cambia foto</b> accanto a quella da cambiare.</p><a href="images/guida/fissa.jpg" class="g-zoom" data-punti="18.20,37.16,10.45,6.25" aria-label="Ingrandisci la schermata"><img src="images/guida/fissa.jpg" alt="Una foto della pagina Tatuaggi con il pulsante Cambia foto" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">1</span><p>Nella pagina <b>Studio</b> e nella <b>Home</b> ci sono foto con un posto fisso: clicca <b>Cambia foto</b> accanto a quella da cambiare.</p><a href="images/guida/fissa.jpg" class="g-zoom" data-punti="18.20,37.16,10.45,6.25" aria-label="Ingrandisci la schermata"><img src="images/guida/fissa.jpg" alt="Una foto della pagina Tatuaggi con il pulsante Cambia foto" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <div class="g-passo"><span class="num">2</span><p>Nella finestra clicca <b>Cambia foto</b> e scegli quella nuova. Scrivi in breve cosa si vede (serve a Google) e clicca <b>Salva</b>.</p><a href="images/guida/fissa-scheda.jpg" class="g-zoom" data-punti="50.27,57.26,10.92,6.25;59.90,80.64,6.98,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/fissa-scheda.jpg" alt="La finestra per cambiare una foto, con Cambia foto e Salva evidenziati" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <p class="g-nota">Ogni pagina è indipendente: una foto cambiata in una pagina resta uguale in tutte le altre.</p>
     </section>
@@ -524,7 +516,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   var $ = function (id) { return document.getElementById(id); };
 
   var lavori = [], ruota = [], ruotaCaricata = false, video = [], videoCaricati = false, immagini = [], anteprimeLocali = {}, token = null;
-  var PAGINE = [['index.html', 'Home'], ['portfolio.html', 'Portfolio'], ['tatuaggi.html', 'Tatuaggi'], ['piercing.html', 'Piercing'], ['studio.html', 'Studio']];
+  var PAGINE = [['index.html', 'Home'], ['portfolio.html', 'Portfolio'], ['studio.html', 'Studio']];
   var SOLO_FOTO = 'image/jpeg,image/png,image/webp,image/heic,image/heif', SOLO_VIDEO = 'video/*';
   var mem = { get: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
               set: function (k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };

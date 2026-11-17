@@ -32,19 +32,13 @@ index.html               Home: prima schermata con la scritta «Rain Ink» al ne
                          al centro (nessun testo né pulsante sopra; il titolo h1 resta solo
                          per Google e i lettori di schermo), ruota 3D dei lavori (scelti
                          dall'area riservata), Video (striscia orizzontale di video verticali,
-                         da data/video.json), Lo studio, Dove siamo (con la mappa animata),
-                         riquadro «Hai già un'idea?»
-tatuaggi.html            I sei stili (blackwork, fine line, dotwork, tradizionale,
-                         giapponese, realistico), uno per riga con ancora
-                         (es. tatuaggi.html#dotwork)
-piercing.html            Piercing: come lavoriamo, zone e tempi di guarigione, cura
+                         da data/video.json), Lo studio, Dove siamo (con la mappa animata)
 portfolio.html           Foto e video dei lavori tutti insieme, per ora senza suddivisioni
                          (da decidere col cliente); a schermo intero le foto si ingrandiscono
                          e i video partono da soli
 studio.html              L'artista (#artista), Lo spazio (#studio), Igiene e sicurezza (#igiene)
 cura-del-tatuaggio.html  Cura del tatuaggio giorno per giorno, con la guida in PDF
 faq.html                 Domande frequenti
-contattaci.html          Contattaci: recapiti a sinistra, modulo a destra
 privacy.html             Informativa privacy
 area-riservata.html      Area riservata del cliente (vedi AREA RISERVATA)
 downloads/               guida-cura-del-tatuaggio.pdf
@@ -60,7 +54,7 @@ js/vendor/maplibre/      MapLibre 5.6.0 (licenza BSD), la libreria delle mappe; 
                          solo quando serve la mappa
 js/vendor/sortable/      SortableJS 1.15.6 (licenza MIT), per l'area riservata
 
-images/comune/           logo-rainink.svg (avorio, usato nella navbar e nel footer),
+images/comune/           logo-rainink.svg (avorio, usato nella navbar),
                          logo-rainink-scuro.svg (nero, solo nei dati per Google),
                          favicon.svg
 images/lavori/           Tutte le foto del sito (tatuaggio-NN-…, studio-NN-… e le copertine
@@ -70,7 +64,6 @@ video/                   NON sta nel repository (è in .gitignore): i video sono
                          alla release «video» di GitHub e la pubblicazione li scarica qui.
                          Per provarli in locale: gh release download video -D video
 images/guida/            Schermate della guida dell'area riservata
-images/piercing/         disegni della pagina Piercing (non ci sono ancora foto di piercing)
 
 Tolti nella versione 6.0 perché non più usati: servizi.html (le voci Tatuaggi e Piercing
 sono ora direttamente nel menu), stili.html (vecchio rimando), test.html (le 30 proposte
@@ -104,9 +97,8 @@ Gli elementi compaiono salendo di poco mentre si scorre; la linea della cura del
 tatuaggio si riempie scorrendo; le FAQ si aprono morbide; nel portfolio l'indicatore
 del filtro scivola e la foto a schermo intero si ingrandisce dalla miniatura.
 Con «riduci movimento» del dispositivo tutto compare fermo.
-Fine di ogni pagina (tranne FAQ, Contattaci e Privacy): riquadro «Hai già un'idea?»
-con «Scrivici» e «Chiama». Footer: indirizzo, orari, contatti, social, privacy e
-gestione cookie.
+Footer su una sola riga (come Olimp): © ed email, social, Privacy e cookie,
+Gestione cookie.
 
 
 DOVE SIAMO (MAPPA ANIMATA, COME IN OLIMP)
@@ -159,7 +151,7 @@ Home, e viceversa.
   non si sceglie «Conferma» o «Annulla»: un clic altrove non salva e non seleziona
   altro, fa solo lampeggiare la barra in basso con l'avviso di scegliere. Se la foto
   è solo selezionata e non ancora spostata, toccarne un'altra cambia la selezione.
-- Tatuaggi, Piercing, Studio: le immagini fisse della pagina; «Cambia foto» e il testo
+- Studio: le immagini fisse della pagina; «Cambia foto» e il testo
   che dice cosa si vede (per Google e per chi non vede).
 Ogni salvataggio (aggiunta, modifica, spostamento, eliminazione) apre subito una
 finestra con una barra che avanza; la barra si completa quando il salvataggio è davvero
@@ -197,8 +189,7 @@ File:
                          Il cliente cambia solo foto e testo alternativo; per aggiungere
                          un'immagine gestibile: data-slot nell'<img> e una voce qui.
 - images/lavori/         Foto caricate dal cliente (anche quelle delle pagine). Quelle che
-                         non usa più nessuno vengono cancellate; images/piercing non
-                         viene mai toccata.
+                         non usa più nessuno vengono cancellate.
 - scripts/genera_lavori.py
                          Scrive i lavori in portfolio.html (da lavori.json), la ruota 3D in
                          index.html (da ruota.json) e i video della home (da video.json,
@@ -243,7 +234,7 @@ footer, in Dove siamo, in Privacy e nei dati per Google in testa a index.html):
 - Facebook e Instagram (@matteoraininktattoo): sono quelli veri dello studio
 - orari (mar–sab 10–19)
 - DOMINIO-DEL-SITO nei meta, in robots.txt e in sitemap.xml
-- modulo dei contatti: in contattaci.html sostituire INSERIRE-CHIAVE-WEB3FORMS con
+- modulo dei contatti: in index.html (sezione #contatti) sostituire INSERIRE-CHIAVE-WEB3FORMS con
   la chiave Web3Forms del cliente. Finché c'è la chiave provvisoria l'invio è solo
   simulato (compare il messaggio di conferma ma non parte nessuna email)
 - da verificare col cliente: attestato regionale, ritocco incluso, consulenza
@@ -615,3 +606,17 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    tutta larghezza (images/lavori/hero-studio.jpg, ritagliata a destra
                    per togliere il cliente), sotto la scritta e sfumata in alto nel
                    nero; niente più scontornatura. style.css?v=49.
+                   Home: al posto del riquadro finale «Hai già un'idea?» (Prenota) c'è la
+                   sezione Contattaci (#contatti): recapiti e modulo. La pagina
+                   contattaci.html è stata eliminata: il pulsante «Contattaci» della
+                   navbar e gli altri link portano a index.html#contatti.
+                   Tolta la pagina Piercing (piercing.html, images/piercing/, voce della
+                   navbar, scheda dell'area riservata e sitemap); nel footer «Tatuaggi di
+                   Matteo Quattrini».
+                   Navbar: nuova voce «Dove siamo» (dopo FAQ) che porta alla sezione
+                   della home (index.html#dove).
+                   Tolta la pagina Tatuaggi (tatuaggi.html, voce della navbar, scheda
+                   dell'area riservata e sitemap); le sue sei foto restano nel portfolio.
+                   Home: scritta Rain Ink e foto più in alto.
+                   Footer semplificato come quello di Olimp: una sola riga con © ed email,
+                   icone social, Privacy e cookie, Gestione cookie (in colonna sul cellulare).
