@@ -153,7 +153,7 @@ function portfolio() {
     var list = works.filter(function (x) { return !x.hidden; }), i = list.indexOf(w), last = document.activeElement;
     var lb = document.createElement('div');
     lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Foto e video a schermo intero');
-    lb.innerHTML = '<figure><img alt=""><video controls playsinline preload="auto" hidden></video><figcaption><span></span><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Precedente">←</button><button class="lb-n" type="button" aria-label="Successivo">→</button>';
+    lb.innerHTML = '<figure><img alt=""><video controls playsinline preload="auto" hidden></video><figcaption><span></span><p class="lb-desc"></p><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Precedente">←</button><button class="lb-n" type="button" aria-label="Successivo">→</button>';
     var im = lb.querySelector('img'), vd = lb.querySelector('video'), cap = lb.querySelector('figcaption span'), sub = lb.querySelector('figcaption small');
     function media() { return vd.hidden ? im : vd; }
     function fill(n) {
@@ -170,6 +170,8 @@ function portfolio() {
       }
       cap.textContent = fc.querySelector('b').textContent;
       var s2 = fc.querySelector('span'); sub.textContent = s2 ? s2.textContent : '';
+      // descrizione provvisoria, uguale per tutti finché non se ne scrive una propria in data-desc
+      lb.querySelector('.lb-desc').textContent = it.getAttribute('data-desc') || (v ? "Una seduta in studio vista da vicino, dalla prima linea all'ultima sfumatura. Attiva l'audio per viverla come se fossi lì." : "Un lavoro nato in studio da un'idea del cliente e disegnato su misura. Ogni linea e ogni sfumatura sono pensate per durare nel tempo.");
     }
     function zoomFrom(el, reverse) {
       if (!canAnimate) return null;
@@ -298,4 +300,31 @@ clips();
 faq();
 bookingForm();
 var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
+proteggi();
+
+/* ======================================================
+   FOTO E VIDEO PROTETTI: si guardano ma non si scaricano facilmente
+   (niente menu del tasto destro, niente trascinamento, niente «Scarica» nei video,
+   niente salvataggio con la pressione lunga sul telefono). Nessun sito può impedirlo
+   del tutto: è un deterrente.
+   ====================================================== */
+function proteggi() {
+  function media(el) { return el && el.closest && el.closest('img, video, picture, canvas, .face, .clip, .work, .lb, .lb3d, .sc-col, .hero'); }
+  document.addEventListener('contextmenu', function (e) { if (media(e.target)) e.preventDefault(); });
+  document.addEventListener('dragstart', function (e) { if (media(e.target)) e.preventDefault(); });
+  function blocca(v) {
+    if (v.tagName !== 'VIDEO' || v.dataset.protetto) return;
+    v.dataset.protetto = '1';
+    v.setAttribute('controlsList', 'nodownload noremoteplayback noplaybackrate');
+    v.disablePictureInPicture = true; v.setAttribute('disablepictureinpicture', '');
+    v.disableRemotePlayback = true; v.setAttribute('disableremoteplayback', '');
+  }
+  all('video').forEach(blocca);
+  // anche i video creati dopo (schermo intero, nastro): «loadstart» arriva prima che si veda il lettore
+  document.addEventListener('loadstart', function (e) { blocca(e.target); }, true);
+  document.addEventListener('play', function (e) { blocca(e.target); }, true);
+  if ('MutationObserver' in window) new MutationObserver(function (ms) {
+    ms.forEach(function (m) { [].forEach.call(m.addedNodes, function (n) { if (n.nodeType !== 1) return; if (n.tagName === 'VIDEO') blocca(n); else all('video', n).forEach(blocca); }); });
+  }).observe(document.body, { childList: true, subtree: true });
+}
 })();

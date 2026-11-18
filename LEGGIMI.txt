@@ -679,3 +679,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Animazioni ancora più fluide: sfocatura delle foto laterali della ruota disegnata una volta
                    sola, tolto il riflesso; nel nastro dei video si vedono le copertine e il video compare solo
                    quando parte; tolte le sfocature dietro navbar e pulsanti play.
+                   Foto e video ingranditi: foto di nuovo al centro, scritta fuori a destra in alto (da 1100 px),
+                   titolo più grande e due righe di descrizione provvisoria uguale per tutti (data-desc la sostituisce).
+                   Foto e video protetti: niente tasto destro, trascinamento, «Scarica» nei video e salvataggio
+                   con la pressione lunga (un deterrente: nessun sito può impedirlo del tutto).

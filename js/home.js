@@ -6,6 +6,9 @@
 'use strict';
 var still = matchMedia('(prefers-reduced-motion: reduce)').matches,
     fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+// descrizione sotto il titolo nelle foto e nei video ingranditi (provvisoria, uguale per tutti finché non se ne scrive una propria in data-desc)
+var DESC_FOTO = "Un lavoro nato in studio da un'idea del cliente e disegnato su misura. Ogni linea e ogni sfumatura sono pensate per durare nel tempo.",
+    DESC_VIDEO = "Una seduta in studio vista da vicino, dalla prima linea all'ultima sfumatura. Attiva l'audio per viverla come se fossi lì.";
 function pad(n) { return (n < 10 ? '0' : '') + n; }
 // animazioni che girano da sole: ferme quando non si vedono
 function fuoriSchermo(el) {
@@ -131,6 +134,7 @@ function fuoriSchermo(el) {
     var f = faces[i], im = f.querySelector('img');
     lbImg.src = im.src; lbImg.alt = im.alt;
     lb.querySelector('figcaption span').textContent = f.dataset.name;
+    lb.querySelector('.lb-desc').textContent = f.dataset.desc || DESC_FOTO;
     lb.querySelector('small').textContent = pad(i + 1) + ' / ' + pad(N) + (f.dataset.title ? ' · ' + f.dataset.title : '');
   }
   function openLb(i) {
@@ -193,7 +197,7 @@ function fuoriSchermo(el) {
   if (!box) return;
   var figs = [].slice.call(box.querySelectorAll('.clip'));
   if (!figs.length) { box.closest('section').hidden = true; return; }
-  var dati = figs.map(function (f) { var v = f.querySelector('video'); return { src: v.getAttribute('src'), poster: v.getAttribute('poster'), titolo: f.querySelector('figcaption').textContent }; });
+  var dati = figs.map(function (f) { var v = f.querySelector('video'); return { src: v.getAttribute('src'), poster: v.getAttribute('poster'), titolo: f.querySelector('figcaption').textContent, desc: f.getAttribute('data-desc') }; });
   var tr = document.createElement('div'); tr.className = 'clips-tr';
   figs.forEach(function (f, k) {
     var v = f.querySelector('video');
@@ -231,12 +235,13 @@ function fuoriSchermo(el) {
     box.classList.add('fermo'); document.documentElement.classList.add('zoom');
     var lb = document.createElement('div');
     lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Video a tutto schermo');
-    lb.innerHTML = '<figure><video controls playsinline preload="auto"></video><figcaption><span></span><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Video precedente">←</button><button class="lb-n" type="button" aria-label="Video successivo">→</button>';
+    lb.innerHTML = '<figure><video controls playsinline preload="auto"></video><figcaption><span></span><p class="lb-desc"></p><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Video precedente">←</button><button class="lb-n" type="button" aria-label="Video successivo">→</button>';
     var vd = lb.querySelector('video');
     function fill(n) {
       i = (n + dati.length) % dati.length;
       vd.pause(); vd.poster = dati[i].poster; vd.src = dati[i].src; vd.setAttribute('aria-label', dati[i].titolo);
       lb.querySelector('figcaption span').textContent = dati[i].titolo;
+      lb.querySelector('.lb-desc').textContent = dati[i].desc || DESC_VIDEO;
       lb.querySelector('figcaption small').textContent = pad(i + 1) + ' / ' + pad(dati.length);
       var p = vd.play(); if (p && p.catch) p.catch(function () {});
     }
