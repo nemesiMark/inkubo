@@ -233,9 +233,9 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 /* con JS: nastro largo quanto la pagina che scorre da solo (si ferma col mouse sopra o col tasto Tab) */
 .clips.nastro { display: block; overflow: hidden; padding: 0 0 1rem; scroll-snap-type: none;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
-.clips-tr { display: flex; gap: 16px; width: max-content; padding-left: 16px; animation: nastro 50s linear infinite; }
+.clips-tr { display: flex; gap: 16px; width: max-content; padding-left: 16px; animation: nastro 50s linear infinite; will-change: transform; backface-visibility: hidden; }
 .clips.nastro:hover .clips-tr, .clips.nastro:focus-within .clips-tr, .clips.fermo .clips-tr { animation-play-state: paused; }
-@keyframes nastro { to { transform: translateX(-50%); } }
+@keyframes nastro { to { transform: translate3d(-50%, 0, 0); } }
 .nastro .clip { position: relative; flex: none; width: clamp(180px, 19vw, 250px); cursor: pointer; border-radius: 14px; outline-offset: 4px; }
 .nastro .clip video { box-shadow: none; transition: transform .5s var(--ease); }
 .nastro .clip::after { content: ""; position: absolute; inset: 0; border-radius: 14px; pointer-events: none;
@@ -397,9 +397,12 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 .wheel:focus-visible .face.front { box-shadow: 0 0 0 3px var(--red2), 0 40px 80px -20px rgba(0, 0, 0, .95); }
 .ring3d { position: absolute; left: 50%; top: 0; width: var(--w); aspect-ratio: 4 / 5; margin-left: calc(var(--w) / -2); transform-style: preserve-3d; }
 .face { position: absolute; inset: 0; border-radius: 14px; overflow: hidden; background: var(--paper); backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, .95); will-change: transform, filter;
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, .95); will-change: transform, opacity;
   -webkit-box-reflect: below 10px linear-gradient(transparent 72%, rgba(0, 0, 0, .22)); } /* riflesso sul «pavimento» */
 .face img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+/* copia sfocata e velo scuro sopra la foto: cambia solo l'opacità (fluido, lo fa la scheda video) */
+.face .sf { position: absolute; inset: 0; filter: saturate(.5) blur(2.5px); transform: scale(1.04); opacity: 0; will-change: opacity; }
+.face .ombra { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; will-change: opacity; }
 .face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255, 255, 255, .12), transparent 40%, transparent 70%, rgba(0, 0, 0, .18)); }
 .face.front { cursor: zoom-in; transition: box-shadow .3s var(--ease); }
 /* foto al centro: leggero contorno rosso col mouse sopra */
@@ -446,9 +449,11 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
   -webkit-mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); }
 .sc-col { display: flex; flex-direction: column; gap: 12px; }
 .sc-col img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 10px; }
-.studio-cols.gira .sc-col { animation: scorriSu 45s linear infinite; }
+.studio-cols.gira .sc-col { animation: scorriSu 45s linear infinite; will-change: transform; backface-visibility: hidden; }
+/* fuori dallo schermo o sotto una foto ingrandita le animazioni si fermano: meno lavoro, niente scatti */
+.clips.fuori .clips-tr, .studio-cols.fuori .sc-col, html.zoom .clips-tr, html.zoom .studio-cols .sc-col { animation-play-state: paused; }
 .studio-cols.gira .sc-giu { animation-direction: reverse; }
-@keyframes scorriSu { to { transform: translateY(-50%); } }
+@keyframes scorriSu { to { transform: translate3d(0, -50%, 0); } }
 .about .frame { position: relative; border-radius: var(--r); padding: 40px; background: #0e0e11; border: 1px solid var(--line); box-shadow: 0 0 0 10px var(--bg2), 0 0 0 11px var(--line); }
 .about .frame img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; }
 .about .frame img[src$=".svg"] { filter: invert(1) hue-rotate(180deg) contrast(1.1); opacity: .9; }   /* i disegni in negativo; le foto restano come sono */

@@ -7,6 +7,11 @@
 var still = matchMedia('(prefers-reduced-motion: reduce)').matches,
     fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
 function pad(n) { return (n < 10 ? '0' : '') + n; }
+// animazioni che girano da sole: ferme quando non si vedono
+function fuoriSchermo(el) {
+  if (!('IntersectionObserver' in window)) return;
+  new IntersectionObserver(function (es) { el.classList.toggle('fuori', !es[0].isIntersecting); }, { rootMargin: '200px 0px' }).observe(el);
+}
 
 /* ---------- coverflow dei lavori: una foto grande al centro, le altre inclinate ai lati ---------- */
 (function () {
@@ -26,6 +31,14 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
   });
   if (N < 2) { document.getElementById('wprev').hidden = document.getElementById('wnext').hidden = true; dotsBox.hidden = true; }
 
+  // le foto ai lati sono più scure, meno colorate e sfocate: invece di ricalcolare un filtro a ogni
+  // fotogramma (lento), ogni foto ha sopra una copia già sfocata e un velo scuro, e cambia solo la loro opacità
+  var veli = faces.map(function (f) {
+    var im = f.querySelector('img'), sf = im.cloneNode(); sf.alt = ''; sf.className = 'sf'; sf.setAttribute('aria-hidden', 'true');
+    sf.removeAttribute('loading'); f.insertBefore(sf, im.nextSibling);
+    var om = document.createElement('i'); om.className = 'ombra'; om.setAttribute('aria-hidden', 'true'); f.appendChild(om);
+    return { sf: sf, om: om };
+  });
   function size() { W = ring.offsetWidth; }
   function show(i) {
     if (i === idx) return; idx = i;
@@ -43,15 +56,25 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
       var o = ((k - pos) % N + N) % N; if (o > N / 2) o -= N;          // 0 = al centro, ±1 = accanto
       var a = Math.abs(o), c = Math.min(a, 1), sg = o < 0 ? -1 : 1;
       var x = o * W * .3 + sg * c * W * .32, z = (1 - c) * 90 - a * 40;
-      f.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,' + z.toFixed(1) + 'px) rotateY(' + (-sg * c * 50).toFixed(2) + 'deg) scale(' + (1 - c * .2).toFixed(3) + ')';
-      // le foto ai lati sono sfumate: più scure, meno colorate e un po' sfocate
-      f.style.filter = 'brightness(' + (1 - c * .62 - Math.max(a - 1, 0) * .1).toFixed(2) + ') saturate(' + (1 - c * .5).toFixed(2) + ') blur(' + (c * 2.5).toFixed(1) + 'px)';
-      f.style.opacity = a > 2.6 ? Math.max(0, 3.4 - a).toFixed(2) : 1;
+      f.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,' + z.toFixed(2) + 'px) rotateY(' + (-sg * c * 50).toFixed(3) + 'deg) scale(' + (1 - c * .2).toFixed(4) + ')';
+      veli[k].sf.style.opacity = c.toFixed(3);
+      veli[k].om.style.opacity = Math.min(1, c * .62 + Math.max(a - 1, 0) * .1).toFixed(3);
+      f.style.opacity = a > 2.6 ? Math.max(0, 3.4 - a).toFixed(3) : 1;
       f.style.zIndex = Math.round(100 - a * 10);
     });
     show(((Math.round(pos)) % N + N) % N);
   }
-  function go(p) { tpos = p; last = Date.now(); if (still) { pos = tpos; render(); } }
+  // ogni passaggio è un movimento a tempo con partenza e arrivo morbidi, uguale su schermi a 60 o 120 Hz
+  // (dopo un trascinamento la foto si assesta senza ripartire piano: frenata finale e basta)
+  var from = 0, t0 = 0, dur = 0, soloFrenata = false;
+  function ease(t) { return soloFrenata ? 1 - Math.pow(1 - t, 3) : t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function go(p, frenata) {
+    last = Date.now();
+    if (still) { pos = tpos = p; render(); return; }
+    soloFrenata = !!frenata;
+    from = pos; tpos = p; t0 = performance.now();
+    dur = frenata ? 420 : Math.min(1400, 750 + 220 * Math.abs(p - pos));
+  }
   function step(n) { if (N > 1) go(Math.round(tpos) + n); }
   document.getElementById('wprev').onclick = function () { step(-1); };
   document.getElementById('wnext').onclick = function () { step(1); };
@@ -69,7 +92,7 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
   });
   wheel.addEventListener('pointerdown', function (e) { dragging = true; moved = 0; sx = e.clientX; sp = pos; wheel.classList.add('drag'); wheel.setPointerCapture(e.pointerId); });
   wheel.addEventListener('pointermove', function (e) { if (!dragging) return; moved = Math.abs(e.clientX - sx); if (N > 1) pos = tpos = sp - (e.clientX - sx) / (W * .55); if (still) render(); });
-  function up(e) { if (!dragging) return; dragging = false; wheel.classList.remove('drag'); go(Math.round(pos)); if (moved < 6 && e.type === 'pointerup') tap(e); }
+  function up(e) { if (!dragging) return; dragging = false; wheel.classList.remove('drag'); go(Math.round(pos), true); if (moved < 6 && e.type === 'pointerup') tap(e); }
   wheel.addEventListener('pointerup', up); wheel.addEventListener('pointercancel', up);
   wheel.addEventListener('mouseenter', function () { hover = true; }); wheel.addEventListener('mouseleave', function () { hover = false; });
   if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { seen = es[0].isIntersecting; }).observe(wheel);
@@ -86,10 +109,10 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
   function openLb(i) {
     lbIdx = i; fill(i); lbBack = document.activeElement; lb.hidden = false; lbOpen = true;
     document.documentElement.style.overflow = 'hidden';
-    void lb.offsetWidth; lb.classList.add('open'); lb.querySelector('.lclose').focus({ preventScroll: true });
+    document.documentElement.classList.add('zoom'); void lb.offsetWidth; lb.classList.add('open'); lb.querySelector('.lclose').focus({ preventScroll: true });
   }
   function closeLb() {
-    lb.classList.remove('open'); lbOpen = false; document.documentElement.style.overflow = '';
+    lb.classList.remove('open'); lbOpen = false; document.documentElement.style.overflow = ''; document.documentElement.classList.remove('zoom');
     setTimeout(function () { if (!lbOpen) lb.hidden = true; }, still ? 0 : 300);
     hover = wheel.matches(":hover"); go(near(lbIdx)); (lbBack || wheel).focus({ preventScroll: true });
   }
@@ -127,12 +150,13 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
 
   size(); render();
   if (still) return;
-  (function loop() {
+  var drawn = NaN;
+  (function loop(now) {
     if (seen && !hover && !dragging && !lbOpen && !tastiera() && Date.now() - last > 4000) step(1);
-    if (!dragging) pos += (tpos - pos) * .09;
-    if (dragging || Math.abs(tpos - pos) > .0005) render();
+    if (!dragging) pos = dur && now - t0 < dur ? from + (tpos - from) * ease(Math.max(0, now - t0) / dur) : tpos;
+    if (pos !== drawn) { drawn = pos; render(); }
     requestAnimationFrame(loop);
-  })();
+  })(performance.now());
 })();
 
 /* ---------- video: nastro che scorre da solo; col mouse sopra si ferma e il video parte muto,
@@ -158,6 +182,7 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
   // durata del giro in proporzione alla lunghezza, così la velocità resta la stessa
   function durata() { tr.style.animationDuration = Math.max(20, tr.scrollWidth / 2 / 45) + 's'; }
   durata(); addEventListener('resize', durata);
+  fuoriSchermo(box);
 
   function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); v.parentNode.classList.add('va'); }
   function stop(v) { v.pause(); v.parentNode.classList.remove('va'); }
@@ -173,7 +198,7 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
 
   function apri(i, da) {
     var last = da || document.activeElement;
-    box.classList.add('fermo');
+    box.classList.add('fermo'); document.documentElement.classList.add('zoom');
     var lb = document.createElement('div');
     lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Video a tutto schermo');
     lb.innerHTML = '<figure><video controls playsinline preload="auto"></video><figcaption><span></span><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Video precedente">←</button><button class="lb-n" type="button" aria-label="Video successivo">→</button>';
@@ -196,7 +221,7 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
     }
     function close() {
       document.removeEventListener('keydown', key); vd.pause(); lb.classList.add('out');
-      setTimeout(function () { lb.remove(); document.body.style.overflow = ''; box.classList.remove('fermo'); if (last && last.focus) last.focus({ preventScroll: true }); }, 250);
+      setTimeout(function () { lb.remove(); document.body.style.overflow = ''; box.classList.remove('fermo'); document.documentElement.classList.remove('zoom'); if (last && last.focus) last.focus({ preventScroll: true }); }, 250);
     }
     lb.querySelector('.lb-x').addEventListener('click', close);
     lb.querySelector('.lb-p').addEventListener('click', function () { fill(i - 1); });
@@ -221,9 +246,14 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
   [].forEach.call(cols, function (c) {
     if (!c.children.length) return;
     // seconda copia per il giro infinito (solo decorativa)
-    [].slice.call(c.children).forEach(function (im) { var k = im.cloneNode(); k.alt = ''; k.setAttribute('aria-hidden', 'true'); c.appendChild(k); });
+    // foto caricate subito e decodificate a parte: niente scatti quando entrano in vista mentre scorrono
+    [].slice.call(c.children).forEach(function (im) {
+      im.loading = 'eager'; im.decoding = 'async';
+      var k = im.cloneNode(); k.alt = ''; k.setAttribute('aria-hidden', 'true'); c.appendChild(k);
+    });
   });
   box.classList.add('gira');
+  fuoriSchermo(box);
 })();
 
 /* prima schermata: scritta e foto ferme (niente movimento col mouse o con lo scorrimento) */

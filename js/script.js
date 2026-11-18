@@ -30,14 +30,19 @@ function navbar() {
   window.addEventListener('scroll', small, { passive: true }); small();
 
   if (!fine || reduce) return;
-  slab.addEventListener('mousemove', function (e) {
+  // al massimo un aggiornamento per fotogramma
+  var ev = null;
+  slab.addEventListener('mousemove', function (e) { if (!ev) requestAnimationFrame(tilt); ev = e; });
+  function tilt() {
+    var e = ev; ev = null; if (!e) return;
     var r = slab.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
     slab.style.setProperty('--ry', ((x - .5) * 6).toFixed(2) + 'deg');
     slab.style.setProperty('--rx', ((.5 - y) * 14).toFixed(2) + 'deg');
     slab.style.setProperty('--mx', (x * 100) + '%'); slab.style.setProperty('--my', (y * 100) + '%');
     slab.style.setProperty('--glow', 1);
-  });
+  }
   slab.addEventListener('mouseleave', function () {
+    ev = null;
     slab.style.setProperty('--rx', '0deg'); slab.style.setProperty('--ry', '0deg'); slab.style.setProperty('--glow', 0);
   });
 }

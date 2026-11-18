@@ -671,3 +671,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Footer: link, icone social e «Gestione cookie» si illuminano di rosso col mouse sopra.
                    Foto e video ingranditi (home e portfolio): su computer nome e numero stanno a destra
                    della foto o del video, in alto; su telefono restano sopra.
+                   Animazioni più fluide: la ruota di Lavori recenti si muove a tempo con partenza e arrivo
+                   morbidi (uguale a 60 e 120 Hz) e lo sfumato delle foto ai lati non si ricalcola più a ogni
+                   fotogramma; nastro dei video e colonne dello studio sulla scheda video, fermi quando non si
+                   vedono o sotto una foto ingrandita; foto dello studio caricate subito; navbar 3D aggiornata
+                   al massimo una volta per fotogramma.
