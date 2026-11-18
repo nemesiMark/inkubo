@@ -139,8 +139,9 @@ con una password. La pagina di accesso dice «Entra per:» foto e video · testi
   dall'80% / rossa dal 95%, quante foto ci stanno ancora (GET /spazio del Worker: il più
   grande fra sito pubblicato e repository). I video stanno nella release e non contano.
 - Foto della Home: prima schermata (foto fissa), ruota dei Lavori recenti (data/ruota.json,
-  solo foto), Video (data/video.json, solo video); il blocco Lo studio rimanda al gruppo
-  Dallo studio del Portfolio. Portfolio: un solo elenco (data/lavori.json) in quattro
+  solo foto), Video (data/video.json, solo video), Lo studio (data/studio-home.json, solo
+  foto: le due colonne che scorrono). Ogni sezione è indipendente: una foto aggiunta,
+  spostata o eliminata in una sezione cambia solo quella. Portfolio: un solo elenco (data/lavori.json) in quattro
   gruppi: Tatuaggi a colori, Bianco e nero, Video, Dallo studio. Studio: due foto fisse
   (L'artista, Lo spazio). Le foto di ogni pagina sono indipendenti.
 - Ruota, Video e Portfolio: tocco su una foto = la si seleziona (rossa che lampeggia, le
@@ -195,9 +196,9 @@ File:
                          spazio, lettura e salvataggio su GitHub. Nessuna chiave nei file.
                          Si pubblica dalla cartella worker/ con  wrangler deploy  (PRIMA
                          del push del sito, se cambia quello che la pagina gli chiede).
-- data/lavori.json, data/ruota.json, data/video.json
+- data/lavori.json, data/ruota.json, data/video.json, data/studio-home.json
                          Portfolio (foto, titolo, "tipo" colori/bn/studio oppure "video"),
-                         ruota della Home, video della Home.
+                         ruota della Home, video della Home, Lo studio della Home.
 - data/immagini.json     Foto fisse: id, pagina, sezione, descrizione, foto, alt, testi
                          (id dei testi vicini). Nell'HTML <img data-slot="id">.
 - data/testi.json        Testi delle pagine: id, pagina, sezione, descrizione, tipo, testo,
@@ -690,3 +691,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Portfolio: tolta la nota sui disegni provvisori (ora ci sono le foto vere).
                    iPhone: la ruota 3D di Lavori recenti usciva ai lati e allargava la pagina (spazio
                    nero a destra, pagina spostabile di lato): ora la sezione taglia ciò che esce.
+6.7  (18/11/2026)  Home, sezione Lo studio: elenco di foto a sé (data/studio-home.json), non più
+                   preso dal gruppo «Dallo studio» del Portfolio. Ogni sezione del sito è
+                   indipendente: dall'area riservata (blocco 4 della Home) si aggiungono,
+                   spostano ed eliminano le foto di Lo studio senza toccare il Portfolio e viceversa.

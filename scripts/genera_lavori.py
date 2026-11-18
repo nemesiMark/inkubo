@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Genera i lavori di portfolio.html (da data/lavori.json: foto e video divisi in gruppi
 con data-cat: tatuaggi a colori, bianco e nero, video, dallo studio), la ruota 3D della home in index.html (da data/ruota.json, un elenco a sé),
-la sezione Video della home (data/video.json), le foto «Dallo studio» nella sezione Lo studio della home e le altre immagini delle pagine
+la sezione Video della home (data/video.json), le foto della sezione Lo studio della home (data/studio-home.json) e le altre immagini delle pagine
 (data/immagini.json: ogni <img data-slot="…"> prende foto e testo alternativo) e i testi delle pagine
 (data/testi.json: ogni elemento data-testo="…" prende il suo testo; **grassetto**, ==evidenziato==, `codice`, [testo](link)).
 Sono i file che il cliente modifica dall'area riservata.
@@ -77,26 +77,27 @@ def video_home(lista):
         f' aria-label="{att(v["titolo"])}"></video><figcaption>{txt(v["titolo"])}</figcaption></figure>'
         for v in lista if v["video"]]
 
-def studio_home(lavori):
-    # sezione «Lo studio» della home: le foto del gruppo «Dallo studio» in due colonne che scorrono
-    # (una sì e una no); il giro infinito lo fa js/home.js duplicandole
-    foto = [l for l in lavori if l["tipo"] == "studio"]
+def studio_home(foto):
+    # sezione «Lo studio» della home: data/studio-home.json (elenco a sé, indipendente dal gruppo
+    # «Dallo studio» del Portfolio) in due colonne che scorrono (una sì e una no); il giro infinito
+    # lo fa js/home.js duplicandole
     colonne = []
     for k in (0, 1):
-        imgs = "".join(f'<img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" loading="lazy">' for l in foto[k::2])
+        imgs = "".join(f'<img src="{att(l["foto"])}" alt="{att(l["titolo"] + ", Rain Ink Tattoo")}" width="800" height="1000" loading="lazy">' for l in foto[k::2])
         colonne.append(f'                    <div class="sc-col{" sc-giu" if k else ""}">{imgs}</div>')
     return colonne
 
-def carica_ruota():
-    # ruota 3D della home: data/ruota.json, nell'ordine scelto dal cliente (solo foto e titolo)
-    with open(os.path.join(RADICE, "data", "ruota.json"), encoding="utf-8") as f:
+def carica_ruota(nome="ruota.json"):
+    # ruota 3D della home (data/ruota.json) o sezione Lo studio della home (data/studio-home.json):
+    # elenchi a sé, nell'ordine scelto dal cliente (solo foto e titolo)
+    with open(os.path.join(RADICE, "data", nome), encoding="utf-8") as f:
         dati = json.load(f)
     ruota = []
     for n, r in enumerate(dati, 1):
         foto = str(r.get("foto") or "").strip().lstrip("/")
         titolo = str(r.get("titolo") or "").strip()
         if not foto or not titolo or not os.path.exists(os.path.join(RADICE, foto)):
-            print(f"avviso: foto n. {n} della ruota saltata (manca la foto o il titolo)", file=sys.stderr)
+            print(f"avviso: foto n. {n} di {nome} saltata (manca la foto o il titolo)", file=sys.stderr)
             continue
         ruota.append(dict(foto=foto, titolo=titolo))
     return ruota
@@ -298,7 +299,7 @@ if __name__ == "__main__":
     lavori = carica()
     ok = sostituisci("portfolio.html", portfolio(lavori), controlla) & sostituisci("index.html", home(carica_ruota()), controlla)
     ok = sostituisci("index.html", video_home(carica("video.json")), controlla, ("<!-- video:inizio -->", "<!-- video:fine -->")) & ok
-    ok = sostituisci("index.html", studio_home(lavori), controlla, ("<!-- studio:inizio -->", "<!-- studio:fine -->")) & ok
+    ok = sostituisci("index.html", studio_home(carica_ruota("studio-home.json")), controlla, ("<!-- studio:inizio -->", "<!-- studio:fine -->")) & ok
     ok = immagini(controlla) & ok
     ok = testi(controlla) & ok
     sys.exit(0 if ok else 1)

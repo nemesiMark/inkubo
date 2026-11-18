@@ -633,7 +633,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       <table class="g-tab">
         <thead><tr><th>Dove</th><th>Forma</th><th>Misura esatta (pixel)</th></tr></thead>
         <tbody>
-          <tr><td>Portfolio (tutti i gruppi), Lavori recenti della Home, foto dello Studio (L'artista e Lo spazio)</td><td>verticale 4:5</td><td>1280 × 1600</td></tr>
+          <tr><td>Portfolio (tutti i gruppi), Lavori recenti e Lo studio della Home, foto dello Studio (L'artista e Lo spazio)</td><td>verticale 4:5</td><td>1280 × 1600</td></tr>
           <tr><td>Home: foto grande della prima schermata</td><td>orizzontale 16:10, parte importante al centro</td><td>1600 × 1000</td></tr>
           <tr><td>Video (Home e Portfolio)</td><td>verticale 9:16, come si registra col telefono</td><td>al massimo 3 minuti</td></tr>
         </tbody>
@@ -656,7 +656,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   var API = meta('ar-api').replace(/\/+$/, ''), REPO = meta('ar-repo'), RAMO = meta('ar-branch') || 'main';
   var $ = function (id) { return document.getElementById(id); };
 
-  var lavori = [], ruota = [], ruotaCaricata = false, video = [], videoCaricati = false, immagini = [], testi = [], testiCaricati = false, anteprimeLocali = {}, token = null;
+  var lavori = [], ruota = [], ruotaCaricata = false, studio = [], studioCaricato = false, video = [], videoCaricati = false, immagini = [], testi = [], testiCaricati = false, anteprimeLocali = {}, token = null;
   var SOLO_FOTO = 'image/jpeg,image/png', SOLO_VIDEO = 'video/*';
   // nel browser si ricordano accesso, scheda e guida vista; il prefisso evita di confondersi con
   // altri siti pubblicati sullo stesso indirizzo (nemesimark.github.io)
@@ -666,16 +666,18 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   /* ---------- sezioni con foto da ordinare ----------
      Il Portfolio (data/lavori.json) è un solo elenco mostrato in quattro gruppi: le foto hanno
      «tipo» (colori, bn, studio), i video stanno sempre nel gruppo Video; si sposta dentro il gruppo.
-     La ruota della Home (data/ruota.json, solo foto) e i video della Home (data/video.json) sono
-     elenchi a sé: cambiare una foto del Portfolio non tocca la Home e viceversa. */
+     La ruota della Home (data/ruota.json, solo foto), i video della Home (data/video.json) e le
+     foto di Lo studio della Home (data/studio-home.json) sono elenchi a sé: ogni sezione è
+     indipendente, cambiare una foto del Portfolio non tocca la Home e viceversa. */
   var SEZ_RUOTA = { id: 'ruota', lista: 'ruota', nome: 'Lavori recenti', accetta: SOLO_FOTO };
+  var SEZ_STUDIO = { id: 'studio-home', lista: 'studio', nome: 'Lo studio della Home', accetta: SOLO_FOTO };
   var SEZ_VIDEO = { id: 'video-home', lista: 'video', nome: 'Video della Home', accetta: SOLO_VIDEO };
   // gruppi del portfolio (uguali a scripts/genera_lavori.py e al Worker)
   var NOMI_TIPO = { colori: 'Tatuaggi a colori', bn: 'Bianco e nero', studio: 'Dallo studio' };
   function sezPort(g, nome, accetta) { return { id: 'port-' + g, lista: 'lavori', gruppo: g, nome: 'Portfolio · ' + nome, accetta: accetta }; }
   var SEZ_PORT = [sezPort('colori', 'Tatuaggi a colori', SOLO_FOTO), sezPort('bn', 'Bianco e nero', SOLO_FOTO),
                   sezPort('video', 'Video', SOLO_VIDEO), sezPort('studio', 'Dallo studio', SOLO_FOTO)];
-  var SEZIONI = {}; [SEZ_RUOTA, SEZ_VIDEO].concat(SEZ_PORT).forEach(function (z) { SEZIONI[z.id] = z; });
+  var SEZIONI = {}; [SEZ_RUOTA, SEZ_VIDEO, SEZ_STUDIO].concat(SEZ_PORT).forEach(function (z) { SEZIONI[z.id] = z; });
 
   /* ---------- pagine del sito e blocchi, nell'ordine in cui si vedono ----------
      [file, nome della scheda, titolo, blocchi, nota della pagina (facoltativa)]
@@ -689,7 +691,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       { t: 'Prima schermata', slots: ['home-hero'] },
       { t: 'Lavori recenti', sez: 'ruota', piccola: true },
       { t: 'Video', sez: 'video-home', piccola: true },
-      { t: 'Lo studio', nota: 'Qui scorrono da sole le foto del gruppo «Dallo studio» del Portfolio: per cambiarle aggiungile, toglile o riordinale lì.' }]],
+      { t: 'Lo studio', sez: 'studio-home', piccola: true }]],
     ['portfolio.html', 'Portfolio', 'Portfolio', [
       { t: 'Tatuaggi a colori', sez: 'port-colori' }, { t: 'Bianco e nero', sez: 'port-bn' },
       { t: 'Video', sez: 'port-video' }, { t: 'Dallo studio', sez: 'port-studio' }],
@@ -723,7 +725,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     $('apri-pw').hidden = nome !== 'lavori';
     $('apri-guida').hidden = nome !== 'lavori';
   }
-  function esci() { token = null; mem.set('ar-token', null); lavori = []; ruota = []; video = []; testi = []; mostraVista('login'); $('pw').value = ''; }
+  function esci() { token = null; mem.set('ar-token', null); lavori = []; ruota = []; studio = []; video = []; testi = []; mostraVista('login'); $('pw').value = ''; }
   $('esci').onclick = function () { if (sel) confermaScelta(); esci(); };
   $('mostra').onclick = function () {
     var vis = $('pw').type === 'password'; $('pw').type = vis ? 'text' : 'password';
@@ -745,6 +747,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       lavori = d.lavori || []; immagini = d.immagini || [];
       ruotaCaricata = Array.isArray(d.ruota); ruota = d.ruota || []; // senza il Worker aggiornato la ruota non si tocca
       videoCaricati = Array.isArray(d.video); video = d.video || [];
+      studioCaricato = Array.isArray(d.studio); studio = d.studio || [];
       testiCaricati = Array.isArray(d.testi); testi = d.testi || []; // idem per i testi
       disegna(); stato('', ''); aggiornaSpazio();
       if (!mem.get('ar-guida-vista')) apriGuida(); // la prima volta si apre da sola
@@ -886,7 +889,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     var t = x ? gruppo(x) : sez.gruppo;
     [].forEach.call(document.querySelectorAll('#tipi input'), function (r) { r.checked = r.value === t; });
   }
-  function elenco(sez) { return sez.lista === 'ruota' ? ruota : sez.lista === 'video' ? video : lavori; }
+  function elenco(sez) { return sez.lista === 'ruota' ? ruota : sez.lista === 'studio' ? studio : sez.lista === 'video' ? video : lavori; }
   function membri(sez) {
     var l = elenco(sez), out = [];
     l.forEach(function (x, i) { if (!sez.gruppo || gruppo(x) === sez.gruppo) out.push(i); });
@@ -1060,7 +1063,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     ul.innerHTML = '';
     var lista = elenco(sez);
     membri(sez).forEach(function (i, k) { ul.appendChild(cartaLavoro(sez, lista[i], k + 1)); });
-    ul.appendChild(cartaAggiungi(sez.accetta === SOLO_VIDEO ? 'Aggiungi un video' : sez.lista === 'lavori' ? 'Aggiungi una foto' : 'Aggiungi una foto ai lavori recenti', sez));
+    ul.appendChild(cartaAggiungi(sez.accetta === SOLO_VIDEO ? 'Aggiungi un video' : sez.lista === 'ruota' ? 'Aggiungi una foto ai lavori recenti' : 'Aggiungi una foto', sez));
     ordinatori.push(new Sortable(ul, {
       // si trascina solo la foto selezionata (le altre sono «filtrate»); trascinamento gestito da
       // Sortable con il puntatore, uguale su telefono e computer
@@ -1194,10 +1197,11 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     if (inCorso) { inAttesa = msg; return Promise.resolve(); }
     inCorso = true; inizioSalva(); // l'avanzamento si vede solo nella finestra di salvataggio
     var foto = fotoInAttesa; fotoInAttesa = {};
-    var inviati = lavori.map(function (l) { return l.foto; }), inviatiR = ruota.map(function (r) { return r.foto; }), inviatiV = video.map(function (v) { return v.foto; });
+    var inviati = lavori.map(function (l) { return l.foto; }), inviatiR = ruota.map(function (r) { return r.foto; }), inviatiS = studio.map(function (r) { return r.foto; }), inviatiV = video.map(function (v) { return v.foto; });
     var imm = immagini.map(function (v) { return { id: v.id, foto: v.foto, alt: v.alt }; });
     var corpo = { lavori: lavori.map(function (l) { var o = { foto: l.foto, titolo: l.titolo }; if (l.video) o.video = l.video; else o.tipo = l.tipo || 'colori'; return o; }),
                   immagini: imm, nuoveFoto: foto, messaggio: 'Area riservata: ' + msg };
+    if (studioCaricato) corpo.studio = studio.map(function (r) { return { foto: r.foto, titolo: r.titolo }; });
     if (ruotaCaricata) corpo.ruota = ruota.map(function (r) { return { foto: r.foto, titolo: r.titolo }; });
     if (videoCaricati) corpo.video = video.map(function (v) { return { foto: v.foto, titolo: v.titolo, video: v.video }; });
     if (testiCaricati) corpo.testi = testi.map(function (v) { return { id: v.id, testo: v.testo }; });
@@ -1206,9 +1210,10 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       // essere stato riordinato) e si tiene l'anteprima locale finché il sito non pubblica la foto
       var nomi = {};
       inviati.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.lavori[i]) nomi[f] = d.lavori[i].foto; });
+      if (corpo.studio && d.studio) inviatiS.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.studio[i]) nomi[f] = d.studio[i].foto; });
       if (corpo.ruota && d.ruota) inviatiR.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.ruota[i]) nomi[f] = d.ruota[i].foto; });
       if (corpo.video && d.video) inviatiV.forEach(function (f, i) { if (f.indexOf('nuova:') === 0 && d.video[i]) nomi[f] = d.video[i].foto; });
-      lavori.concat(ruota, video).forEach(function (l) { var n = nomi[l.foto]; if (n) { anteprimeLocali[n] = anteprimeLocali[l.foto]; l.foto = n; } });
+      lavori.concat(ruota, studio, video).forEach(function (l) { var n = nomi[l.foto]; if (n) { anteprimeLocali[n] = anteprimeLocali[l.foto]; l.foto = n; } });
       (d.immagini || []).forEach(function (srv) {
         var loc = immagini.filter(function (v) { return v.id === srv.id; })[0];
         if (loc && loc.foto.indexOf('nuova:') === 0 && imm.some(function (x) { return x.id === srv.id && x.foto === loc.foto; })) {

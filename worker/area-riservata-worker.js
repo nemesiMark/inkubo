@@ -4,6 +4,7 @@
  * Fa da ponte fra la pagina area-riservata.html e il repository GitHub del sito:
  * controlla la password, poi legge e salva data/lavori.json (portfolio: foto e video),
  * data/ruota.json (ruota dei lavori della home), data/video.json (sezione Video della home),
+ * data/studio-home.json (sezione Lo studio della home),
  * data/immagini.json (le altre immagini delle pagine), data/testi.json (i testi delle pagine)
  * e le foto in images/lavori/
  * con un solo commit per ogni salvataggio. GitHub Actions ripubblica il sito da solo.
@@ -53,6 +54,7 @@ function formattazione(t) {
   return out.join(",");
 }
 const FILE_RUOTA = "data/ruota.json";
+const FILE_STUDIO = "data/studio-home.json";
 const MAX_RUOTA = 30;
 const CARTELLA_FOTO = "images/lavori/";
 const MAX_FOTO_BYTES = 4 * 1024 * 1024;   // dopo il ridimensionamento nel browser sono ~0,3–0,6 MB
@@ -204,8 +206,8 @@ async function ugualiCostante(a, b) {
 /* ---------- lettura ---------- */
 
 async function leggiLavori(env, cors) {
-  const { lavori, immagini, ruota, video, testi } = await statoAttuale(env);
-  return json({ lavori, immagini, ruota, video, testi }, 200, cors);
+  const { lavori, immagini, ruota, video, testi, studio } = await statoAttuale(env);
+  return json({ lavori, immagini, ruota, video, testi, studio }, 200, cors);
 }
 
 /**
@@ -241,11 +243,12 @@ async function leggiSpazio(env, cors) {
 async function statoAttuale(env) {
   const ref = await gh(env, `git/ref/heads/${env.BRANCH}`);
   const sha = ref.object.sha;
-  const [lavori, immagini, ruota, video, testi] = await Promise.all([leggiJson(env, FILE_LAVORI, sha),
+  const [lavori, immagini, ruota, video, testi, studio] = await Promise.all([leggiJson(env, FILE_LAVORI, sha),
     leggiJson(env, FILE_IMMAGINI, sha).catch(() => []), leggiJson(env, FILE_RUOTA, sha).catch(() => []),
-    leggiJson(env, FILE_VIDEO, sha).catch(() => []), leggiJson(env, FILE_TESTI, sha).catch(() => [])]);
+    leggiJson(env, FILE_VIDEO, sha).catch(() => []), leggiJson(env, FILE_TESTI, sha).catch(() => []),
+    leggiJson(env, FILE_STUDIO, sha).catch(() => [])]);
   const lista = (x) => Array.isArray(x) ? x : [];
-  return { sha, lavori: lista(lavori), immagini: lista(immagini), ruota: lista(ruota), video: lista(video), testi: lista(testi) };
+  return { sha, lavori: lista(lavori), immagini: lista(immagini), ruota: lista(ruota), video: lista(video), testi: lista(testi), studio: lista(studio) };
 }
 
 async function leggiJson(env, percorso, sha) {
@@ -258,6 +261,7 @@ async function leggiJson(env, percorso, sha) {
 /**
  * Corpo: { lavori: [ {foto, titolo, video? | tipo?} ], immagini: [ {id, foto, alt} ] (facoltativo),
  *         ruota: [ {foto, titolo} ] (facoltativo: la ruota della home, indipendente dal portfolio),
+ *         studio: [ {foto, titolo} ] (facoltativo: la sezione Lo studio della home, anche lei a sé),
  *         video: [ {foto, titolo, video} ] (facoltativo: la sezione Video della home),
  *         testi: [ {id, testo} ] (facoltativo: i testi delle pagine),
  *         nuoveFoto: { "nuova:ID": "base64…" }, messaggio }
@@ -336,6 +340,18 @@ async function salva(request, env, cors) {
     });
   }
 
+  // sezione Lo studio della home: elenco a sé, solo foto e titolo
+  let studio = null;
+  if (Array.isArray(corpo.studio)) {
+    if (corpo.studio.length > MAX_RUOTA) throw errore("Troppe foto in Lo studio", 400);
+    studio = corpo.studio.map((r, i) => {
+      const titolo = pulisci(r && r.titolo, 80), foto = String((r && r.foto) || "");
+      if (!titolo) throw errore(`Manca il titolo della foto n. ${i + 1} di Lo studio`, 400);
+      if (!(foto in percorsi) && !FOTO_VALIDA.test(foto)) throw errore(`Foto non valida in Lo studio (n. ${i + 1})`, 400);
+      return { foto, titolo };
+    });
+  }
+
   // immagini delle pagine: id → foto e testo alternativo scelti
   const scelte = {};
   if (Array.isArray(corpo.immagini)) for (const im of corpo.immagini) {
@@ -358,18 +374,18 @@ async function salva(request, env, cors) {
 
   const giorno = new Date().toISOString().slice(0, 10);
   for (const f of blobFoto) {
-    const lavoro = lavori.find((l) => l.foto === f.id) || (ruota || []).find((r) => r.foto === f.id) || (videoHome || []).find((v) => v.foto === f.id);
+    const lavoro = lavori.find((l) => l.foto === f.id) || (ruota || []).find((r) => r.foto === f.id) || (studio || []).find((r) => r.foto === f.id) || (videoHome || []).find((v) => v.foto === f.id);
     const slot = Object.entries(scelte).find(([, v]) => v.foto === f.id);
     if (!lavoro && !slot) continue; // foto caricata ma non usata: si ignora
     const nome = `${giorno}-${slug(lavoro ? lavoro.titolo : slot[0])}-${casuale(6)}.${f.est}`;
     percorsi[f.id] = CARTELLA_FOTO + nome;
-    for (const l of [...lavori, ...(ruota || []), ...(videoHome || [])]) if (l.foto === f.id) l.foto = percorsi[f.id];
+    for (const l of [...lavori, ...(ruota || []), ...(studio || []), ...(videoHome || [])]) if (l.foto === f.id) l.foto = percorsi[f.id];
     for (const v of Object.values(scelte)) if (v.foto === f.id) v.foto = percorsi[f.id];
   }
 
   // fino a 3 tentativi se nel frattempo il ramo è cambiato
   for (let tentativo = 0; tentativo < 3; tentativo++) {
-    const { sha, lavori: prima, immagini: immPrima, ruota: ruotaPrima, video: videoPrima, testi: testiPrima } = await statoAttuale(env);
+    const { sha, lavori: prima, immagini: immPrima, ruota: ruotaPrima, video: videoPrima, testi: testiPrima, studio: studioPrima } = await statoAttuale(env);
     for (const id of Object.keys(testiScelti))
       if (!testiPrima.some((v) => v.id === id)) throw errore("Testo sconosciuto: ricarica la pagina", 400);
     const testi = testiPrima.map((v) => {
@@ -381,9 +397,10 @@ async function salva(request, env, cors) {
     });
     const immagini = immPrima.map((v) => scelte[v.id] ? { ...v, foto: scelte[v.id].foto, alt: scelte[v.id].alt || v.alt } : v);
     const ruotaNuova = ruota || ruotaPrima;
+    const studioNuovo = studio || studioPrima;
     const videoNuovo = videoHome || videoPrima;
-    const usate = new Set([...lavori, ...immagini, ...ruotaNuova, ...videoNuovo].map((x) => x.foto));
-    const daCancellare = [...new Set([...prima, ...immPrima, ...ruotaPrima, ...videoPrima].map((l) => l && l.foto).filter((p) =>
+    const usate = new Set([...lavori, ...immagini, ...ruotaNuova, ...studioNuovo, ...videoNuovo].map((x) => x.foto));
+    const daCancellare = [...new Set([...prima, ...immPrima, ...ruotaPrima, ...studioPrima, ...videoPrima].map((l) => l && l.foto).filter((p) =>
       typeof p === "string" && p.startsWith(CARTELLA_FOTO) && FOTO_VALIDA.test(p) && !usate.has(p)))];
 
     const commit = await gh(env, `git/commits/${sha}`);
@@ -399,12 +416,14 @@ async function salva(request, env, cors) {
       albero.push({ path: FILE_IMMAGINI, mode: "100644", type: "blob", content: JSON.stringify(immagini, null, 2) + "\n" });
     if (ruota && JSON.stringify(ruota) !== JSON.stringify(ruotaPrima))
       albero.push({ path: FILE_RUOTA, mode: "100644", type: "blob", content: JSON.stringify(ruota, null, 2) + "\n" });
+    if (studio && JSON.stringify(studio) !== JSON.stringify(studioPrima))
+      albero.push({ path: FILE_STUDIO, mode: "100644", type: "blob", content: JSON.stringify(studio, null, 2) + "\n" });
     if (videoHome && JSON.stringify(videoHome) !== JSON.stringify(videoPrima))
       albero.push({ path: FILE_VIDEO, mode: "100644", type: "blob", content: JSON.stringify(videoHome, null, 2) + "\n" });
     if (testiPrima.length && JSON.stringify(testi) !== JSON.stringify(testiPrima))
       albero.push({ path: FILE_TESTI, mode: "100644", type: "blob", content: JSON.stringify(testi, null, 2) + "\n" });
     for (const p of daCancellare) albero.push({ path: p, mode: "100644", type: "blob", sha: null });
-    if (!albero.length) return json({ lavori, immagini, ruota: ruotaNuova, video: videoNuovo, testi, commit: sha }, 200, cors); // niente da salvare
+    if (!albero.length) return json({ lavori, immagini, ruota: ruotaNuova, studio: studioNuovo, video: videoNuovo, testi, commit: sha }, 200, cors); // niente da salvare
 
     const nuovoAlbero = await gh(env, "git/trees", "POST", { base_tree: commit.tree.sha, tree: albero });
     const messaggio = pulisci(corpo.messaggio, 100) || "Area riservata: aggiornati i lavori del portfolio";
@@ -417,7 +436,7 @@ async function salva(request, env, cors) {
       const vecchio = Date.now() - 6 * 3600 * 1000;
       for (const a of allegati.filter((a) => !videoUsati.has(a.name) && Date.parse(a.created_at) < vecchio).slice(0, 10))
         await gh(env, `releases/assets/${a.id}`, "DELETE").catch(() => {});
-      return json({ lavori, immagini, ruota: ruotaNuova, video: videoNuovo, testi, commit: nuovoCommit.sha }, 200, cors);
+      return json({ lavori, immagini, ruota: ruotaNuova, studio: studioNuovo, video: videoNuovo, testi, commit: nuovoCommit.sha }, 200, cors);
     } catch (e) {
       if (e.stato !== 422) throw e; // 422: il ramo è andato avanti, si riprova sul nuovo stato
     }
