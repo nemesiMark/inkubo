@@ -80,8 +80,8 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
   function fill(i) {
     var f = faces[i], im = f.querySelector('img');
     lbImg.src = im.src; lbImg.alt = im.alt;
-    lb.querySelector('small').textContent = f.dataset.name + ' · ' + pad(i + 1) + ' / ' + pad(N);
-    lb.querySelector('figcaption span').textContent = f.dataset.title;
+    lb.querySelector('figcaption span').textContent = f.dataset.name;
+    lb.querySelector('small').textContent = pad(i + 1) + ' / ' + pad(N) + (f.dataset.title ? ' · ' + f.dataset.title : '');
   }
   function openLb(i) {
     lbIdx = i; fill(i); lbBack = document.activeElement; lb.hidden = false; lbOpen = true;
@@ -213,7 +213,7 @@ function pad(n) { return (n < 10 ? '0' : '') + n; }
   }
 })();
 
-/* ---------- Lo studio: due colonne di foto che scorrono in versi opposti (si fermano col mouse sopra) ---------- */
+/* ---------- Lo studio: due colonne di foto che scorrono in versi opposti, senza fermarsi ---------- */
 (function () {
   var box = document.getElementById('studio-cols');
   if (!box || still) return;

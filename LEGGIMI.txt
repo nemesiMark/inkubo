@@ -657,8 +657,15 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Lavori recenti: foto al centro più grande, quelle ai lati più sfumate
                    (scure, meno colorate, un po' sfocate); leggero contorno rosso col mouse sopra.
                    Home, Lo studio: al posto della foto in cornice due colonne con le foto
-                   «Dallo studio» del portfolio che scorrono in versi opposti (si fermano col
-                   mouse sopra, niente zoom); tolti il testo e i passi Consulenza → Cura.
+                   «Dallo studio» del portfolio che scorrono in versi opposti (niente zoom); tolti il testo e i passi Consulenza → Cura.
                    Le scrive genera_lavori.py tra <!-- studio:inizio --> e <!-- studio:fine -->;
                    tolta la voce «home-studio» da data/immagini.json (nell'area riservata il
                    blocco 4 della Home ora rimanda al gruppo Dallo studio del Portfolio).
+                   Hero: sotto «Rain Ink» la frase «Ogni tatuaggio nasce da un'idea…» su due
+                   righe (al posto di «Tatuaggi su misura · Solo su appuntamento»); foto un po' più a destra.
+                   Zoom di Lavori recenti: niente più strisce chiare ai lati (la foto prende la
+                   sua forma); nome e numero fuori dalla foto, in alto a destra.
+                   Lo studio: le colonne di foto non si fermano più col mouse sopra.
+                   Lo studio (home): sotto il titolo il testo «Uno spazio dove creatività…» in bianco.
+                   Contattaci (home): tolta la frase «Raccontaci il tuo progetto…» accanto al titolo.
+                   Footer: link, icone social e «Gestione cookie» si illuminano di rosso col mouse sopra.
