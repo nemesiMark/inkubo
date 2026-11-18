@@ -1,7 +1,7 @@
 /* Rain Ink Tattoo – gestione cookie, ripresa dal sito Olimp.
    Alla prima visita compare una barra in fondo alla pagina con «Rifiuta» e «Accetta».
    Il sito usa solo cookie tecnici; l'unica cosa che dipende dalla scelta è la mappa animata
-   della home (js/mappa.js), che contatta servizi esterni (Esri, OpenFreeMap).
+   della home (js/mappa.js), che contatta un servizio esterno (Esri).
    Se si accetta, la mappa parte da sola quando si arriva a «Dove siamo»; se si rifiuta,
    resta il riquadro «Mostra la mappa». «Gestione cookie» nel footer riapre la barra. */
 (function(){
@@ -64,7 +64,7 @@ background-image:linear-gradient(var(--red,#c4372a),var(--red,#c4372a));backgrou
     if(old){old.querySelector('h2').textContent=t+'.';flash(old);return}
     var b=document.createElement('div');
     b.id='ck-banner';b.setAttribute('role','region');b.setAttribute('aria-label','Cookie');
-    b.innerHTML='<div class="ck-in"><div class="ck-txt"><h2></h2> Usiamo solo cookie tecnici. Se accetti, la mappa animata di «Dove siamo» si carica da sola (foto satellitari Esri e caratteri OpenFreeMap, servizi esterni). <a href="privacy.html">Privacy e cookie</a></div><div class="ck-row"><button type="button" class="ck-btn" data-ck="no">Rifiuta</button><button type="button" class="ck-btn" data-ck="yes">Accetta</button></div></div>';
+    b.innerHTML='<div class="ck-in"><div class="ck-txt"><h2></h2> Usiamo solo cookie tecnici. Se accetti, la mappa animata di «Dove siamo» si carica da sola (foto satellitari Esri, servizio esterno). <a href="privacy.html">Privacy e cookie</a></div><div class="ck-row"><button type="button" class="ck-btn" data-ck="no">Rifiuta</button><button type="button" class="ck-btn" data-ck="yes">Accetta</button></div></div>';
     b.querySelector('h2').textContent=t+'.';
     b.querySelector('[data-ck=no]').addEventListener('click',function(){choose(false)});
     b.querySelector('[data-ck=yes]').addEventListener('click',function(){choose(true)});

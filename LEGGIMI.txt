@@ -27,12 +27,15 @@ STRUTTURA
 ---------
 Dalla versione 6.0 tutto il sito è scuro, con i colori e i componenti della home scura
 (vedi ASPETTO).
-index.html               Home: prima schermata con la scritta «Rain Ink» al neon in
-                         profondità subito sotto la navbar e il tatuatore in primo piano
-                         al centro (nessun testo né pulsante sopra; il titolo h1 resta solo
-                         per Google e i lettori di schermo), ruota 3D dei lavori (scelti
-                         dall'area riservata), Video (striscia orizzontale di video verticali,
-                         da data/video.json), Lo studio, Dove siamo (con la mappa animata)
+index.html               Home: prima schermata «editoriale» (foto a tutto schermo e scritta
+                         RAIN INK enorme in basso a sinistra, che è anche il titolo h1,
+                         con «Tatuaggi su misura · Solo su appuntamento»), coverflow dei
+                         Lavori recenti (scelti
+                         dall'area riservata), Video (nastro largo quanto la pagina che scorre da solo:
+                         col mouse sopra si ferma e il video parte muto, al clic si apre
+                         a tutto schermo con l'audio; da data/video.json), Lo studio (le foto del gruppo «Dallo
+                         studio» del portfolio in due colonne che scorrono piano, senza zoom),
+                         Dove siamo (con la mappa animata)
 portfolio.html           Foto e video dei lavori divisi in gruppi con i pulsanti in alto:
                          Tatuaggi a colori, Bianco e nero, Video, Dallo studio
                          (es. portfolio.html#bn); a schermo intero le foto si ingrandiscono
@@ -48,7 +51,7 @@ css/style.css            Tutti gli stili del sito
 js/script.js             Navbar 3D, comparsa allo scorrimento, cura del tatuaggio, foto e
                          video a schermo intero del portfolio, video della home (uno alla
                          volta), FAQ, invio del modulo
-js/home.js               Solo home: profondità della prima schermata e ruota 3D dei lavori
+js/home.js               Solo home: coverflow dei Lavori recenti e tutto schermo
 js/mappa.js              Mappa animata di «Dove siamo» (vedi DOVE SIAMO)
 js/cookie.js             Barra dei cookie e «Gestione cookie» nel footer
 js/vendor/maplibre/      MapLibre 5.6.0 (licenza BSD), la libreria delle mappe; si carica
@@ -85,15 +88,14 @@ all'area riservata. Scorrendo
 diventa più bassa. Sotto i 1020 px di larghezza: tasto a panino e pannello che scende.
 Pulsanti: rossi in rilievo (si alzano al passaggio e si abbassano quando si premono);
 quelli secondari sono grigio scuro.
-Prima schermata della home: tre piani della scritta «Rain Ink» (alone rosso sfocato,
-neon che sfarfalla, contorno) e la foto del tatuatore; col mouse (su telefono da soli,
-piano) i piani si spostano di quantità diverse e danno profondità; scorrendo scendono
-a velocità diverse.
-Ruota dei lavori (home): le foto scelte nell'area riservata (data/ruota.json), in giro
-su una ruota 3D; quello davanti è grande e nitido, quelli ai lati
-sfocati e più scuri. Gira da sola ogni 4 secondi quando si vede; si gira con le frecce,
-i pallini, trascinando o con le frecce della tastiera; toccando l'immagine davanti va a
-tutto schermo (frecce, scorrimento col dito, Esc per chiudere).
+Prima schermata della home: la foto del tatuatore in bianco e nero a tutto schermo,
+sfumata nel nero in basso, e la scritta RAIN INK enorme in basso a sinistra con sotto
+«Tatuaggi su misura · Solo su appuntamento». Tutto fermo.
+Lavori recenti (home): le foto scelte nell'area riservata (data/ruota.json) in un
+coverflow: quella al centro è grande e dritta, le altre inclinate ai lati e più scure,
+con il riflesso sotto. Scorre da sola ogni 4 secondi quando si vede; si scorre con le
+frecce, i pallini, trascinando o con le frecce della tastiera; toccando l'immagine al
+centro va a tutto schermo (frecce, scorrimento col dito, Esc per chiudere).
 Gli elementi compaiono salendo di poco mentre si scorre; la linea della cura del
 tatuaggio si riempie scorrendo; le FAQ si aprono morbide; nel portfolio l'indicatore
 del filtro scivola e la foto a schermo intero si ingrandisce dalla miniatura.
@@ -112,7 +114,8 @@ illuminano in rosso, col loro nome, Italia, Marche, provincia di Macerata e il c
 di Montelupone; all'arrivo il segnaposto «RAIN INK» con l'indirizzo, che apre Google
 Maps. Pulsante «Rivedi» per ripartire. Alla fine la mappa si può muovere (Ctrl/⌘ +
 rotellina o due dita per ingrandire). Con «riduci movimento» si vede subito l'arrivo.
-Privacy: la mappa scarica foto da Esri e caratteri da OpenFreeMap (servizi esterni),
+Privacy: la mappa scarica le foto da Esri (servizio esterno); i nomi sulla mappa
+sono scritte del sito (carattere Inter Tight), non caratteri scaricati,
 quindi all'inizio c'è il riquadro «Dallo spazio fino allo studio» con il tasto «Mostra
 la mappa»; la scelta resta salvata nel browser del visitatore (chiave
 rainink_mappa_ok). È scritto anche nella pagina Privacy.
@@ -228,10 +231,10 @@ DATI DA SOSTITUIRE PRIMA DI PUBBLICARE
 --------------------------------------
 Veri (dalla pagina Facebook, versione 2.4): Rain Ink Tattoo di Matteo Quattrini,
 C.da San Martino n° 16, 62010 Montelupone (MC), cellulare 339 260 5135, negozio di
-tatuaggi e piercing.
+tatuaggi e piercing. Email vera: matteoraininktattoo91@gmail.com (in tutte le pagine).
 Sono ancora inventati e vanno chiesti al cliente (si trovano in tutte le pagine, nel
 footer, in Dove siamo, in Privacy e nei dati per Google in testa a index.html):
-- email (info@example.com, segnaposto) e P.IVA (00000000000)
+- P.IVA (00000000000)
 - Facebook e Instagram (@matteoraininktattoo): sono quelli veri dello studio
 - orari (mar–sab 10–19)
 - DOMINIO-DEL-SITO nei meta, in robots.txt e in sitemap.xml
@@ -631,3 +634,31 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Area riservata: il Portfolio è diviso negli stessi quattro gruppi del
                    sito, ognuno con il suo + e il riordino dentro il gruppo; da «Modifica»
                    una foto si può spostare in un altro gruppo.
+                   Home: prima schermata senza movimento 3D (foto e scritta ferme, la scritta
+                   lampeggia ancora come un neon). La scritta Rain Ink sta DIETRO la foto;
+                   la foto è un po' più in basso e ha profondità: centro nitido, bordi
+                   sfocati e più scuri.
+                   Home: la ruota 3D dei lavori diventa un coverflow (foto grande al centro,
+                   le altre inclinate ai lati, riflesso sotto); clic/tocco sulla foto al
+                   centro per vederla a tutto schermo. Nell'area riservata il blocco si
+                   chiama «Lavori recenti» (stesso file data/ruota.json).
+                   Home: prima schermata «editoriale» (proposta 2 di 30): foto a tutto
+                   schermo, RAIN INK enorme in basso a sinistra, sottotitolo senza
+                   «a Montelupone». Mappa di Dove siamo: nomi delle zone e segnaposto col
+                   carattere del sito (niente più maiuscole spaziate «al neon»); non si
+                   usano più i caratteri di OpenFreeMap (tolti anche da cookie e privacy).
+                   Email vera dello studio al posto del segnaposto: matteoraininktattoo91@gmail.com.
+                   Video della home: nastro che scorre da solo (si ferma col mouse sopra,
+                   il video parte muto; clic o tocco = tutto schermo con l'audio e frecce).
+                   Mappa: «Provincia di Macerata» resta visibile più a lungo e non si
+                   sovrappone più al nome «Marche» né al contorno di Montelupone.
+                   Lavori recenti: dopo aver chiuso lo zoom lo scorrimento automatico riparte
+                   (prima restava fermo perché la ruota teneva il fuoco del clic).
+                   Lavori recenti: foto al centro più grande, quelle ai lati più sfumate
+                   (scure, meno colorate, un po' sfocate); leggero contorno rosso col mouse sopra.
+                   Home, Lo studio: al posto della foto in cornice due colonne con le foto
+                   «Dallo studio» del portfolio che scorrono in versi opposti (si fermano col
+                   mouse sopra, niente zoom); tolti il testo e i passi Consulenza → Cura.
+                   Le scrive genera_lavori.py tra <!-- studio:inizio --> e <!-- studio:fine -->;
+                   tolta la voce «home-studio» da data/immagini.json (nell'area riservata il
+                   blocco 4 della Home ora rimanda al gruppo Dallo studio del Portfolio).

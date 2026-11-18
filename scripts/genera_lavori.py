@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Genera i lavori di portfolio.html (da data/lavori.json: foto e video divisi in gruppi
 con data-cat: tatuaggi a colori, bianco e nero, video, dallo studio), la ruota 3D della home in index.html (da data/ruota.json, un elenco a sé),
-la sezione Video della home (data/video.json) e le altre immagini delle pagine
+la sezione Video della home (data/video.json), le foto «Dallo studio» nella sezione Lo studio della home e le altre immagini delle pagine
 (data/immagini.json: ogni <img data-slot="…"> prende foto e testo alternativo).
 Sono i file che il cliente modifica dall'area riservata.
 
@@ -75,6 +75,16 @@ def video_home(lista):
         f'                    <figure class="clip"><video src="{att(v["video"])}" poster="{att(v["foto"])}" controls playsinline preload="none"'
         f' aria-label="{att(v["titolo"])}"></video><figcaption>{txt(v["titolo"])}</figcaption></figure>'
         for v in lista if v["video"]]
+
+def studio_home(lavori):
+    # sezione «Lo studio» della home: le foto del gruppo «Dallo studio» in due colonne che scorrono
+    # (una sì e una no); il giro infinito lo fa js/home.js duplicandole
+    foto = [l for l in lavori if l["tipo"] == "studio"]
+    colonne = []
+    for k in (0, 1):
+        imgs = "".join(f'<img src="{att(l["foto"])}" alt="{att(l["alt"])}" width="800" height="1000" loading="lazy">' for l in foto[k::2])
+        colonne.append(f'                    <div class="sc-col{" sc-giu" if k else ""}">{imgs}</div>')
+    return colonne
 
 def carica_ruota():
     # ruota 3D della home: data/ruota.json, nell'ordine scelto dal cliente (solo foto e titolo)
@@ -159,5 +169,6 @@ if __name__ == "__main__":
     lavori = carica()
     ok = sostituisci("portfolio.html", portfolio(lavori), controlla) & sostituisci("index.html", home(carica_ruota()), controlla)
     ok = sostituisci("index.html", video_home(carica("video.json")), controlla, ("<!-- video:inizio -->", "<!-- video:fine -->")) & ok
+    ok = sostituisci("index.html", studio_home(lavori), controlla, ("<!-- studio:inizio -->", "<!-- studio:fine -->")) & ok
     ok = immagini(controlla) & ok
     sys.exit(0 if ok else 1)

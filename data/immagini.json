@@ -8,14 +8,6 @@
     "alt": "Matteo al lavoro su un tatuaggio"
   },
   {
-    "id": "home-studio",
-    "pagina": "index.html",
-    "sezione": "Lo studio",
-    "descrizione": "Il riquadro accanto a «Una postazione, tutto il tempo che serve», sotto la ruota dei lavori.",
-    "foto": "images/lavori/studio-06-prima-di-iniziare.jpg",
-    "alt": "La postazione dello studio Rain Ink prima di una seduta"
-  },
-  {
     "id": "studio-artista",
     "pagina": "studio.html",
     "sezione": "L'artista",
