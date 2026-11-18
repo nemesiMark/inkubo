@@ -4,7 +4,8 @@
  * Fa da ponte fra la pagina area-riservata.html e il repository GitHub del sito:
  * controlla la password, poi legge e salva data/lavori.json (portfolio: foto e video),
  * data/ruota.json (ruota dei lavori della home), data/video.json (sezione Video della home),
- * data/immagini.json (le altre immagini delle pagine) e le foto in images/lavori/
+ * data/immagini.json (le altre immagini delle pagine), data/testi.json (i testi delle pagine)
+ * e le foto in images/lavori/
  * con un solo commit per ogni salvataggio. GitHub Actions ripubblica il sito da solo.
  *
  * I VIDEO non passano dal repository (sarebbero troppo pesanti): POST /video li allega
@@ -24,6 +25,7 @@
  *   KV      DATI             un namespace KV (es. «rainink-area-riservata»). Lì si salva
  *                            l'impronta della password nuova (PBKDF2, mai la password in
  *                            chiaro). Finché nessuno la cambia vale ADMIN_PASSWORD.
+ *                            Lì si contano anche le password sbagliate (chiave «tentativi»).
  * Nessuna chiave è scritta in questo file.
  */
 
@@ -35,6 +37,21 @@ const MAX_VIDEO_BYTES = 95 * 1024 * 1024;  // Cloudflare (piano gratuito) accett
 const TIPI_FOTO = ["colori", "bn", "studio"]; // gruppi del portfolio, uguali a scripts/genera_lavori.py
 const VIDEO_VALIDO = /^video\/[a-z0-9][a-z0-9._-]{0,120}\.(mp4|webm)$/;
 const FILE_IMMAGINI = "data/immagini.json";
+const FILE_TESTI = "data/testi.json";
+const MAX_TESTO = 4000;
+// indirizzi ammessi per i testi cliccabili (gli stessi di scripts/genera_contenuti.py)
+const LINK_VALIDO = /^(https?:\/\/[^\s<>"']+|mailto:[^\s<>"']+|tel:\+?[0-9 ()./-]+|#[A-Za-z0-9_-]*|(?!.*\.\.)[A-Za-z0-9][A-Za-z0-9._\/-]*(#[A-Za-z0-9_-]*)?)$/;
+const LINK_NEL_TESTO = /\[([^\]\n]+)\]\(([^)\s]+)\)/g;
+// grassetto, evidenziato, codice e link nel testo (le stesse regole di genera_contenuti.py)
+const MARCHE = /\[([^\]\n]+)\]\(([^)\s]+)\)|\*\*([\s\S]+?)\*\*|==([\s\S]+?)==|`([\s\S]+?)`/g;
+// la formattazione di un testo (quali parti sono in grassetto, evidenziate, cliccabili e dove portano):
+// dall'area riservata si cambiano solo le parole, la formattazione deve restare uguale
+function formattazione(t) {
+  const out = [];
+  for (const m of t.matchAll(MARCHE))
+    out.push(m[1] != null ? `L${m[2]}(${formattazione(m[1])})` : m[3] != null ? `B(${formattazione(m[3])})` : m[4] != null ? `M(${formattazione(m[4])})` : "C");
+  return out.join(",");
+}
 const FILE_RUOTA = "data/ruota.json";
 const MAX_RUOTA = 30;
 const CARTELLA_FOTO = "images/lavori/";
@@ -54,6 +71,7 @@ export default {
       const url = new URL(request.url);
       if (request.method === "POST" && url.pathname === "/login") return await login(request, env, cors);
       if (!(await accessoValido(request, env))) return json({ errore: "Accesso scaduto, entra di nuovo" }, 401, cors);
+      if (request.method === "GET" && url.pathname === "/spazio") return await leggiSpazio(env, cors);
       if (request.method === "GET" && url.pathname === "/lavori") return await leggiLavori(env, cors);
       if (request.method === "POST" && url.pathname === "/salva") return await salva(request, env, cors);
       if (request.method === "POST" && url.pathname === "/video") return await caricaVideo(request, env, cors, url);
@@ -69,14 +87,42 @@ export default {
 /* ---------- accesso ---------- */
 
 async function login(request, env, cors) {
+  const attesa = await bloccato(request, env);
+  if (attesa) return json({ errore: messaggioBlocco(attesa) }, 429, cors);
   const corpo = await request.json().catch(() => ({}));
   const pw = await passwordSalvata(env);
   if (!(await passwordGiusta(corpo.password, pw, env))) {
     await new Promise((r) => setTimeout(r, 1200)); // rallenta i tentativi a raffica
-    return json({ errore: "Password non corretta" }, 401, cors);
+    const restano = await tentativoSbagliato(request, env);
+    if (!restano) return json({ errore: messaggioBlocco(BLOCCO_S) }, 429, cors);
+    return json({ errore: "Password non corretta" + (restano <= 2 ? ` (ancora ${restano} ${restano === 1 ? "tentativo" : "tentativi"}, poi si aspettano 15 minuti)` : "") }, 401, cors);
   }
+  await azzeraTentativi(request, env);
   return json(await nuovoAccesso(env, pw ? pw.versione : 0), 200, cors);
 }
+
+/* tentativi sbagliati: contati tutti insieme nel KV DATI (il sito lo gestisce una persona sola
+   e le modifiche sono rare): dopo MAX_ERRORI l'area riservata si blocca per tutti per
+   BLOCCO_S secondi, da qualunque dispositivo o rete (conta anche la password attuale sbagliata
+   nel cambio password). Senza il KV resta solo il rallentamento di 1,2 secondi. */
+const MAX_ERRORI = 5;
+const BLOCCO_S = 15 * 60;
+function chiaveTentativi() { return "tentativi"; }
+function messaggioBlocco(s) { const m = Math.max(1, Math.ceil(s / 60)); return `Troppi tentativi sbagliati: per sicurezza riprova tra ${m} ${m === 1 ? "minuto" : "minuti"}`; }
+async function bloccato(request, env) {
+  if (!env.DATI) return 0;
+  const t = await env.DATI.get(chiaveTentativi(request), "json");
+  const ora = Math.floor(Date.now() / 1000);
+  return t && t.n >= MAX_ERRORI && t.fino > ora ? t.fino - ora : 0;
+}
+async function tentativoSbagliato(request, env) { // restituisce quanti tentativi restano (0 = bloccato)
+  if (!env.DATI) return MAX_ERRORI;
+  const k = chiaveTentativi(request), t = (await env.DATI.get(k, "json")) || { n: 0 };
+  const n = t.n + 1, fino = Math.floor(Date.now() / 1000) + BLOCCO_S;
+  await env.DATI.put(k, JSON.stringify({ n, fino }), { expirationTtl: BLOCCO_S });
+  return Math.max(0, MAX_ERRORI - n);
+}
+async function azzeraTentativi(request, env) { if (env.DATI) await env.DATI.delete(chiaveTentativi(request)); }
 
 async function nuovoAccesso(env, versione) {
   const scade = Math.floor(Date.now() / 1000) + DURATA_ACCESSO_S;
@@ -107,11 +153,15 @@ async function impronta(password, sale, iterazioni) {
 async function cambiaPassword(request, env, cors) {
   if (!env.DATI) throw errore("Cambio password non ancora attivo: manca il collegamento DATI su Cloudflare", 501);
   const corpo = await request.json().catch(() => ({}));
+  const attesa = await bloccato(request, env);
+  if (attesa) throw errore(messaggioBlocco(attesa), 429);
   const pw = await passwordSalvata(env);
   if (!(await passwordGiusta(corpo.attuale, pw, env))) {
     await new Promise((r) => setTimeout(r, 1200));
-    throw errore("La password attuale non è corretta", 403);
+    const restano = await tentativoSbagliato(request, env);
+    throw errore(restano ? "La password attuale non è corretta" : messaggioBlocco(BLOCCO_S), restano ? 403 : 429);
   }
+  await azzeraTentativi(request, env);
   const nuova = corpo.nuova;
   if (typeof nuova !== "string" || nuova.length < PW_MIN) throw errore(`La password nuova deve avere almeno ${PW_MIN} caratteri`, 400);
   if (nuova.length > PW_MAX) throw errore("La password nuova è troppo lunga", 400);
@@ -154,18 +204,48 @@ async function ugualiCostante(a, b) {
 /* ---------- lettura ---------- */
 
 async function leggiLavori(env, cors) {
-  const { lavori, immagini, ruota, video } = await statoAttuale(env);
-  return json({ lavori, immagini, ruota, video }, 200, cors);
+  const { lavori, immagini, ruota, video, testi } = await statoAttuale(env);
+  return json({ lavori, immagini, ruota, video, testi }, 200, cors);
 }
+
+/**
+ * Spazio occupato. Le foto stanno nel repository GitHub e il sito è su GitHub Pages:
+ * il sito pubblicato può pesare al massimo 1 GB, e GitHub consiglia di tenere il repository
+ * (che conserva anche le foto cancellate, nella cronologia) sotto 1 GB. Si conta il più grande.
+ * Il sito pubblicato = i file del ramo senza .*, scripts, data e worker (come in pubblica.yml).
+ */
+const LIMITE_SPAZIO = 1024 * 1024 * 1024;
+const FOTO_MEDIA_STIMATA = 400 * 1024; // foto da 1280–1600 px in JPEG 85, finché non ce ne sono abbastanza caricate
+async function leggiSpazio(env, cors) {
+  const ref = await gh(env, `git/ref/heads/${env.BRANCH}`);
+  const [albero, info] = await Promise.all([
+    gh(env, `git/trees/${ref.object.sha}?recursive=1`),
+    fetch(`https://api.github.com/repos/${env.REPO}`, { headers: intestazioniGh(env) }).then((r) => (r.ok ? r.json() : {})),
+  ]);
+  let sito = 0, caricate = 0, nCaricate = 0;
+  for (const e of albero.tree || []) {
+    if (e.type !== "blob") continue;
+    const parti = e.path.split("/");
+    if (parti.some((x) => x.startsWith(".")) || ["scripts", "data", "worker", "_site"].includes(parti[0])) continue;
+    sito += e.size || 0;
+    if (e.path.startsWith(CARTELLA_FOTO)) { caricate += e.size || 0; nCaricate++; }
+  }
+  const repo = (Number(info.size) || 0) * 1024; // GitHub lo dà in KB (aggiornato con qualche ritardo)
+  return json({
+    sito, repo, usato: Math.max(sito, repo), limite: LIMITE_SPAZIO,
+    mediaFoto: nCaricate >= 5 ? Math.round(caricate / nCaricate) : FOTO_MEDIA_STIMATA,
+  }, 200, cors);
+}
+
 
 async function statoAttuale(env) {
   const ref = await gh(env, `git/ref/heads/${env.BRANCH}`);
   const sha = ref.object.sha;
-  const [lavori, immagini, ruota, video] = await Promise.all([leggiJson(env, FILE_LAVORI, sha),
+  const [lavori, immagini, ruota, video, testi] = await Promise.all([leggiJson(env, FILE_LAVORI, sha),
     leggiJson(env, FILE_IMMAGINI, sha).catch(() => []), leggiJson(env, FILE_RUOTA, sha).catch(() => []),
-    leggiJson(env, FILE_VIDEO, sha).catch(() => [])]);
+    leggiJson(env, FILE_VIDEO, sha).catch(() => []), leggiJson(env, FILE_TESTI, sha).catch(() => [])]);
   const lista = (x) => Array.isArray(x) ? x : [];
-  return { sha, lavori: lista(lavori), immagini: lista(immagini), ruota: lista(ruota), video: lista(video) };
+  return { sha, lavori: lista(lavori), immagini: lista(immagini), ruota: lista(ruota), video: lista(video), testi: lista(testi) };
 }
 
 async function leggiJson(env, percorso, sha) {
@@ -179,10 +259,13 @@ async function leggiJson(env, percorso, sha) {
  * Corpo: { lavori: [ {foto, titolo, video? | tipo?} ], immagini: [ {id, foto, alt} ] (facoltativo),
  *         ruota: [ {foto, titolo} ] (facoltativo: la ruota della home, indipendente dal portfolio),
  *         video: [ {foto, titolo, video} ] (facoltativo: la sezione Video della home),
+ *         testi: [ {id, testo} ] (facoltativo: i testi delle pagine),
  *         nuoveFoto: { "nuova:ID": "base64…" }, messaggio }
  * Nel campo foto di una foto nuova c'è "nuova:ID": qui diventa il percorso vero della foto caricata.
  * Delle immagini delle pagine si cambiano solo foto e testo alternativo: quali sono, in che
  * pagina e con che descrizione lo decide data/immagini.json sul sito.
+ * Dei testi si cambiano solo le parole: grassetto, evidenziato, testi cliccabili e i loro indirizzi
+ * restano com'erano; quali sono, in che pagina e sezione lo decide data/testi.json sul sito.
  * Nel campo video c'è il percorso restituito da POST /video (il video è già nella release).
  * Le foto di images/lavori/ e i video della release che non sono più usati da nessuna parte
  * vengono cancellati.
@@ -262,6 +345,17 @@ async function salva(request, env, cors) {
     scelte[im.id] = { foto, alt: pulisci(im.alt, 160) };
   }
 
+  // testi: id → testo (e indirizzo) scelti
+  const testiScelti = {};
+  if (Array.isArray(corpo.testi)) for (const t of corpo.testi) {
+    if (!t || typeof t.id !== "string" || !/^[a-z0-9-]{1,80}$/.test(t.id)) throw errore("Testo non valido", 400);
+    const testo = pulisciTesto(t.testo);
+    if (!testo) throw errore("Il testo non può essere vuoto", 400);
+    for (const m of testo.matchAll(LINK_NEL_TESTO))
+      if (!LINK_VALIDO.test(m[2])) throw errore(`Indirizzo del link non valido: ${m[2].slice(0, 60)}`, 400);
+    testiScelti[t.id] = { testo }; // l'indirizzo dei testi cliccabili non si cambia dall'area riservata
+  }
+
   const giorno = new Date().toISOString().slice(0, 10);
   for (const f of blobFoto) {
     const lavoro = lavori.find((l) => l.foto === f.id) || (ruota || []).find((r) => r.foto === f.id) || (videoHome || []).find((v) => v.foto === f.id);
@@ -275,7 +369,16 @@ async function salva(request, env, cors) {
 
   // fino a 3 tentativi se nel frattempo il ramo è cambiato
   for (let tentativo = 0; tentativo < 3; tentativo++) {
-    const { sha, lavori: prima, immagini: immPrima, ruota: ruotaPrima, video: videoPrima } = await statoAttuale(env);
+    const { sha, lavori: prima, immagini: immPrima, ruota: ruotaPrima, video: videoPrima, testi: testiPrima } = await statoAttuale(env);
+    for (const id of Object.keys(testiScelti))
+      if (!testiPrima.some((v) => v.id === id)) throw errore("Testo sconosciuto: ricarica la pagina", 400);
+    const testi = testiPrima.map((v) => {
+      const n = testiScelti[v.id];
+      if (!n) return v;
+      const o = { ...v, testo: v.tipo === "semplice" ? n.testo.replace(/\s+/g, " ") : n.testo };
+      if (formattazione(o.testo) !== formattazione(String(v.testo || ""))) throw errore("Si possono cambiare solo le parole, non grassetto e testi cliccabili", 400);
+      return o;
+    });
     const immagini = immPrima.map((v) => scelte[v.id] ? { ...v, foto: scelte[v.id].foto, alt: scelte[v.id].alt || v.alt } : v);
     const ruotaNuova = ruota || ruotaPrima;
     const videoNuovo = videoHome || videoPrima;
@@ -290,14 +393,18 @@ async function salva(request, env, cors) {
       const blob = await gh(env, "git/blobs", "POST", { content: f.b64, encoding: "base64" });
       albero.push({ path: percorsi[f.id], mode: "100644", type: "blob", sha: blob.sha });
     }
-    albero.push({ path: FILE_LAVORI, mode: "100644", type: "blob", content: JSON.stringify(lavori, null, 2) + "\n" });
+    if (JSON.stringify(lavori) !== JSON.stringify(prima))
+      albero.push({ path: FILE_LAVORI, mode: "100644", type: "blob", content: JSON.stringify(lavori, null, 2) + "\n" });
     if (immPrima.length && JSON.stringify(immagini) !== JSON.stringify(immPrima))
       albero.push({ path: FILE_IMMAGINI, mode: "100644", type: "blob", content: JSON.stringify(immagini, null, 2) + "\n" });
     if (ruota && JSON.stringify(ruota) !== JSON.stringify(ruotaPrima))
       albero.push({ path: FILE_RUOTA, mode: "100644", type: "blob", content: JSON.stringify(ruota, null, 2) + "\n" });
     if (videoHome && JSON.stringify(videoHome) !== JSON.stringify(videoPrima))
       albero.push({ path: FILE_VIDEO, mode: "100644", type: "blob", content: JSON.stringify(videoHome, null, 2) + "\n" });
+    if (testiPrima.length && JSON.stringify(testi) !== JSON.stringify(testiPrima))
+      albero.push({ path: FILE_TESTI, mode: "100644", type: "blob", content: JSON.stringify(testi, null, 2) + "\n" });
     for (const p of daCancellare) albero.push({ path: p, mode: "100644", type: "blob", sha: null });
+    if (!albero.length) return json({ lavori, immagini, ruota: ruotaNuova, video: videoNuovo, testi, commit: sha }, 200, cors); // niente da salvare
 
     const nuovoAlbero = await gh(env, "git/trees", "POST", { base_tree: commit.tree.sha, tree: albero });
     const messaggio = pulisci(corpo.messaggio, 100) || "Area riservata: aggiornati i lavori del portfolio";
@@ -310,7 +417,7 @@ async function salva(request, env, cors) {
       const vecchio = Date.now() - 6 * 3600 * 1000;
       for (const a of allegati.filter((a) => !videoUsati.has(a.name) && Date.parse(a.created_at) < vecchio).slice(0, 10))
         await gh(env, `releases/assets/${a.id}`, "DELETE").catch(() => {});
-      return json({ lavori, immagini, ruota: ruotaNuova, video: videoNuovo, commit: nuovoCommit.sha }, 200, cors);
+      return json({ lavori, immagini, ruota: ruotaNuova, video: videoNuovo, testi, commit: nuovoCommit.sha }, 200, cors);
     } catch (e) {
       if (e.stato !== 422) throw e; // 422: il ramo è andato avanti, si riprova sul nuovo stato
     }
@@ -406,6 +513,14 @@ function errore(messaggio, stato) { const e = new Error(messaggio); e.stato = st
 
 function pulisci(v, max) {
   return typeof v === "string" ? v.replace(/[\u0000-\u001f\u007f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, max) : "";
+}
+
+// testi delle pagine: si tengono gli a capo (diventano <br>), si tolgono i caratteri di controllo;
+// < e > restano: il generatore li scrive come testo, mai come HTML
+function pulisciTesto(v) {
+  if (typeof v !== "string") return "";
+  return v.replace(/\r\n?/g, "\n").replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, "")
+    .split("\n").map((r) => r.replace(/[ \t]+/g, " ").trim()).join("\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, MAX_TESTO);
 }
 
 function slug(t) {

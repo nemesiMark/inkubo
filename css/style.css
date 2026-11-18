@@ -402,6 +402,8 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 @media (max-width: 700px) { .hero-scorri { display: none; } }
 
 /* HOME: coverflow dei lavori (le foto le scrive scripts/genera_lavori.py; il movimento è in js/home.js) */
+#lavori { overflow-x: clip; }  /* la ruota 3D esce ai lati: su iPhone allargava la pagina (spazio nero a destra) */
+@supports not (overflow: clip) { #lavori { overflow-x: hidden; } }
 .wheel { --w: clamp(260px, 34vw, 480px); position: relative; height: calc(var(--w) * 1.25 + 110px); perspective: 1400px; perspective-origin: 50% 40%;
   cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; outline: none; }
 .wheel.drag { cursor: grabbing; }

@@ -125,106 +125,97 @@ si cambia SEDE in js/mappa.js (longitudine, latitudine); confini semplificati da
 OpenStreetMap, salvati nello stesso file.
 
 
-AREA RISERVATA (FOTO GESTITE DAL CLIENTE)
------------------------------------------
-Il cliente cambia da solo le foto del sito da area-riservata.html (lucchetto in fondo
-alla navbar, non indicizzata): entra con una password e trova una scheda per ogni
-pagina, con le immagini nell'ordine in cui si vedono e una descrizione di dove stanno:
-Le foto di ogni pagina sono indipendenti: cambiare un lavoro del Portfolio non tocca la
-Home, e viceversa.
-- Home: prima schermata, ruota dei lavori (un elenco a sé, data/ruota.json: solo foto e
-  titolo), Video (data/video.json: solo video), lo studio.
-- Portfolio: foto e video in un solo elenco, nell'ordine del sito (niente stili per ora).
-- Video: nel Portfolio e nel blocco Video della Home il + accetta anche video. Il video
-  viene convertito nel browser (canvas + MediaRecorder: MP4 H.264 dove il browser lo
-  sa fare, altrimenti WebM; lato lungo 1280 px, 3,5 Mbit/s, SENZA audio, massimo 3
-  minuti / 90 MB); ci vuole quanto dura il video. La copertina è il fotogramma a 1
-  secondo, salvata come una foto normale. Cliccando «Aggiungi» il video parte subito
-  (POST /video del Worker, con la percentuale) verso la release «video» di GitHub;
-  poi lo si posiziona e conferma come una foto. Nei JSON: "video": "video/nome.mp4".
-  Ad ogni salvataggio il Worker cancella dalla release i video che nessun elenco usa
-  più (solo quelli caricati da più di 6 ore).
-- Nella ruota, nei Video e nel Portfolio: tocco su una foto = la si seleziona; diventa
-  rossa e lampeggia, le altre diventano più chiare, e in basso compare una barra. Da lì
-  la si prende e la si trascina dove si vuole (solo la foto selezionata si muove), poi
-  «Conferma» salva il nuovo posto; «Annulla» la rimette dov'era; «Modifica o elimina»
-  apre la scheda (solo foto e titolo). Il riquadro + in fondo aggiunge
-  una foto: basta la foto e il titolo; compare in fondo già selezionata, la si sposta e
-  si tocca «Conferma e salva» (per lasciarla in fondo basta confermare subito).
-  Dopo uno spostamento (o con una foto nuova) il resto della pagina è bloccato finché
-  non si sceglie «Conferma» o «Annulla»: un clic altrove non salva e non seleziona
-  altro, fa solo lampeggiare la barra in basso con l'avviso di scegliere. Se la foto
-  è solo selezionata e non ancora spostata, toccarne un'altra cambia la selezione.
-- Studio: le immagini fisse della pagina; «Cambia foto» e il testo
-  che dice cosa si vede (per Google e per chi non vede).
-Ogni salvataggio (aggiunta, modifica, spostamento, eliminazione) apre subito una
-finestra con una barra che avanza; la barra si completa quando il salvataggio è davvero
-riuscito e compare «Salvataggio riuscito correttamente» in verde, da chiudere con «OK»;
-il sito si aggiorna da solo in qualche minuto.
-Guida: pulsante «Guida» in alto (dopo l'accesso). Spiega passo passo, con testo e
-schermate, come aggiungere, riordinare, rinominare ed eliminare le foto e come cambiare
-quelle fisse. Si apre da sola la prima volta che si entra da un dispositivo (ricordato
-nel browser con ar-guida-vista). Le schermate sono in images/guida/ (JPEG, prese dal
-computer a 1280×800, con gli anelli viola sui punti da cliccare; un clic le ingrandisce nella stessa pagina)
-Ingrandita, i punti evidenziati lampeggiano: le loro posizioni (in % della schermata)
-stanno in data-punti su ogni immagine della guida; se si rifà una schermata vanno
-aggiornate anche quelle.: se l'aspetto
-dell'area riservata cambia molto vanno rifatte.
-La foto viene rimpicciolita nel telefono prima dell'invio (lato lungo 1600 px, JPEG
-qualità 85) e perde i dati EXIF, compresa la posizione GPS.
+AREA RISERVATA (FOTO, VIDEO E TESTI GESTITI DAL CLIENTE)
+--------------------------------------------------------
+Stessa area riservata di Olimp (~/Desktop/olimp, skill «crea-area-riservata»), con in più
+i video e i gruppi del Portfolio; colore d'accento il rosso del sito (#d6342c, testo bianco).
+Il cliente entra da area-riservata.html (lucchetto in fondo alla navbar, non indicizzata)
+con una password. La pagina di accesso dice «Entra per:» foto e video · testi · password.
+- Schede: una per pagina, nell'ordine del menu del sito: Home, Portfolio, Studio, Cura del
+  tatuaggio, FAQ, Privacy (il sito non ha sottomenu: una riga sola, niente scheda Menu).
+  In ogni pagina il pulsante Foto | Testi (la scelta vale per tutte le pagine; Cura del
+  tatuaggio, FAQ e Privacy hanno solo i testi). Blocchi numerati nell'ordine della pagina.
+- In cima il riquadro «Spazio per le foto»: MB usati su 1 GB, barra verde / gialla
+  dall'80% / rossa dal 95%, quante foto ci stanno ancora (GET /spazio del Worker: il più
+  grande fra sito pubblicato e repository). I video stanno nella release e non contano.
+- Foto della Home: prima schermata (foto fissa), ruota dei Lavori recenti (data/ruota.json,
+  solo foto), Video (data/video.json, solo video); il blocco Lo studio rimanda al gruppo
+  Dallo studio del Portfolio. Portfolio: un solo elenco (data/lavori.json) in quattro
+  gruppi: Tatuaggi a colori, Bianco e nero, Video, Dallo studio. Studio: due foto fisse
+  (L'artista, Lo spazio). Le foto di ogni pagina sono indipendenti.
+- Ruota, Video e Portfolio: tocco su una foto = la si seleziona (rossa che lampeggia, le
+  altre più chiare, barra in basso); si trascina solo quella selezionata; «Conferma» salva,
+  «Annulla» la rimette dov'era, «Modifica o elimina» apre la scheda (foto, titolo e, per una
+  foto del Portfolio già salvata, il gruppo). Il + in fondo aggiunge: la foto nuova compare
+  in fondo già selezionata, la si sposta e si tocca «Conferma e salva». Dopo uno
+  spostamento il resto della pagina è bloccato finché non si sceglie Conferma o Annulla.
+- Video: nel gruppo Video del Portfolio e nel blocco Video della Home il + accetta solo
+  video. Convertito nel browser (canvas + MediaRecorder: MP4 H.264 dove si può, altrimenti
+  WebM; lato lungo 1280 px, 3,5 Mbit/s, senza audio, massimo 3 minuti / 90 MB); la
+  copertina è il fotogramma a 1 secondo. «Aggiungi» lo invia subito (POST /video, con la
+  percentuale) alla release «video» di GitHub; nei JSON "video": "video/nome.mp4". A ogni
+  salvataggio il Worker cancella dalla release i video non più usati (caricati da più di 6 ore).
+- Foto fisse: «Cambia foto», «Cosa si vede» (per Google) e, nella stessa finestra, «Testi
+  accanto alla foto» (campo testi di data/immagini.json).
+- Foto: nella finestra la misura esatta del posto («Prepara la foto a 1280 × 1600 pixel
+  (verticale 4:5), in formato JPG/JPEG o PNG, fino a 30 MB»; prima schermata 1600 × 1000,
+  orizzontale 16:10) e l'anteprima con la stessa forma; avviso giallo se la forma è diversa
+  (oltre il 3%) o la foto più piccola; rifiutate sotto 500 px, oltre 30 MB, HEIC/WebP/GIF.
+  Nel browser: lato lungo 1600 px, JPEG 85, senza EXIF/GPS, PNG trasparenti su bianco.
+  Le misure stanno in FORME/formaDi(id) di area-riservata.html.
+- Testi (data/testi.json, 155 testi): per pagina e per sezione; ogni scheda dice dove si
+  vede («Computer, tablet e telefono»; «Scorri verso il basso» solo «Computer e tablet»,
+  campo "schermi"). Si cambiano solo le parole: i testi con grassetto o link sono divisi in
+  parti e la «firma» della formattazione deve restare uguale (controllo nella pagina e nel
+  Worker); l'indirizzo dei link si vede ma è bloccato; tipo «semplice» = una riga, per
+  gli elementi con parti fisse accanto. Regole nel JSON: **grassetto**, ==evidenziato==,
+  `codice`, [parole](indirizzo), a capo. Nell'HTML ogni testo ha data-testo="pagina-tNNN":
+  QUEI TESTI SI CAMBIANO NEL JSON, NON NELL'HTML (il generatore li riscrive).
+  Esclusi: la scritta Rain Ink al neon, menu, footer, titoli dei lavori, numeri.
+- Salvataggio: finestra con barra e «Salvataggio riuscito correttamente» in verde; Esc
+  bloccato; il browser chiede conferma se si chiude la pagina durante un salvataggio, un
+  cambio password o con uno spostamento non confermato. Un commit per salvataggio (solo i
+  file cambiati; nessun commit se non cambia nulla); il Worker cancella le foto non più usate.
+- Cambia password: attuale + nuova due volte; stessa finestra con la barra («Cambio della
+  password in corso…», almeno 1,5 s) → «Password cambiata correttamente» oppure
+  «Password non cambiata» con «Correggi». Impronta PBKDF2 nel KV DATI.
+- Tentativi sbagliati: contati tutti insieme nel KV DATI (chiave «tentativi»): dopo 5 errori
+  (accesso o password attuale) l'area si blocca per tutti per 15 minuti, anche con la
+  password giusta; dopo il 3° e il 4° errore il messaggio dice quanti tentativi restano.
+- Guida: pulsante «Guida» in alto; si apre da sola al primo accesso da un dispositivo.
+  Sezioni Aggiungere, Video, Riordinare, Rinominare, Eliminare, Foto fisse, Testi, Formati
+  e misure; schermate in images/guida/ (1280×800 → JPEG 1600×1000, anelli viola; le
+  posizioni dei punti che lampeggiano sono in data-punti, in % della schermata).
+- Nel browser si ricordano accesso, scheda, Foto/Testi e guida vista con il prefisso
+  «inkubo-» (con l'aggiornamento 6.6 il cliente rientra una volta con la password).
 File:
-- area-riservata.html    La pagina del cliente. In testa: <meta name="ar-api"> con
-                         l'indirizzo del Worker (oggi INSERIRE-INDIRIZZO-WORKER: finché
-                         resta così la pagina dice «non ancora attivata»).
-- worker/area-riservata-worker.js
-                         Il servizio che sta in mezzo (Cloudflare Worker, gratuito):
-                         controlla la password e salva su GitHub, un solo commit per ogni
-                         salvataggio. Non contiene chiavi: stanno nelle impostazioni del
-                         Worker (vedi le istruzioni in testa al file). Non viene pubblicato
-                         sul sito.
-- data/lavori.json       Elenco del portfolio: foto e titolo, più "video" per i video
-                         (la foto è la copertina). L'ordine è quello del portfolio.
-- data/video.json        I video della home: foto (copertina), titolo, video.
-- data/ruota.json        Le foto della ruota della home (foto e titolo), nell'ordine in cui
-                         girano. Indipendente dal portfolio.
-- data/immagini.json     Le immagini fisse delle pagine: id, pagina, sezione, descrizione
-                         (quello che il cliente legge nell'area riservata), foto e testo
-                         alternativo. Nell'HTML ogni immagine gestita ha data-slot="id".
-                         Il cliente cambia solo foto e testo alternativo; per aggiungere
-                         un'immagine gestibile: data-slot nell'<img> e una voce qui.
-- images/lavori/         Foto caricate dal cliente (anche quelle delle pagine). Quelle che
-                         non usa più nessuno vengono cancellate.
+- area-riservata.html    La pagina del cliente. <meta name="ar-api"> = indirizzo del Worker.
+- worker/area-riservata-worker.js, worker/wrangler.toml
+                         Il Worker Cloudflare rainink-area-riservata: password, blocco,
+                         spazio, lettura e salvataggio su GitHub. Nessuna chiave nei file.
+                         Si pubblica dalla cartella worker/ con  wrangler deploy  (PRIMA
+                         del push del sito, se cambia quello che la pagina gli chiede).
+- data/lavori.json, data/ruota.json, data/video.json
+                         Portfolio (foto, titolo, "tipo" colori/bn/studio oppure "video"),
+                         ruota della Home, video della Home.
+- data/immagini.json     Foto fisse: id, pagina, sezione, descrizione, foto, alt, testi
+                         (id dei testi vicini). Nell'HTML <img data-slot="id">.
+- data/testi.json        Testi delle pagine: id, pagina, sezione, descrizione, tipo, testo,
+                         link (pulsanti e link), schermi (se non si vede ovunque).
+- images/lavori/         Foto caricate dal cliente.
 - scripts/genera_lavori.py
-                         Scrive i lavori in portfolio.html (da lavori.json), la ruota 3D in
-                         index.html (da ruota.json) e i video della home (da video.json,
-                         fra <!-- video:inizio --> e <!-- video:fine -->)
-                         fra <!-- lavori:inizio --> e <!-- lavori:fine --> (quel tratto non
-                         si modifica a mano) e aggiorna src e alt delle <img data-slot>
-                         da data/immagini.json. In locale, dopo aver cambiato i JSON:
+                         Scrive portfolio, ruota, video, studio della Home, foto fisse e
+                         testi nelle pagine. Dopo aver cambiato i JSON:
                            python3 scripts/genera_lavori.py   (--check per solo controllo)
 - .github/workflows/pubblica.yml
-                         A ogni modifica del ramo main GitHub Actions scarica i video della
-                         release «video» in video/, esegue lo script e pubblica il sito. GitHub Pages va impostato su «GitHub Actions».
-- js/vendor/sortable/    SortableJS 1.15.6 (licenza MIT): trascinamento per riordinare.
-Attivazione (una volta sola):
-1. GitHub → Settings → Developer settings → Fine-grained tokens: token solo per il
-   repository inkubo, permesso «Contents: Read and write».
-2. Cloudflare (account gratuito) → Workers → crea un Worker, incolla il contenuto di
-   worker/area-riservata-worker.js e pubblica.
-3. Nel Worker, Settings → Variables: secret ADMIN_PASSWORD, SESSION_SECRET (stringa
-   casuale lunga), GITHUB_TOKEN; testo REPO = nemesiMark/inkubo, BRANCH = main,
-   ORIGINS = https://nemesimark.github.io
-4. In area-riservata.html mettere l'indirizzo del Worker in <meta name="ar-api">.
-5. Al cliente: indirizzo della pagina (da aggiungere alla schermata Home del telefono)
-   e password. Per far uscire tutti si cambia SESSION_SECRET.
-6. Cambio password dall'area riservata (tasto «Cambia password» in alto): nel Worker,
-   Settings → Bindings → Add → KV namespace, nome della variabile DATI, e crea un
-   namespace nuovo (es. rainink-area-riservata). Poi incolla di nuovo nel Worker il
-   contenuto aggiornato di worker/area-riservata-worker.js e pubblica (Deploy).
-   La password nuova si salva lì solo come impronta (PBKDF2), mai in chiaro; da quel
-   momento ADMIN_PASSWORD non vale più. Dopo il cambio si resta dentro sul dispositivo
-   usato, sugli altri bisogna rientrare. Se il cliente la dimentica: su Cloudflare,
-   KV → il namespace → cancellare la voce «password»; torna a valere ADMIN_PASSWORD.
+                         A ogni modifica di main scarica i video della release in video/,
+                         esegue lo script e pubblica (senza data/, scripts/, worker/).
+- js/vendor/sortable/    SortableJS 1.15.6 (MIT): trascinamento.
+Attivazione: già fatta (Worker rainink-area-riservata su Cloudflare, KV DATI
+rainink-area-riservata, secret ADMIN_PASSWORD, SESSION_SECRET, GITHUB_TOKEN messi con
+wrangler secret put; il token GitHub sta solo su Cloudflare). Se il cliente dimentica la
+password: Cloudflare → KV → rainink-area-riservata → cancellare la voce «password»; torna
+a valere ADMIN_PASSWORD. Per far uscire tutti si cambia SESSION_SECRET.
 
 
 DATI DA SOSTITUIRE PRIMA DI PUBBLICARE
@@ -685,3 +676,17 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    con la pressione lunga (un deterrente: nessun sito può impedirlo del tutto).
                    Home, prima schermata: in basso a destra «Scorri verso il basso» con una linea rossa in cui
                    scende una luce (porta a Lavori recenti; nascosta sui telefoni).
+
+6.6  (18/11/2026)  Area riservata aggiornata come quella di Olimp: schede per tutte le pagine
+                   (anche Cura del tatuaggio, FAQ e Privacy) con il pulsante Foto | Testi; testi
+                   di tutte le pagine modificabili (data/testi.json, data-testo negli HTML, solo le
+                   parole); testi accanto alle foto fisse; riquadro «Spazio per le foto»; misura
+                   esatta e formato delle foto (JPG/PNG, 30 MB, avviso giallo); cambio password
+                   con la barra; blocco per 15 minuti dopo 5 password sbagliate; accesso con
+                   l'elenco «Entra per:»; colore rosso del sito al posto dell'arancione; guida con
+                   le sezioni Testi e Formati e misure e schermate nuove. Worker: lettura e
+                   salvataggio dei testi, /spazio, blocco, nessun commit se non cambia nulla;
+                   worker/wrangler.toml per pubblicarlo con wrangler. Generatore: passo dei testi.
+                   Portfolio: tolta la nota sui disegni provvisori (ora ci sono le foto vere).
+                   iPhone: la ruota 3D di Lavori recenti usciva ai lati e allargava la pagina (spazio
+                   nero a destra, pagina spostabile di lato): ora la sezione taglia ciò che esce.

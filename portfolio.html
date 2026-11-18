@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Inter+Tight:wght@600;700;800&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=71">
+    <link rel="stylesheet" href="css/style.css?v=72">
     <link rel="icon" type="image/svg+xml" href="images/comune/favicon.svg">
     <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -43,15 +43,15 @@
     <main id="main">
         <section class="page-hero">
             <div class="wrap">
-                <span class="eyebrow">Lavori recenti</span>
-                <h1>Portfolio</h1>
-                <p>Tatuaggi a colori, in bianco e nero e video delle sedute. Tocca un’immagine per vederla a schermo intero.</p>
+                <span data-testo="portfolio-t001" class="eyebrow">Lavori recenti</span>
+                <h1 data-testo="portfolio-t002">Portfolio</h1>
+                <p data-testo="portfolio-t003">Tatuaggi a colori, in bianco e nero e video delle sedute. Tocca un’immagine per vederla a schermo intero.</p>
             </div>
         </section>
 
         <section>
             <div class="wrap">
-                <div class="filters-wrap"><div class="filters" role="group" aria-label="Scegli i lavori da vedere"><button type="button" data-f="colori" aria-pressed="true">Tatuaggi a colori</button><button type="button" data-f="bn" aria-pressed="false">Bianco e nero</button><button type="button" data-f="video" aria-pressed="false">Video</button><button type="button" data-f="studio" aria-pressed="false">Dallo studio</button></div></div>
+                <div class="filters-wrap"><div class="filters" role="group" aria-label="Scegli i lavori da vedere"><button data-testo="portfolio-t004" type="button" data-f="colori" aria-pressed="true">Tatuaggi a colori</button><button data-testo="portfolio-t005" type="button" data-f="bn" aria-pressed="false">Bianco e nero</button><button data-testo="portfolio-t006" type="button" data-f="video" aria-pressed="false">Video</button><button data-testo="portfolio-t007" type="button" data-f="studio" aria-pressed="false">Dallo studio</button></div></div>
                 <div class="works"><!-- lavori:inizio -->
                     <figure class="work rv" data-cat="colori"><button type="button" aria-label="Apri Ritratto biomeccanico a schermo intero"><span class="ph"><img src="images/lavori/tatuaggio-01-ritratto-biomeccanico.jpg" alt="Ritratto biomeccanico, Rain Ink Tattoo" width="800" height="1000" loading="lazy"></span></button><figcaption><b>Ritratto biomeccanico</b></figcaption></figure>
                     <figure class="work rv" data-cat="colori"><button type="button" aria-label="Apri Manica con volto di donna a schermo intero"><span class="ph"><img src="images/lavori/tatuaggio-02-manica-con-volto-di-donna.jpg" alt="Manica con volto di donna, Rain Ink Tattoo" width="800" height="1000" loading="lazy"></span></button><figcaption><b>Manica con volto di donna</b></figcaption></figure>
@@ -115,7 +115,6 @@
                     <figure class="work rv" data-cat="studio"><button type="button" aria-label="Apri Concentrazione a schermo intero"><span class="ph"><img src="images/lavori/studio-10-concentrazione.jpg" alt="Concentrazione, Rain Ink Tattoo" width="800" height="1000" loading="lazy"></span></button><figcaption><b>Concentrazione</b></figcaption></figure>
                 <!-- lavori:fine -->
                 </div>
-                <p class="note">Le immagini di questa pagina sono disegni provvisori: verranno sostituite dalle foto dei tatuaggi realizzati in studio.</p>
             </div>
         </section>
     </main>

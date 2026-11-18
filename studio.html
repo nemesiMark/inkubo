@@ -17,7 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Inter+Tight:wght@600;700;800&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=71">
+    <link rel="stylesheet" href="css/style.css?v=72">
     <link rel="icon" type="image/svg+xml" href="images/comune/favicon.svg">
     <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -43,9 +43,9 @@
     <main id="main">
         <section class="page-hero">
             <div class="wrap">
-                <span class="eyebrow">Chi siamo</span>
-                <h1>Lo studio</h1>
-                <p>Uno spazio piccolo, pensato per lavorare con calma: una sola postazione, un solo cliente alla volta.</p>
+                <span data-testo="studio-t001" class="eyebrow">Chi siamo</span>
+                <h1 data-testo="studio-t002">Lo studio</h1>
+                <p data-testo="studio-t003">Uno spazio piccolo, pensato per lavorare con calma: una sola postazione, un solo cliente alla volta.</p>
             </div>
         </section>
 
@@ -53,14 +53,14 @@
             <div class="wrap split">
                 <figure class="ph"><img data-slot="studio-artista" src="images/lavori/studio-07-al-lavoro.jpg" alt="Il tatuatore al lavoro con il cliente" width="800" height="1000" loading="lazy"></figure>
                 <div class="rv">
-                    <span class="eyebrow">L’artista · Matteo Quattrini</span>
-                    <h2>Disegno prima,<br>inchiostro poi.</h2>
-                    <p>Dietro Rain Ink c’è Matteo Quattrini, che segue ogni progetto dall’inizio alla fine: ascolta l’idea, la disegna a mano, la prova sulla pelle e la tatua. Nessun passaggio di consegne.</p>
-                    <p>La formazione viene dal disegno e dall’illustrazione: per questo ogni tatuaggio nasce sulla carta, e solo quando funziona lì passa alla pelle.</p>
+                    <span data-testo="studio-t004" class="eyebrow">L’artista · Matteo Quattrini</span>
+                    <h2 data-testo="studio-t005">Disegno prima,<br>inchiostro poi.</h2>
+                    <p data-testo="studio-t006">Dietro Rain Ink c’è Matteo Quattrini, che segue ogni progetto dall’inizio alla fine: ascolta l’idea, la disegna a mano, la prova sulla pelle e la tatua. Nessun passaggio di consegne.</p>
+                    <p data-testo="studio-t007">La formazione viene dal disegno e dall’illustrazione: per questo ogni tatuaggio nasce sulla carta, e solo quando funziona lì passa alla pelle.</p>
                     <ul class="facts">
-                        <li><b>01</b><span><strong>Attestato regionale</strong>Formazione obbligatoria per tatuatori su igiene e sicurezza.</span></li>
-                        <li><b>02</b><span><strong>Stili principali</strong>Blackwork, fine line, dotwork e tradizionale.</span></li>
-                        <li><b>03</b><span><strong>Guest spot</strong>Ogni tanto ospitiamo altri artisti: li annunciamo su Facebook.</span></li>
+                        <li><b>01</b><span data-testo="studio-t008"><strong>Attestato regionale</strong>Formazione obbligatoria per tatuatori su igiene e sicurezza.</span></li>
+                        <li><b>02</b><span data-testo="studio-t009"><strong>Stili principali</strong>Blackwork, fine line, dotwork e tradizionale.</span></li>
+                        <li><b>03</b><span data-testo="studio-t010"><strong>Guest spot</strong>Ogni tanto ospitiamo altri artisti: li annunciamo su Facebook.</span></li>
                     </ul>
                 </div>
             </div>
@@ -68,19 +68,19 @@
         <section id="studio">
             <div class="wrap split">
                 <div class="rv">
-                    <span class="eyebrow">Lo spazio</span>
-                    <h2>Su appuntamento,<br>senza fretta.</h2>
-                    <p>Lo studio è una stanza luminosa a Montelupone, in contrada San Martino, con una sola postazione. Lavorando su appuntamento il tempo è tutto per te: puoi portare chi vuoi ad accompagnarti, fare pause, cambiare musica.</p>
-                    <p>Per i progetti lunghi organizziamo sedute di massimo quattro o cinque ore: la pelle lavora meglio, e anche tu.</p>
-                    <div class="btns"><a class="btn" href="index.html#contatti">Contattaci</a></div>
+                    <span data-testo="studio-t011" class="eyebrow">Lo spazio</span>
+                    <h2 data-testo="studio-t012">Su appuntamento,<br>senza fretta.</h2>
+                    <p data-testo="studio-t013">Lo studio è una stanza luminosa a Montelupone, in contrada San Martino, con una sola postazione. Lavorando su appuntamento il tempo è tutto per te: puoi portare chi vuoi ad accompagnarti, fare pause, cambiare musica.</p>
+                    <p data-testo="studio-t014">Per i progetti lunghi organizziamo sedute di massimo quattro o cinque ore: la pelle lavora meglio, e anche tu.</p>
+                    <div class="btns"><a data-testo="studio-t015" class="btn" href="index.html#contatti">Contattaci</a></div>
                 </div>
                 <figure class="ph"><img data-slot="studio-spazio" src="images/lavori/studio-02-la-postazione.jpg" alt="La postazione dello studio con la luce ad anello" width="800" height="1000" loading="lazy"></figure>
             </div>
         </section>
         <section class="alt" id="igiene">
             <div class="wrap">
-                <div class="sec-head rv"><div><span class="eyebrow">Igiene e sicurezza</span><h2>Pulito,<br>sempre.</h2></div><p>Un tatuaggio è una piccola ferita: va trattata come tale. Queste sono le regole che seguiamo a ogni seduta, senza eccezioni.</p></div>
-                <ul class="hygiene"><li class="rv"><b>01</b><h3>Aghi e cartucce monouso</h3>Si aprono davanti a te e si buttano a fine seduta nei contenitori per rifiuti sanitari.</li><li class="rv"><b>02</b><h3>Sterilizzazione</h3>Tutto ciò che non è monouso viene sterilizzato in autoclave, con controlli registrati.</li><li class="rv"><b>03</b><h3>Postazione protetta</h3>Lettino, macchinetta e cavi vengono coperti con barriere nuove per ogni cliente.</li><li class="rv"><b>04</b><h3>Inchiostri a norma</h3>Usiamo solo inchiostri conformi alle regole europee sulle sostanze per tatuaggi.</li><li class="rv"><b>05</b><h3>Guanti e disinfezione</h3>Guanti in nitrile cambiati a ogni passaggio, pelle preparata e disinfettata.</li><li class="rv"><b>06</b><h3>Consenso informato</h3>Prima di ogni seduta compiliamo insieme la scheda sulla salute e il consenso firmato.</li></ul>
+                <div class="sec-head rv"><div><span data-testo="studio-t016" class="eyebrow">Igiene e sicurezza</span><h2 data-testo="studio-t017">Pulito,<br>sempre.</h2></div><p data-testo="studio-t018">Un tatuaggio è una piccola ferita: va trattata come tale. Queste sono le regole che seguiamo a ogni seduta, senza eccezioni.</p></div>
+                <ul class="hygiene"><li data-testo="studio-t019" class="rv"><b>01</b><h3 data-testo="studio-t020">Aghi e cartucce monouso</h3>Si aprono davanti a te e si buttano a fine seduta nei contenitori per rifiuti sanitari.</li><li data-testo="studio-t021" class="rv"><b>02</b><h3 data-testo="studio-t022">Sterilizzazione</h3>Tutto ciò che non è monouso viene sterilizzato in autoclave, con controlli registrati.</li><li data-testo="studio-t023" class="rv"><b>03</b><h3 data-testo="studio-t024">Postazione protetta</h3>Lettino, macchinetta e cavi vengono coperti con barriere nuove per ogni cliente.</li><li data-testo="studio-t025" class="rv"><b>04</b><h3 data-testo="studio-t026">Inchiostri a norma</h3>Usiamo solo inchiostri conformi alle regole europee sulle sostanze per tatuaggi.</li><li data-testo="studio-t027" class="rv"><b>05</b><h3 data-testo="studio-t028">Guanti e disinfezione</h3>Guanti in nitrile cambiati a ogni passaggio, pelle preparata e disinfettata.</li><li data-testo="studio-t029" class="rv"><b>06</b><h3 data-testo="studio-t030">Consenso informato</h3>Prima di ogni seduta compiliamo insieme la scheda sulla salute e il consenso firmato.</li></ul>
             </div>
         </section>
     </main>

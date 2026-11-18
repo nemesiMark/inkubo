@@ -3,9 +3,13 @@
     "id": "home-hero",
     "pagina": "index.html",
     "sezione": "Prima schermata",
-    "descrizione": "La foto grande in primo piano, sopra la scritta «Rain Ink» al neon. Meglio verticale, in bianco e nero, con Matteo di spalle mentre tatua.",
+    "descrizione": "La foto grande della prima schermata, a tutta larghezza dietro la scritta «Rain Ink» al neon. Orizzontale, con Matteo di spalle mentre tatua: il volto del cliente non deve vedersi.",
     "foto": "images/lavori/hero-studio.jpg",
-    "alt": "Matteo al lavoro su un tatuaggio"
+    "alt": "Matteo al lavoro su un tatuaggio",
+    "testi": [
+      "index-t001",
+      "index-t002"
+    ]
   },
   {
     "id": "studio-artista",
@@ -13,7 +17,13 @@
     "sezione": "L'artista",
     "descrizione": "In alto, accanto a «Disegno prima, inchiostro poi» (Matteo Quattrini).",
     "foto": "images/lavori/studio-07-al-lavoro.jpg",
-    "alt": "Il tatuatore al lavoro con il cliente"
+    "alt": "Il tatuatore al lavoro con il cliente",
+    "testi": [
+      "studio-t004",
+      "studio-t005",
+      "studio-t006",
+      "studio-t007"
+    ]
   },
   {
     "id": "studio-spazio",
@@ -21,6 +31,12 @@
     "sezione": "Lo spazio",
     "descrizione": "Al centro, accanto a «Su appuntamento, senza fretta»: una foto dello studio.",
     "foto": "images/lavori/studio-02-la-postazione.jpg",
-    "alt": "La postazione dello studio con la luce ad anello"
+    "alt": "La postazione dello studio con la luce ad anello",
+    "testi": [
+      "studio-t011",
+      "studio-t012",
+      "studio-t013",
+      "studio-t014"
+    ]
   }
 ]
