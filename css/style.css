@@ -103,10 +103,9 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 .nav3d .slab {
   pointer-events: auto; position: relative; width: min(1180px, 100% - 24px); margin-inline: auto;
   display: flex; align-items: center; gap: 20px; padding: 10px 12px 10px 20px; border-radius: 18px;
-  background: linear-gradient(180deg, rgba(32, 32, 38, .92), rgba(14, 14, 18, .92));
+  background: linear-gradient(180deg, rgba(32, 32, 38, .96), rgba(14, 14, 18, .96));
   border: 1px solid rgba(255, 255, 255, .07);
   box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 -1px 0 rgba(0, 0, 0, .6) inset, 0 6px 0 #050506, 0 30px 60px -10px rgba(0, 0, 0, .8);
-  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   transform-style: preserve-3d; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   transition: transform .5s var(--ease), padding .25s var(--ease);
 }
@@ -237,16 +236,18 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 .clips.nastro:hover .clips-tr, .clips.nastro:focus-within .clips-tr, .clips.fermo .clips-tr { animation-play-state: paused; }
 @keyframes nastro { to { transform: translate3d(-50%, 0, 0); } }
 .nastro .clip { position: relative; flex: none; width: clamp(180px, 19vw, 250px); cursor: pointer; border-radius: 14px; outline-offset: 4px; }
-.nastro .clip video { box-shadow: none; transition: transform .5s var(--ease); }
+.nastro .clip video { display: none; position: absolute; left: 0; top: 0; height: 100%; box-shadow: none; }
+.nastro .clip.va video { display: block; }
+.clip-cop { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 14px; background: #000; -webkit-user-drag: none; }
 .nastro .clip::after { content: ""; position: absolute; inset: 0; border-radius: 14px; pointer-events: none;
   background: linear-gradient(transparent 55%, rgba(0, 0, 0, .85)); }
 .nastro .clip figcaption { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: 0 1rem 1rem; font-size: .95rem; text-shadow: 0 1px 6px #000; }
 .clip-pl { position: absolute; left: 50%; top: 50%; z-index: 1; width: 58px; height: 58px; margin: -29px 0 0 -29px; border-radius: 50%;
-  background: rgba(10, 10, 12, .55); border: 1px solid rgba(255, 255, 255, .35); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  background: rgba(10, 10, 12, .62); border: 1px solid rgba(255, 255, 255, .35);
   pointer-events: none; transition: opacity .3s; }
 .clip-pl::after { content: ""; position: absolute; left: 23px; top: 18px; border-left: 16px solid #fff; border-top: 11px solid transparent; border-bottom: 11px solid transparent; }
 .clip.va .clip-pl { opacity: 0; }
-@media (hover: hover) and (pointer: fine) { .nastro .clip:hover video { transform: scale(1.03); } }
+@media (hover: hover) and (pointer: fine) { .nastro .clip { transition: transform .5s var(--ease); } .nastro .clip:hover { transform: scale(1.03); } }
 @media (max-width: 640px) { .nastro .clip { width: 46vw; } }
 @media (prefers-reduced-motion: reduce) {
   .clips.nastro { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
@@ -396,14 +397,13 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 .wheel.drag { cursor: grabbing; }
 .wheel:focus-visible .face.front { box-shadow: 0 0 0 3px var(--red2), 0 40px 80px -20px rgba(0, 0, 0, .95); }
 .ring3d { position: absolute; left: 50%; top: 0; width: var(--w); aspect-ratio: 4 / 5; margin-left: calc(var(--w) / -2); transform-style: preserve-3d; }
-.face { position: absolute; inset: 0; border-radius: 14px; overflow: hidden; background: var(--paper); backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, .95); will-change: transform, opacity;
-  -webkit-box-reflect: below 10px linear-gradient(transparent 72%, rgba(0, 0, 0, .22)); } /* riflesso sul «pavimento» */
-.face img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+.face { position: absolute; inset: 0; border-radius: 14px; background: var(--paper); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, .95); will-change: transform, opacity; }
+.face img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
 /* copia sfocata e velo scuro sopra la foto: cambia solo l'opacità (fluido, lo fa la scheda video) */
-.face .sf { position: absolute; inset: 0; filter: saturate(.5) blur(2.5px); transform: scale(1.04); opacity: 0; will-change: opacity; }
-.face .ombra { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; will-change: opacity; }
-.face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255, 255, 255, .12), transparent 40%, transparent 70%, rgba(0, 0, 0, .18)); }
+.face .sf { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; will-change: opacity; }
+.face .ombra { position: absolute; inset: 0; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; will-change: opacity; }
+.face::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(115deg, rgba(255, 255, 255, .12), transparent 40%, transparent 70%, rgba(0, 0, 0, .18)); }
 .face.front { cursor: zoom-in; transition: box-shadow .3s var(--ease); }
 /* foto al centro: leggero contorno rosso col mouse sopra */
 @media (hover: hover) and (pointer: fine) {

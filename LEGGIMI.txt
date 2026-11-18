@@ -676,3 +676,6 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    fotogramma; nastro dei video e colonne dello studio sulla scheda video, fermi quando non si
                    vedono o sotto una foto ingrandita; foto dello studio caricate subito; navbar 3D aggiornata
                    al massimo una volta per fotogramma.
+                   Animazioni ancora più fluide: sfocatura delle foto laterali della ruota disegnata una volta
+                   sola, tolto il riflesso; nel nastro dei video si vedono le copertine e il video compare solo
+                   quando parte; tolte le sfocature dietro navbar e pulsanti play.

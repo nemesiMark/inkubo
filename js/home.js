@@ -33,12 +33,39 @@ function fuoriSchermo(el) {
 
   // le foto ai lati sono più scure, meno colorate e sfocate: invece di ricalcolare un filtro a ogni
   // fotogramma (lento), ogni foto ha sopra una copia già sfocata e un velo scuro, e cambia solo la loro opacità
+  // la copia sfocata è disegnata una volta sola in un riquadro piccolo (ingrandito sembra sfocato) e
+  // con meno colore: nessun filtro da calcolare mentre la ruota gira
+  function sfoca(im, cv) {
+    function draw() {
+      if (!im.naturalWidth) return;
+      var w = 240, h = 300, pw = 120, ph = 150, r = 14 * w / Math.max(ring.offsetWidth, 1);
+      var p = document.createElement('canvas'); p.width = pw; p.height = ph;
+      var pc = p.getContext('2d'), sc = Math.max(pw / im.naturalWidth, ph / im.naturalHeight);
+      pc.imageSmoothingEnabled = true; pc.imageSmoothingQuality = 'high';
+      pc.drawImage(im, (pw - im.naturalWidth * sc) / 2, (ph - im.naturalHeight * sc) / 2, im.naturalWidth * sc, im.naturalHeight * sc);
+      try {
+        var d = pc.getImageData(0, 0, pw, ph), a = d.data;
+        for (var j = 0; j < a.length; j += 4) { var g = .2126 * a[j] + .7152 * a[j + 1] + .0722 * a[j + 2]; a[j] = g + (a[j] - g) * .5; a[j + 1] = g + (a[j + 1] - g) * .5; a[j + 2] = g + (a[j + 2] - g) * .5; }
+        pc.putImageData(d, 0, 0);
+      } catch (e) {}
+      cv.width = w; cv.height = h;
+      var c = cv.getContext('2d'); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
+      c.drawImage(p, 0, 0, w, h);
+      // angoli arrotondati disegnati qui, così il riquadro non ha bisogno di ritagli mentre si muove
+      c.globalCompositeOperation = 'destination-in'; c.beginPath();
+      if (c.roundRect) c.roundRect(0, 0, w, h, r); else c.rect(0, 0, w, h);
+      c.fill();
+    }
+    if (im.complete) draw(); else im.addEventListener('load', draw);
+  }
   var veli = faces.map(function (f) {
-    var im = f.querySelector('img'), sf = im.cloneNode(); sf.alt = ''; sf.className = 'sf'; sf.setAttribute('aria-hidden', 'true');
-    sf.removeAttribute('loading'); f.insertBefore(sf, im.nextSibling);
-    var om = document.createElement('i'); om.className = 'ombra'; om.setAttribute('aria-hidden', 'true'); f.appendChild(om);
-    return { sf: sf, om: om };
+    var im = f.querySelector('img'), sf = document.createElement('canvas'); sf.className = 'sf'; sf.setAttribute('aria-hidden', 'true');
+    f.insertBefore(sf, im.nextSibling); sfoca(im, sf);
+    var om = document.createElement('i'); om.className = 'ombra'; om.setAttribute('aria-hidden', 'true'); f.insertBefore(om, sf.nextSibling);
+    return { sf: sf, om: om, v: {} };
   });
+  // scrive uno stile solo se è cambiato (meno lavoro per il browser a ogni fotogramma)
+  function set(k, el, prop, val) { var c = veli[k].v, key = prop + (el === faces[k] ? '' : el.className); if (c[key] !== val) { c[key] = val; el.style[prop] = val; } }
   function size() { W = ring.offsetWidth; }
   function show(i) {
     if (i === idx) return; idx = i;
@@ -57,10 +84,10 @@ function fuoriSchermo(el) {
       var a = Math.abs(o), c = Math.min(a, 1), sg = o < 0 ? -1 : 1;
       var x = o * W * .3 + sg * c * W * .32, z = (1 - c) * 90 - a * 40;
       f.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,' + z.toFixed(2) + 'px) rotateY(' + (-sg * c * 50).toFixed(3) + 'deg) scale(' + (1 - c * .2).toFixed(4) + ')';
-      veli[k].sf.style.opacity = c.toFixed(3);
-      veli[k].om.style.opacity = Math.min(1, c * .62 + Math.max(a - 1, 0) * .1).toFixed(3);
-      f.style.opacity = a > 2.6 ? Math.max(0, 3.4 - a).toFixed(3) : 1;
-      f.style.zIndex = Math.round(100 - a * 10);
+      set(k, veli[k].sf, 'opacity', c.toFixed(3));
+      set(k, veli[k].om, 'opacity', Math.min(1, c * .62 + Math.max(a - 1, 0) * .1).toFixed(3));
+      set(k, f, 'opacity', a > 2.6 ? Math.max(0, 3.4 - a).toFixed(3) : '1');
+      set(k, f, 'zIndex', String(Math.round(100 - a * 10)));
     });
     show(((Math.round(pos)) % N + N) % N);
   }
@@ -172,6 +199,9 @@ function fuoriSchermo(el) {
     var v = f.querySelector('video');
     v.removeAttribute('controls'); v.muted = true; v.loop = true; v.setAttribute('aria-hidden', 'true'); v.tabIndex = -1;
     f.dataset.k = k; f.tabIndex = 0; f.setAttribute('role', 'button'); f.setAttribute('aria-label', 'Guarda il video: ' + dati[k].titolo);
+    // nel nastro si vede la copertina (un'immagine, leggera); il video compare solo quando parte
+    var cop = document.createElement('img'); cop.className = 'clip-cop'; cop.src = dati[k].poster; cop.alt = ''; cop.setAttribute('aria-hidden', 'true');
+    cop.decoding = 'async'; cop.draggable = false; f.insertBefore(cop, v);
     var pl = document.createElement('span'); pl.className = 'clip-pl'; pl.setAttribute('aria-hidden', 'true'); f.insertBefore(pl, f.firstChild.nextSibling);
     tr.appendChild(f);
   });
@@ -184,7 +214,7 @@ function fuoriSchermo(el) {
   durata(); addEventListener('resize', durata);
   fuoriSchermo(box);
 
-  function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); v.parentNode.classList.add('va'); }
+  function play(v) { v.parentNode.classList.add('va'); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
   function stop(v) { v.pause(); v.parentNode.classList.remove('va'); }
   [].forEach.call(tr.children, function (f) {
     var v = f.querySelector('video');
