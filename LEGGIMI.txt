@@ -683,3 +683,5 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    titolo più grande e due righe di descrizione provvisoria uguale per tutti (data-desc la sostituisce).
                    Foto e video protetti: niente tasto destro, trascinamento, «Scarica» nei video e salvataggio
                    con la pressione lunga (un deterrente: nessun sito può impedirlo del tutto).
+                   Home, prima schermata: in basso a destra «Scorri verso il basso» con una linea rossa in cui
+                   scende una luce (porta a Lavori recenti; nascosta sui telefoni).

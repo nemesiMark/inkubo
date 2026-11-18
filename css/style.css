@@ -390,6 +390,16 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 .hero-testo { position: absolute; left: clamp(16px, 5vw, 80px); right: 16px; bottom: clamp(30px, 6vh, 70px); z-index: 2; }
 .hero-scritta { margin: 0; font: 800 clamp(80px, 17vw, 300px)/.8 var(--head); letter-spacing: -.05em; text-transform: uppercase; color: var(--txt); }
 .hero-sub { margin-top: 1.2rem; max-width: 90ch; padding-left: calc(clamp(80px, 17vw, 300px) * .035); /* allineata al bordo visibile di «RAIN INK» */ font: 500 clamp(14px, 1.4vw, 18px)/1.55 var(--body); letter-spacing: .02em; color: var(--mute); }
+/* in basso a destra: «Scorri verso il basso» con una linea rossa in cui scende una luce */
+.hero-scorri { position: absolute; right: clamp(16px, 2.2vw, 44px); bottom: 0; z-index: 2; height: clamp(110px, 20vh, 200px); padding: 0 0 0 14px; overflow: hidden;
+  font: 500 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: rgba(235, 227, 210, .75); text-decoration: none; transition: color .3s ease; }
+.hero-scorri::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: rgba(255, 90, 74, .25); }
+.hero-scorri::after { content: ""; position: absolute; left: 0; top: 0; width: 2px; height: 45%; background: linear-gradient(transparent, #ff5a4a 60%, #ff5a4a);
+  box-shadow: 0 0 10px rgba(255, 90, 74, .7); animation: scorriLuce 2.2s cubic-bezier(.65, 0, .35, 1) infinite; will-change: transform; }
+@keyframes scorriLuce { from { transform: translateY(-100%); } to { transform: translateY(230%); } }
+.hero-scorri:hover, .hero-scorri:focus-visible { color: #ff5a4a; }
+@media (prefers-reduced-motion: reduce) { .hero-scorri::after { animation: none; height: 100%; opacity: .8; } }
+@media (max-width: 700px) { .hero-scorri { display: none; } }
 
 /* HOME: coverflow dei lavori (le foto le scrive scripts/genera_lavori.py; il movimento è in js/home.js) */
 .wheel { --w: clamp(260px, 34vw, 480px); position: relative; height: calc(var(--w) * 1.25 + 110px); perspective: 1400px; perspective-origin: 50% 40%;
