@@ -669,3 +669,5 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Lo studio (home): sotto il titolo il testo «Uno spazio dove creatività…» in bianco.
                    Contattaci (home): tolta la frase «Raccontaci il tuo progetto…» accanto al titolo.
                    Footer: link, icone social e «Gestione cookie» si illuminano di rosso col mouse sopra.
+                   Foto e video ingranditi (home e portfolio): su computer nome e numero stanno a destra
+                   della foto o del video, in alto; su telefono restano sopra.
