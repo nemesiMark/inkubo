@@ -1,37 +1,37 @@
 [
   {
     "foto": "images/lavori/video-01-una-seduta-in-studio.jpg",
-    "video": "video/video-01-una-seduta-in-studio.mp4",
-    "titolo": "Una seduta in studio"
+    "titolo": "Una seduta in studio",
+    "video": "video/video-01-una-seduta-in-studio.mp4"
   },
   {
     "foto": "images/lavori/video-02-robot-viola.jpg",
-    "video": "video/video-02-robot-viola.mp4",
-    "titolo": "Robot viola"
+    "titolo": "Robot viola",
+    "video": "video/video-02-robot-viola.mp4"
   },
   {
     "foto": "images/lavori/video-03-fiori-di-ciliegio.jpg",
-    "video": "video/video-03-fiori-di-ciliegio.mp4",
-    "titolo": "Fiori di ciliegio"
+    "titolo": "Fiori di ciliegio",
+    "video": "video/video-03-fiori-di-ciliegio.mp4"
   },
   {
     "foto": "images/lavori/video-04-samurai-in-bianco-e-nero.jpg",
-    "video": "video/video-04-samurai-in-bianco-e-nero.mp4",
-    "titolo": "Samurai in bianco e nero"
+    "titolo": "Samurai in bianco e nero",
+    "video": "video/video-04-samurai-in-bianco-e-nero.mp4"
   },
   {
     "foto": "images/lavori/video-05-nastro-rosso-e-onde.jpg",
-    "video": "video/video-05-nastro-rosso-e-onde.mp4",
-    "titolo": "Nastro rosso e onde"
+    "titolo": "Nastro rosso e onde",
+    "video": "video/video-05-nastro-rosso-e-onde.mp4"
   },
   {
     "foto": "images/lavori/video-06-donna-con-lanterna.jpg",
-    "video": "video/video-06-donna-con-lanterna.mp4",
-    "titolo": "Donna con lanterna"
+    "titolo": "Donna con lanterna",
+    "video": "video/video-06-donna-con-lanterna.mp4"
   },
   {
     "foto": "images/lavori/video-07-manica-a-colori-completa.jpg",
-    "video": "video/video-07-manica-a-colori-completa.mp4",
-    "titolo": "Manica a colori completa"
+    "titolo": "Manica a colori completa",
+    "video": "video/video-07-manica-a-colori-completa.mp4"
   }
 ]
