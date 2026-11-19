@@ -751,3 +751,10 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
 6.16 (19/11/2026)  Home: la frase sotto RAIN INK si legge meglio: ora è avorio (non più grigia) con
                    un'ombra scura morbida, e il riflesso rosso del neon sta dietro la scritta e non
                    più dietro la frase (style.css?v=79).
+6.17 (19/11/2026)  Mappa di «Dove siamo», passaggio dalla provincia di Macerata a Montelupone: la
+                   vista della provincia è già spostata verso Montelupone (la provincia resta tutta
+                   in vista); poi la vista si avvicina al comune in modo regolare e lo centra sul suo
+                   territorio (baricentro, MEZZO_COMUNE), dove sta anche la scritta «Montelupone».
+                   Il contorno del comune si accende prima (mentre la provincia svanisce) e la
+                   discesa rallenta già da lì, così il comune si legge bene; prima scivolava di lato
+                   e passava in fretta (js/mappa.js; mappa.js?v=10).

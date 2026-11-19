@@ -15,6 +15,9 @@
   // Confine del comune di Montelupone (OpenStreetMap) e punto dove scrivere il nome (il paese)
   var CITTA={"type":"Feature","properties":{},"geometry":{"type":"MultiPolygon","coordinates":[[[[13.50172,43.35374],[13.51292,43.34376],[13.50707,43.34142],[13.50872,43.33165],[13.51988,43.33227],[13.5161,43.32914],[13.51534,43.32121],[13.51865,43.32097],[13.51981,43.31677],[13.52383,43.31905],[13.52132,43.314],[13.5228,43.30841],[13.53033,43.31122],[13.52949,43.3189],[13.53762,43.31784],[13.55087,43.3251],[13.56728,43.32653],[13.56807,43.33005],[13.58795,43.32979],[13.6056,43.3345],[13.60422,43.34075],[13.60171,43.33951],[13.59776,43.34516],[13.5958,43.35533],[13.58587,43.36037],[13.58906,43.36187],[13.5889,43.36804],[13.58461,43.37448],[13.5787,43.37481],[13.5581,43.36443],[13.53728,43.36739],[13.51958,43.35604],[13.50902,43.35718],[13.50172,43.35374]]]]}};
   var CENTRO_CITTA=[13.5676, 43.3442];
+  // Baricentro del territorio comunale: qui si centra la vista e si scrive «Montelupone», così il
+  // contorno rosso sta in mezzo al riquadro (il paese è nella parte est del comune)
+  var MEZZO_COMUNE=[13.5528, 43.3445];
   /* Aree evidenziate durante la discesa, dalla più grande alla più piccola: ognuna compare al suo
      livello di zoom (da, pieno, fino, via) e poi svanisce. Confini semplificati da OpenStreetMap
      (Italia ritagliata sulla costa di Natural Earth, come nel sito Olimp). */
@@ -117,11 +120,11 @@
         ].concat(areeLivelli(),[
           // contorno del comune: compare verso la fine della discesa
           {id:'citta-area',type:'fill',source:'citta',
-           paint:{'fill-color':ROSSO,'fill-opacity':['interpolate',['linear'],['zoom'],10.4,0,11,0.14,13,0.14,14.5,0]}},
+           paint:{'fill-color':ROSSO,'fill-opacity':['interpolate',['linear'],['zoom'],9.7,0,10.4,0.14,13,0.14,14.5,0]}},
           {id:'citta-alone',type:'line',source:'citta',
-           paint:{'line-color':ROSSO,'line-width':14,'line-blur':10,'line-opacity':['interpolate',['linear'],['zoom'],10.4,0,11,0.9]}},
+           paint:{'line-color':ROSSO,'line-width':14,'line-blur':10,'line-opacity':['interpolate',['linear'],['zoom'],9.7,0,10.4,0.9]}},
           {id:'citta-bordo',type:'line',source:'citta',
-           paint:{'line-color':ROSSO,'line-width':3,'line-opacity':['interpolate',['linear'],['zoom'],10.4,0,11,1]}},
+           paint:{'line-color':ROSSO,'line-width':3,'line-opacity':['interpolate',['linear'],['zoom'],9.7,0,10.4,1]}},
         ])   // il nome «Montelupone» è una scritta HTML (nomiStretti)
       },
       center:PARTENZA.center, zoom:PARTENZA.zoom, pitch:0, bearing:0, maxPitch:0,
@@ -161,7 +164,7 @@
     function op(z,w){if(z<=w[0]||z>=w[3])return 0;if(z<w[1])return (z-w[0])/(w[1]-w[0]);if(z>w[2])return (w[3]-z)/(w[3]-w[2]);return 1}
     var gr=function(){return stretto()?1:1.55}; // su computer i nomi sono più grandi
     var lista=AREE.map(function(a){return {nome:a.nome,punto:a.punto,w:a.nomeZoom||a.zoom,size:function(){return Math.round(18*gr())}}});
-    lista.push({nome:'Montelupone',punto:CENTRO_CITTA,w:[10.6,11.2,13.5,14.6],size:function(z){return Math.round((17+Math.max(0,Math.min(1,(z-10)/3))*4)*gr())}});
+    lista.push({nome:'Montelupone',punto:MEZZO_COMUNE,w:[10.0,10.6,13.5,14.6],size:function(z){return Math.round((17+Math.max(0,Math.min(1,(z-10)/3))*4)*gr())}});
     lista.forEach(function(n){var e=document.createElement('div');e.className='map-nome';e.textContent=n.nome;e.setAttribute('aria-hidden','true');box.appendChild(e);n.el=e});
     function aggiorna(){
       var z=map.getZoom(),W=box.clientWidth,H=box.clientHeight,pad=14;
@@ -185,7 +188,7 @@
      mentre si legge un nome (Italia, Marche, provincia di Macerata, Montelupone) e accelera nei tratti
      in mezzo. La velocità cambia con dolcezza; il centro passa sopra ogni zona mentre il suo nome è visibile. */
   function liscio(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)}
-  var LENTO=[[4.2,5.4,0.8],[6.4,7.1,0.47],[8.2,9.3,0.73],[11.2,13.5,0.92]]; // [da zoom, a zoom, velocità]
+  var LENTO=[[4.2,5.4,0.8],[6.4,7.1,0.47],[8.2,9.3,0.73],[10.1,13.5,0.85]]; // [da zoom, a zoom, velocità]
   var VELOCE=2.6; // zoom al secondo nei tratti senza nomi
   function velocita(z,zFine,t){
     var v=VELOCE;
@@ -203,8 +206,8 @@
       [PARTENZA.zoom,PARTENZA.center],
       [tel?4.6:4.8,[12.7,42.0]],      // Italia
       [6.75,[13.05,43.3]],            // Marche
-      [8.75,[13.2,43.15]],            // provincia di Macerata
-      [12.3,CENTRO_CITTA],            // Montelupone
+      [8.75,[13.33,43.21]],           // provincia di Macerata (spostata verso Montelupone, la provincia resta tutta in vista)
+      [10.9,MEZZO_COMUNE],            // Montelupone: al centro già quando il nome è del tutto acceso
       [zoomArrivo(),SEDE]             // lo studio
     ];
   }
@@ -213,6 +216,13 @@
       var A=tappe[i-1],B=tappe[i];
       if(z<=B[0]||i===tappe.length-1){
         var f=liscio((z-A[0])/(B[0]-A[0]));
+        if(i>=4){
+          /* Dalla provincia in giù (Montelupone e lo studio): la meta si avvicina al centro dello
+             schermo in modo regolare mentre si scende. Con il passaggio lineare il comune, che è
+             al bordo della provincia, scivolava di lato proprio quando compariva il suo contorno. */
+          var g=(1-f)*Math.pow(2,A[0]-z);
+          return [B[1][0]+(A[1][0]-B[1][0])*g,B[1][1]+(A[1][1]-B[1][1])*g];
+        }
         return [A[1][0]+(B[1][0]-A[1][0])*f,A[1][1]+(B[1][1]-A[1][1])*f];
       }
     }
