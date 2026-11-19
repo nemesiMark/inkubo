@@ -786,3 +786,11 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    del telefono, dove prima era il pulsante rosso in fondo). Il quadratino del
                    lucchetto dell'area riservata ora è rosso in rilievo, come era «Contattaci»,
                    con il lucchetto bianco (style.css?v=84).
+6.23 (20/11/2026)  Mappa di «Dove siamo» più fluida, senza scatti, con gli zoom veloci di prima tra un
+                   nome e l'altro (zoom, centrature e secondi sui nomi restano gli stessi, la discesa
+                   dura sempre circa 15 s): frenata e ripartenza intorno a ogni nome sono morbide e
+                   non più a strappo, la partenza e l'arrivo sono dolci; la mappa si ridisegna nello
+                   stesso istante in cui si muove, un fotogramma in ritardo non la fa più balzare in
+                   avanti, e i nomi (Italia, Marche, ..., Montelupone) scorrono e crescono in modo
+                   continuo, non più a scatti di un pixel. Il nome «Montelupone» resta in vista
+                   3 secondi (prima 4); la discesa dura circa 14 s (js/mappa.js; mappa.js?v=13).

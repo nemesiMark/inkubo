@@ -65,7 +65,7 @@
     }
     function end(){if(!finished){finished=true;done()}}
     if(!window.fetch){end();return}
-    setTimeout(end,2000);   // non aspetta più di 2 secondi le foto
+    setTimeout(end,3500);   // non aspetta più di 3,5 secondi le foto (più foto pronte = discesa più fluida)
     var i=0,active=0;
     function next(){
       if(finished&&active===0)return;
@@ -164,19 +164,31 @@
     function op(z,w){if(z<=w[0]||z>=w[3])return 0;if(z<w[1])return (z-w[0])/(w[1]-w[0]);if(z>w[2])return (w[3]-z)/(w[3]-w[2]);return 1}
     var gr=function(){return stretto()?1:1.55}; // su computer i nomi sono più grandi
     var lista=AREE.map(function(a){return {nome:a.nome,punto:a.punto,w:a.nomeZoom||a.zoom,size:function(){return Math.round(18*gr())}}});
-    lista.push({nome:'Montelupone',punto:MEZZO_COMUNE,w:[10.0,10.6,13.5,14.6],size:function(z){return Math.round((17+Math.max(0,Math.min(1,(z-10)/3))*4)*gr())}});
+    lista.push({nome:'Montelupone',punto:MEZZO_COMUNE,w:[10.0,10.6,13.5,14.6],size:function(z){return (17+Math.max(0,Math.min(1,(z-10)/3))*4)*gr()}});
     lista.forEach(function(n){var e=document.createElement('div');e.className='map-nome';e.textContent=n.nome;e.setAttribute('aria-hidden','true');box.appendChild(e);n.el=e});
+    /* FLUIDITÀ: ogni scritta ha la sua grandezza massima, misurata una volta sola; durante la discesa
+       cambia solo il transform (posizione e scala continua), così niente ricalcoli della pagina e
+       niente scritta che cresce a scatti di un pixel */
+    function misura(){
+      lista.forEach(function(n){
+        n.max=n.size(99);n.el.style.fontSize=n.max+'px';
+        n.hw=n.el.offsetWidth/2;n.hh=n.el.offsetHeight/2;n.o=-1;
+      });
+    }
     function aggiorna(){
       var z=map.getZoom(),W=box.clientWidth,H=box.clientHeight,pad=14;
       lista.forEach(function(n){
-        var o=op(z,n.w);n.el.style.opacity=o;if(o<=0)return;
-        n.el.style.fontSize=n.size(z)+'px';
-        var p=map.project(n.punto),hw=n.el.offsetWidth/2,hh=n.el.offsetHeight/2;
+        var o=op(z,n.w);
+        if(o!==n.o){n.o=o;n.el.style.opacity=o}
+        if(o<=0)return;
+        var k=n.size(z)/n.max,p=map.project(n.punto),hw=n.hw*k,hh=n.hh*k;
         var x=Math.max(pad+hw,Math.min(W-pad-hw,p.x)),y=Math.max(pad+hh,Math.min(H-pad-hh,p.y));
-        n.el.style.transform='translate('+(x-hw)+'px,'+(y-hh)+'px)';
+        n.el.style.transform='translate3d('+(x-n.hw).toFixed(2)+'px,'+(y-n.hh).toFixed(2)+'px,0) scale('+k.toFixed(4)+')';
       });
     }
-    map.on('move',aggiorna);map.on('resize',aggiorna);aggiorna();
+    misura();
+    map.on('move',aggiorna);map.on('resize',function(){misura();aggiorna()});aggiorna();
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){misura();aggiorna()});
   }
 
   function arrive(){ pin.classList.add('is-on'); }
@@ -188,16 +200,21 @@
      mentre si legge un nome (Italia, Marche, provincia di Macerata, Montelupone) e accelera nei tratti
      in mezzo. La velocità cambia con dolcezza; il centro passa sopra ogni zona mentre il suo nome è visibile. */
   function liscio(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)}
-  var LENTO=[[4.2,5.4,0.8],[6.4,7.1,0.47],[8.2,9.3,0.73],[10.1,13.5,0.85]]; // [da zoom, a zoom, velocità]
-  var VELOCE=2.6; // zoom al secondo nei tratti senza nomi
+  function morbido(x){x=Math.max(0,Math.min(1,x));return x*x*x*(x*(6*x-15)+10)} // come liscio, ma senza strappi
+  var LENTO=[[4.2,5.4,0.8],[6.4,7.1,0.47],[8.2,9.3,0.73],[10.1,13.5,1.13]]; // [da zoom, a zoom, velocità]
+  var VELOCE=2.8; // zoom al secondo nei tratti senza nomi: zoom veloci tra un nome e l'altro
+  /* FLUIDITÀ (Rain Ink 6.23): tra un nome e l'altro gli zoom restano veloci come prima, ma frenata e
+     ripartenza hanno la curva «morbido» (tratto FRENO prima e dopo ogni nome) e i rallentamenti si
+     moltiplicano invece di prendere il minimo: niente spigoli, quindi niente strappi. */
+  var FRENO=.5;
   function velocita(z,zFine,t){
     var v=VELOCE;
     LENTO.forEach(function(l){
-      var dentro=liscio((z-l[0]+.45)/.45)*liscio((l[1]-z+.45)/.45); // 0 fuori, 1 dentro, morbido ai bordi
-      v=Math.min(v,VELOCE-(VELOCE-l[2])*dentro);
+      var dentro=morbido((z-l[0]+FRENO)/FRENO)*morbido((l[1]-z+FRENO)/FRENO); // 0 fuori, 1 sul nome
+      v*=1-(1-l[2]/VELOCE)*dentro;
     });
-    v*=.12+.88*liscio(t/1.8);                    // partenza dolce
-    v*=Math.max(.1,Math.min(1,(zFine-z)/1.4));  // arrivo dolce
+    v*=.12+.88*morbido(t/1.8);                              // partenza dolce
+    v*=Math.max(.06,Math.sqrt(liscio((zFine-z)/1.8)));      // arrivo: frena fino a fermarsi, senza colpo finale
     return v;
   }
   function percorso(){
@@ -215,7 +232,7 @@
     for(var i=1;i<tappe.length;i++){
       var A=tappe[i-1],B=tappe[i];
       if(z<=B[0]||i===tappe.length-1){
-        var f=liscio((z-A[0])/(B[0]-A[0]));
+        var f=morbido((z-A[0])/(B[0]-A[0])); // morbido: anche lo spostamento parte e arriva senza strappi
         if(i>=4){
           /* Dalla provincia in giù (Montelupone e lo studio): la meta si avvicina al centro dello
              schermo in modo regolare mentre si scende. Con il passaggio lineare il comune, che è
@@ -240,15 +257,19 @@
     if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){
       map.jumpTo({center:SEDE,zoom:zoomArrivo()});arrive();return;
     }
-    var tappe=percorso(),zFine=zoomArrivo(),z=PARTENZA.zoom,t=0,prima=null;
+    var tappe=percorso(),zFine=zoomArrivo(),z=PARTENZA.zoom,t=0,prima=null,dtM=1/60;
     function passo(ora){
       if(mia!==corsa)return;
       if(prima===null)prima=ora;
-      var dt=Math.min(.05,(ora-prima)/1000);prima=ora;t+=dt; // max 50 ms: niente salti se la scheda era nascosta
+      var dt=Math.min(.05,(ora-prima)/1000);prima=ora; // max 50 ms: niente salti se la scheda era nascosta
+      /* passo medio: un fotogramma in ritardo non fa fare un balzo alla mappa (si recupera piano) */
+      dtM+=(dt-dtM)*.12;dt=dtM;t+=dt;
       z+=velocita(z,zFine,t)*dt;
       if(z>=zFine-.01){map.jumpTo({center:SEDE,zoom:zFine});arrive();return}
-      map.jumpTo({center:centroA(z,tappe),zoom:z});
       requestAnimationFrame(passo);
+      /* la mappa si ridisegna subito, nello stesso fotogramma (redraw), non in quello dopo:
+         ogni fotogramma mostra un passo uguale e il movimento non va a scatti */
+      map.jumpTo({center:centroA(z,tappe),zoom:z});map.redraw();
     }
     setTimeout(function(){if(mia===corsa)requestAnimationFrame(passo)},1200);
   }
