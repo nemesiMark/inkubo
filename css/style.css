@@ -211,8 +211,14 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
   .work button:hover .ph { transform: translateY(-4px); }
   .work button:hover .ph img { transform: scale(1.04); }
 }
-.work figcaption { display: flex; justify-content: space-between; gap: 1rem; padding-top: .9rem; font-size: .92rem; color: var(--mute); }
-.work figcaption b { color: var(--txt); font-weight: 600; }
+/* il titolo sta dentro la foto, in basso, su una sfumatura scura (come i video della Home) */
+.work { position: relative; }
+.work .ph::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(transparent 58%, rgba(0, 0, 0, .82)); }
+.work figcaption { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem;
+  padding: 0 1.1rem 1rem; font-size: .92rem; color: rgba(255, 255, 255, .78); text-shadow: 0 1px 6px #000; pointer-events: none; transition: transform 300ms var(--ease); }
+.work figcaption b { color: #fff; font-weight: 600; }
+@media (hover: hover) and (pointer: fine) { .work button:hover + figcaption { transform: translateY(-4px); } }
 .work.is-video button { cursor: pointer; }
 /* pulsante play sulle copertine dei video */
 .play { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
