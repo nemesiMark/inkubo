@@ -769,3 +769,15 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    sul telefono tenendo il dito sulla foto); anche il tasto L lo accende e spegne.
                    La scelta è la stessa delle altre gallerie e resta ricordata
                    (style.css?v=81, home.js?v=14).
+6.20 (19/11/2026)  Home, prima schermata: la frase sotto RAIN INK non passa più sotto la linea
+                   rossa di «Scorri verso il basso» (sugli schermi più stretti va a capo prima e
+                   lascia libera la striscia a destra). Sui tablet in verticale e sul telefono la
+                   foto di Matteo è meno ingrandita: ora si vedono il viso, le mani e il braccio
+                   che sta tatuando (prima si vedeva quasi solo la spalla); sotto sfuma nel nero
+                   dove stanno la scritta e la frase. Al computer la foto non cambia
+                   (style.css?v=82).
+6.21 (19/11/2026)  Foto a tutto schermo (Lavori recenti in home e gallerie di portfolio e studio):
+                   l'interruttore «Lente» non sta più in alto a sinistra ma subito sotto titolo,
+                   descrizione e numero (es. «03 / 09»): al computer nella colonna a destra della
+                   foto, sul telefono insieme alla scritta. Nei video non compare
+                   (style.css?v=83, script.js?v=28, home.js?v=15).

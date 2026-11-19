@@ -138,7 +138,7 @@ function fuoriSchermo(el) {
     lb.querySelector('small').textContent = pad(i + 1) + ' / ' + pad(N) + (f.dataset.title ? ' · ' + f.dataset.title : '');
     vetro.style.backgroundImage = 'url("' + im.src + '")'; vetro.classList.remove('su');
   }
-  /* LENTE: come nelle altre gallerie; interruttore in alto a sinistra, acceso compare un cerchio che
+  /* LENTE: come nelle altre gallerie; interruttore sotto titolo, descrizione e numero; acceso compare un cerchio che
      ingrandisce i dettagli (col mouse passandoci sopra, col dito tenendolo sulla foto). Scelta ricordata. */
   var sw = lb.querySelector('.lb-lente'), vetro = lb.querySelector('.lb-vetro'), aiuto = lb.querySelector('.lb-aiuto'), LZ = 2.6, lenteOn = false;
   try { lenteOn = localStorage.getItem('rainink-lente') === '1'; } catch (e) {}

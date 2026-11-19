@@ -291,9 +291,11 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 }
 .lb button { position: absolute; }
 .lb .lb-x { top: 1.2rem; right: 1.2rem; }
-/* interruttore «Lente» nella foto a schermo intero (spento di partenza, la scelta resta ricordata) */
+/* interruttore «Lente» nella foto a schermo intero, sotto la didascalia (spento di partenza, la scelta resta ricordata) */
 .lb .lb-lente, .lb3d .lb-lente { position: absolute; top: 1.2rem; left: 1.2rem; width: auto; height: 44px; padding: 0 14px 0 7px; border-radius: 999px; display: inline-flex; align-items: center; gap: 10px; font: 600 14px var(--body); }
 .lb .lb-lente[hidden], .lb3d .lb-lente[hidden] { display: none; }
+/* l'interruttore sta nella didascalia, subito sotto il numero (es. «03 / 09») */
+.lb figcaption .lb-lente, .lb3d figcaption .lb-lente { position: static; margin-top: 1rem; letter-spacing: 0; }
 .lb-lente i { position: relative; width: 44px; height: 26px; border-radius: 999px; background: #3a3a42; transition: background 200ms; }
 .lb-lente i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 200ms var(--ease); }
 .lb-lente[aria-checked="true"] i { background: var(--red); }
@@ -450,6 +452,15 @@ animation:insegna 7s infinite steps(1,end)}
 .hero-scorri:hover, .hero-scorri:focus-visible { color: #ff5a4a; }
 @media (prefers-reduced-motion: reduce) { .hero-scorri::after { animation: none; height: 100%; opacity: .8; } }
 @media (max-width: 700px) { .hero-scorri { display: none; } }
+/* la frase sotto RAIN INK non passa mai sotto «Scorri verso il basso»: a destra resta libera la sua striscia */
+@media (min-width: 701px) { .hero-testo { right: calc(clamp(16px, 2.2vw, 44px) + 230px); } }
+/* schermi stretti e alti (tablet in verticale, telefono): la foto non è più ingrandita a tutta altezza
+   (si vedeva solo la spalla di Matteo); è meno zoomata e inquadra viso, mani e braccio che sta tatuando,
+   poi sfuma nel nero dove stanno la scritta e la frase */
+@media (max-aspect-ratio: 13/10) {
+  .hero-foto { bottom: auto; height: min(100%, max(60%, 100vw / 1.35)); transform: none; object-position: 75% 35%;
+    -webkit-mask-image: linear-gradient(#000 72%, transparent); mask-image: linear-gradient(#000 72%, transparent); }
+}
 
 /* HOME: coverflow dei lavori (le foto le scrive scripts/genera_lavori.py; il movimento è in js/home.js) */
 #lavori { overflow-x: clip; }  /* la ruota 3D esce ai lati: su iPhone allargava la pagina (spazio nero a destra) */

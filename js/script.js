@@ -162,10 +162,10 @@ function portfolio() {
     var list = works.filter(function (x) { return !x.hidden; }), i = list.indexOf(w), last = document.activeElement;
     var lb = document.createElement('div');
     lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Foto e video a schermo intero');
-    lb.innerHTML = '<figure><img alt=""><span class="lb-vetro" aria-hidden="true"></span><video controls playsinline preload="auto" hidden></video><figcaption><span></span><p class="lb-desc"></p><small></small></figcaption><p class="lb-aiuto"></p></figure><button class="lb-lente" type="button" role="switch" aria-checked="false"><i aria-hidden="true"></i>Lente</button><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Precedente">←</button><button class="lb-n" type="button" aria-label="Successivo">→</button>';
+    lb.innerHTML = '<figure><img alt=""><span class="lb-vetro" aria-hidden="true"></span><video controls playsinline preload="auto" hidden></video><figcaption><span></span><p class="lb-desc"></p><small></small><button class="lb-lente" type="button" role="switch" aria-checked="false"><i aria-hidden="true"></i>Lente</button></figcaption><p class="lb-aiuto"></p></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Precedente">←</button><button class="lb-n" type="button" aria-label="Successivo">→</button>';
     var im = lb.querySelector('img'), vd = lb.querySelector('video'), cap = lb.querySelector('figcaption span'), sub = lb.querySelector('figcaption small');
     function media() { return vd.hidden ? im : vd; }
-    /* LENTE: interruttore in alto a sinistra; acceso, sulla foto compare un cerchio che ingrandisce
+    /* LENTE: interruttore sotto titolo, descrizione e numero; acceso, sulla foto compare un cerchio che ingrandisce
        i dettagli (col mouse passandoci sopra, col dito tenendolo sulla foto). Scelta ricordata. */
     var sw = lb.querySelector('.lb-lente'), vetro = lb.querySelector('.lb-vetro'), aiuto = lb.querySelector('.lb-aiuto'), LZ = 2.6, lenteOn = false;
     try { lenteOn = localStorage.getItem('rainink-lente') === '1'; } catch (e) {}
