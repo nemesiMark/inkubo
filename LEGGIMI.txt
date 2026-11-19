@@ -695,3 +695,9 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    preso dal gruppo «Dallo studio» del Portfolio. Ogni sezione del sito è
                    indipendente: dall'area riservata (blocco 4 della Home) si aggiungono,
                    spostano ed eliminano le foto di Lo studio senza toccare il Portfolio e viceversa.
+                   Navbar: il lucchetto non esce più dal bordo destro (meno rilievo 3D, più margine a destra)
+                   e non si sovrappone a «Contattaci».
+6.8  (19/11/2026)  Mappa animata di «Dove siamo» come quella di Olimp (skill crea-mappa-universo):
+                   discesa continua dallo spazio allo studio, senza fermate; rallenta su ogni nome
+                   (Italia, Marche, Provincia di Macerata 1,5 s ciascuno, Montelupone 2,5 s) e
+                   accelera nei tratti in mezzo, circa 14 s in tutto. «Rivedi» riparte da capo.
