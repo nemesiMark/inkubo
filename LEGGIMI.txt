@@ -738,3 +738,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    browser, tasto L): acceso, sulla foto compare un cerchio che ingrandisce i
                    dettagli 2,6 volte (col mouse passando sopra, col dito tenendolo sulla foto);
                    nei video l'interruttore non c'è. style.css?v=77, script.js?v=26.
+6.14 (19/11/2026)  Guida dell'area riservata: rifatte le schermate nuova, rinomina, elimina e
+                   fissa-scheda con l'anteprima di adesso (vista Computer e Telefono, barra dello
+                   zoom, «✥ Trascina la foto»); data-punti ricalcolati dagli anelli (riquadri.py).
+                   Nell'anteprima da trascinare «Cambia foto» sta in alto a destra, più piccolo,
+                   così non copre più la scritta «✥ Trascina la foto».
