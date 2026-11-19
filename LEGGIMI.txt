@@ -743,3 +743,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    zoom, «✥ Trascina la foto»); data-punti ricalcolati dagli anelli (riquadri.py).
                    Nell'anteprima da trascinare «Cambia foto» sta in alto a destra, più piccolo,
                    così non copre più la scritta «✥ Trascina la foto».
+6.15 (19/11/2026)  Home: la scritta RAIN INK della prima schermata è un'insegna al neon rossa che
+                   ogni 7 secondi sfarfalla e si riaccende; la K di INK è il «tubo difettoso» che
+                   sfarfalla da sola; un riflesso rosso sulla foto segue l'insegna. Con «riduci
+                   movimento» resta accesa e ferma (css/style.css, sotto .hero-sub; style.css?v=78).
+                   La pubblicazione esclude anche CLAUDE.md (note per Claude, non fanno parte del sito).
