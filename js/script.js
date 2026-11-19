@@ -11,7 +11,7 @@ function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 function all(sel, root) { return [].slice.call((root || document).querySelectorAll(sel)); }
 
 /* ======================================================
-   NAVBAR 3D: panino su telefono, più bassa scorrendo, si inclina col mouse
+   NAVBAR: panino su telefono, più bassa scorrendo, luce rossa che gira sul contorno
    ====================================================== */
 function navbar() {
   var nav = document.getElementById('nav3d'); if (!nav) return;
@@ -29,22 +29,17 @@ function navbar() {
   var small = function () { nav.classList.toggle('small', window.scrollY > 40); };
   window.addEventListener('scroll', small, { passive: true }); small();
 
-  if (!fine || reduce) return;
-  // al massimo un aggiornamento per fotogramma
-  var ev = null;
-  slab.addEventListener('mousemove', function (e) { if (!ev) requestAnimationFrame(tilt); ev = e; });
-  function tilt() {
-    var e = ev; ev = null; if (!e) return;
-    var r = slab.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-    slab.style.setProperty('--ry', ((x - .5) * 6).toFixed(2) + 'deg');
-    slab.style.setProperty('--rx', ((.5 - y) * 14).toFixed(2) + 'deg');
-    slab.style.setProperty('--mx', (x * 100) + '%'); slab.style.setProperty('--my', (y * 100) + '%');
-    slab.style.setProperty('--glow', 1);
-  }
-  slab.addEventListener('mouseleave', function () {
-    ev = null;
-    slab.style.setProperty('--rx', '0deg'); slab.style.setProperty('--ry', '0deg'); slab.style.setProperty('--glow', 0);
+  // luce rossa che corre lungo il contorno (va e torna): SVG con un tratto che scorre
+  var NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('class', 'nav-giro'); svg.setAttribute('aria-hidden', 'true');
+  ['alone', 'luce'].forEach(function (c) {
+    var r = document.createElementNS(NS, 'rect');
+    r.setAttribute('class', c); r.setAttribute('x', '0'); r.setAttribute('y', '0');
+    r.setAttribute('width', '100%'); r.setAttribute('height', '100%');
+    r.setAttribute('rx', '18'); r.setAttribute('pathLength', '1000');
+    svg.appendChild(r);
   });
+  slab.insertBefore(svg, slab.firstChild);
 }
 
 /* ======================================================

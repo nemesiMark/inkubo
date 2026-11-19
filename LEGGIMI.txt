@@ -758,3 +758,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Il contorno del comune si accende prima (mentre la provincia svanisce) e la
                    discesa rallenta già da lì, così il comune si legge bene; prima scivolava di lato
                    e passava in fretta (js/mappa.js; mappa.js?v=10).
+6.18 (19/11/2026)  Navbar: non è più in 3D (non si inclina più seguendo il mouse) e non c'è più
+                   l'alone rosso sotto il cursore. Passando sopra Portfolio, Studio, Cura del
+                   tatuaggio, Dove siamo, FAQ e il lucchetto dell'area riservata, la voce si solleva
+                   e si ingrandisce, in rilievo. Sul contorno della navbar corre una luce rossa
+                   che fa tutto il giro e poi torna indietro, con calma (style.css?v=80, script.js?v=27).

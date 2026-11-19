@@ -18,7 +18,7 @@ Dettagli completi in **LEGGIMI.txt**: leggilo prima di modifiche non banali.
 - I testi con `data-testo`, le foto con `data-slot` e le gallerie si cambiano nei JSON di `data/` (`testi.json`, `immagini.json`, `lavori.json`, `ruota.json`, `video.json`, `studio-home.json`), **non nell'HTML**: `scripts/genera_lavori.py` riscrive le pagine a ogni pubblicazione.
 - Ogni foto/video/testo è indipendente: modificare una sezione non deve mai toccare altre sezioni o pagine (unica eccezione: i sottomenu della navbar).
 - Se cambia ciò che la pagina chiede al Worker, pubblica il Worker (`cd worker && wrangler deploy`) prima del push del sito.
-- Le schermate della guida stanno in `images/guida/`; i punti `data-punti` si ricalcolano con `riquadri.py` della skill crea-area-riservata.
+- Le schermate della guida stanno in `images/guida/`; i punti `data-punti` si ricalcolano con `riquadri.py` della skill area-ris.
 
 ## Dati provvisori
 P.IVA, orari, dominio, chiave Web3Forms sono ancora da chiedere al cliente (elenco in LEGGIMI, «DATI DA SOSTITUIRE»).

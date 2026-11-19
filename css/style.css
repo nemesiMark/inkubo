@@ -95,8 +95,8 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 }
 
 /* ======================================================
-   NAVBAR 3D: lastra sospesa che si inclina seguendo il mouse,
-   voci che si sollevano, pulsante «Prenota» in rilievo.
+   NAVBAR: lastra sospesa ferma (niente inclinazione col mouse), luce rossa che corre
+   lungo il contorno avanti e indietro, voci e lucchetto che si sollevano e ingrandiscono al passaggio.
    Sotto i 1020 px: panino e pannello che scende.
    ====================================================== */
 .nav3d { position: fixed; top: 14px; left: 0; right: 0; z-index: 50; perspective: 1200px; pointer-events: none; }
@@ -106,24 +106,27 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
   background: linear-gradient(180deg, rgba(32, 32, 38, .96), rgba(14, 14, 18, .96));
   border: 1px solid rgba(255, 255, 255, .07);
   box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 -1px 0 rgba(0, 0, 0, .6) inset, 0 6px 0 #050506, 0 30px 60px -10px rgba(0, 0, 0, .8);
-  transform-style: preserve-3d; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transition: transform .5s var(--ease), padding .25s var(--ease);
+  transform-style: preserve-3d;
+  transition: padding .25s var(--ease);
 }
 .nav3d.small .slab { padding-block: 6px; }
-.nav3d .slab::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 90, 74, .16), transparent 60%); opacity: var(--glow, 0); transition: opacity .3s; }
+.nav-giro { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.nav-giro rect { fill: none; stroke-linecap: round; stroke-dasharray: 90 910; animation: nav-giro 9s ease-in-out infinite alternate; }
+.nav-giro .luce { stroke: #ff6a5a; stroke-width: 1.6; }
+.nav-giro .alone { stroke: rgba(255, 60, 45, .55); stroke-width: 7; filter: blur(5px); }
+@keyframes nav-giro { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -1000; } }
 .nav3d .logo { display: flex; align-items: center; flex: none; transform: translateZ(30px); }
 .nav3d .logo img { height: 38px; width: auto; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .6)); }
 .links { display: flex; gap: 4px; list-style: none; margin-left: auto; transform-style: preserve-3d; }
 .links a { position: relative; display: block; padding: 10px 13px; font-size: 14px; font-weight: 500; color: var(--mute); white-space: nowrap;
   border-radius: 11px; transform-style: preserve-3d; transform: translateZ(10px);
-  transition: transform 200ms var(--ease), color 200ms ease, background-color 200ms ease, box-shadow 200ms var(--ease); }
+  transition: transform 220ms var(--ease), color 200ms ease, background-color 200ms ease, box-shadow 220ms var(--ease); }
 .links a[aria-current], .links a:focus-visible { color: var(--txt); background: linear-gradient(180deg, #2a2a31, #18181d);
   transform: translateZ(24px) translateY(-2px); box-shadow: 0 1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #050506, 0 14px 24px -6px rgba(0, 0, 0, .9); }
 .links a[aria-current]::before { content: ""; position: absolute; left: 13px; right: 13px; bottom: 5px; height: 2px; border-radius: 2px; background: var(--red2); }
 @media (hover: hover) and (pointer: fine) {
-  .links a:hover { color: var(--txt); background: linear-gradient(180deg, #2a2a31, #18181d);
-    transform: translateZ(24px) translateY(-2px); box-shadow: 0 1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #050506, 0 14px 24px -6px rgba(0, 0, 0, .9); }
+  .links a:hover { color: var(--txt); background: linear-gradient(180deg, #303038, #1a1a20);
+    transform: translateZ(24px) translateY(-4px) scale(1.1); box-shadow: 0 1px 0 rgba(255, 255, 255, .14) inset, 0 6px 0 #050506, 0 18px 28px -6px rgba(0, 0, 0, .95); }
 }
 .nav-cta { flex: none; min-height: 44px; padding: .7rem 1.2rem; font-size: 14px; transform: translateZ(40px); }
 @media (hover: hover) and (pointer: fine) { .nav-cta:hover { transform: translateZ(40px) translateY(-2px); } }
@@ -652,9 +655,10 @@ animation:insegna 7s infinite steps(1,end)}
    con la prospettiva della navbar un rilievo alto lo spingeva fuori dal bordo destro */
 .nav-lock { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; color: var(--mute);
   background: linear-gradient(180deg, #2a2a31, #17171c); box-shadow: 0 1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #050506;
-  transform: translateZ(10px); transition: transform 160ms var(--ease), color 200ms ease; }
+  transform: translateZ(10px); transition: transform 220ms var(--ease), color 200ms ease, box-shadow 220ms var(--ease); }
 .nav-lock:active { transform: translateZ(10px) translateY(3px); }
-@media (hover: hover) and (pointer: fine) { .nav-lock:hover { color: var(--txt); transform: translateZ(10px) translateY(-2px); } }
+@media (hover: hover) and (pointer: fine) { .nav-lock:hover { color: var(--txt); transform: translateZ(10px) translateY(-4px) scale(1.12);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .14) inset, 0 6px 0 #050506, 0 18px 28px -6px rgba(0, 0, 0, .95); } }
 @media (max-width: 1020px) { .nav-lock { width: 46px; height: 46px; } }
 @media (max-width: 1020px) { .burger ~ .nav-lock { margin-left: -8px; } }
 
