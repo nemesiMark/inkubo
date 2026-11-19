@@ -402,6 +402,19 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
 .anteprima-testo.grande{display:block;-webkit-line-clamp:none;max-height:30svh;overflow:auto;padding:12px 14px;background:#fff;border:1px dashed #b9b9b3;border-radius:3px;margin-bottom:12px}
 .anteprima-testo .vuoto{color:var(--mute)}
 .etichetta-ant{font-size:14px;font-weight:500;margin-bottom:6px}
+/* testi: anteprima come sul sito, sul computer e sul telefono (come per le foto): la pagina vera
+   in piccolo, con il testo nuovo al suo posto e contornato, centrata sul testo */
+#d-testo{width:min(720px,100% - 24px)}
+.viste-testo{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin-bottom:12px}
+.viste-testo[hidden]{display:none}
+.viste-testo figure{margin:0;flex:1 1 300px;min-width:0}
+.viste-testo figure.tel{flex:0 0 200px;margin:0 auto}
+.vt-fin{position:relative;height:240px;overflow:hidden;border:1px solid var(--line);border-radius:3px;background:var(--paper)}
+.vt-fin iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;pointer-events:none;visibility:hidden}
+.vt-fin.pronta iframe{visibility:visible}
+.vt-msg{position:absolute;inset:0;display:grid;place-items:center;padding:14px;text-align:center;font-size:13px;line-height:1.4;color:var(--mute)}
+.vt-fin.pronta .vt-msg{display:none}
+.viste-testo figcaption{font-size:12px;color:var(--mute);margin-top:5px;text-align:center}
 #d-testo textarea{width:100%;min-height:52px;padding:12px 14px;border:1px solid #b9b9b3;border-radius:3px;background:#fff;font:16px/1.5 var(--testo);resize:vertical}
 #d-testo textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0,.08)}
 #d-testo .parte+.parte,.testi-foto .parte+.parte{margin-top:8px}
@@ -541,8 +554,12 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
       <label for="tx-link">Dove porta il clic <span class="facoltativo">(non si cambia da qui)</span></label>
       <input type="text" id="tx-link" readonly tabindex="-1">
     </div>
-    <p class="etichetta-ant" id="tx-ant-et">Come si vedrà</p>
-    <div class="anteprima-testo grande" id="tx-ant" aria-live="polite"></div>
+    <p class="etichetta-ant" id="tx-ant-et">Come si vedrà sul sito</p>
+    <div class="viste-testo" id="tx-viste" aria-hidden="true">
+      <figure class="pc"><div class="vt-fin"><span class="vt-msg">Preparazione dell'anteprima…</span></div><figcaption>Computer</figcaption></figure>
+      <figure class="tel"><div class="vt-fin"><span class="vt-msg">Preparazione dell'anteprima…</span></div><figcaption>Telefono</figcaption></figure>
+    </div>
+    <div class="anteprima-testo grande" id="tx-ant" aria-live="polite" hidden></div>
     <p class="errore" id="err-tx" role="alert"></p>
     <div class="azioni">
       <button class="btn" type="button" id="tx-annulla">Annulla</button>
@@ -694,12 +711,12 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     <section class="g-sez" id="g-t-modificare" aria-labelledby="g-t-modificare-t">
       <h3 id="g-t-modificare-t">Modificare un testo</h3>
       <div class="g-passo"><span class="num">1</span><p>Nella pagina clicca <b>Testi</b> (accanto a Foto). I testi sono divisi per sezione, nell'ordine in cui si vedono sul sito: clicca quello da cambiare.</p><a href="images/guida/testi.jpg" class="g-zoom" data-punti="12.25,34.70,9.44,7.20;6.44,49.20,87.12,13.90" aria-label="Ingrandisci la schermata"><img src="images/guida/testi.jpg" alt="Il pulsante Testi e l'elenco dei testi della Home divisi per sezione" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
-      <div class="g-passo"><span class="num">2</span><p>Scrivi il testo nuovo (per andare a capo premi Invio). Si cambiano solo le parole: se nel testo ci sono parti in grassetto o cliccabili, ognuna ha il suo campo e resta com'è. Sotto vedi come si vedrà; poi clicca <b>Salva</b>.</p><a href="images/guida/testo-modifica.jpg" class="g-zoom" data-punti="32.94,27.60,34.12,14.20;59.75,65.80,7.31,7.50" aria-label="Ingrandisci la schermata"><img src="images/guida/testo-modifica.jpg" alt="La finestra del testo con il campo da scrivere, l'anteprima e il pulsante Salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">2</span><p>Scrivi il testo nuovo (per andare a capo premi Invio). Si cambiano solo le parole: se nel testo ci sono parti in grassetto o cliccabili, ognuna ha il suo campo e resta com'è. Sotto vedi, mentre scrivi, <b>come si vedrà sul sito</b>: a sinistra sul <b>computer</b>, a destra sul <b>telefono</b>, con il testo contornato di rosso al suo posto nella pagina; poi clicca <b>Salva</b>.</p><a href="images/guida/testo-modifica.jpg" class="g-zoom" data-punti="22.97,21.25,54.06,13.75;22.97,45.38,54.06,34.38;70.08,83.50,6.95,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/testo-modifica.jpg" alt="La finestra del testo con il campo da scrivere, l'anteprima come sul sito per computer e telefono e il pulsante Salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
       <p class="g-nota">Quasi ogni testo è uno solo e si vede uguale su computer, tablet e telefono (cambia solo come è impaginato): nella scheda c'è scritto dove si vede. «Scorri verso il basso», nella prima schermata della Home, si vede solo su computer e tablet.</p>
     </section>
     <section class="g-sez" id="g-t-link" aria-labelledby="g-t-link-t">
       <h3 id="g-t-link-t">Pulsanti e testi cliccabili</h3>
-      <div class="g-passo"><span class="num">1</span><p>Nei pulsanti e nei testi cliccabili cambi le parole; sotto vedi anche <b>Dove porta il clic</b>, che invece resta com'è.</p><a href="images/guida/testo-link.jpg" class="g-zoom" data-punti="32.94,23.20,34.12,14.20;32.94,43.90,34.12,11.40;59.75,70.30,7.31,7.50" aria-label="Ingrandisci la schermata"><img src="images/guida/testo-link.jpg" alt="La finestra di un pulsante con il testo da cambiare, il campo Dove porta il clic in grigio e il pulsante Salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
+      <div class="g-passo"><span class="num">1</span><p>Nei pulsanti e nei testi cliccabili cambi le parole; sotto vedi anche <b>Dove porta il clic</b>, che invece resta com'è.</p><a href="images/guida/testo-link.jpg" class="g-zoom" data-punti="22.97,15.50,54.06,13.75;22.97,36.25,54.06,10.88;70.08,89.38,6.95,7.00" aria-label="Ingrandisci la schermata"><img src="images/guida/testo-link.jpg" alt="La finestra di un pulsante con il testo da cambiare, il campo Dove porta il clic in grigio e il pulsante Salva" width="1600" height="1000" loading="lazy" decoding="async"></a></div>
     </section>
     <section class="g-sez" id="g-t-fissi" aria-labelledby="g-t-fissi-t">
       <h3 id="g-t-fissi-t">Cosa non si cambia</h3>
@@ -1940,7 +1957,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     $('tx-t').textContent = g.titolo;
     $('tx-dove').textContent = 'Menu · vale per tutte le pagine del sito';
     $('tx-etichetta').hidden = true; $('tx-aiuto').hidden = true; $('tx-aiuto-semplice').hidden = true;
-    $('tx-campo-link').hidden = true; $('tx-ant-et').hidden = true; $('tx-ant').hidden = true;
+    $('tx-campo-link').hidden = true; $('tx-ant-et').hidden = true; $('tx-ant').hidden = true; $('tx-viste').hidden = true;
     var box = $('tx-parti'); box.innerHTML = '';
     g.eds = g.voci.map(function (v, k) {
       var c = document.createElement('div'); c.className = 'coppia-campo';
@@ -1959,7 +1976,7 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
   function apriTesto(id) {
     if (COPPIE[id]) { apriCoppia(COPPIE[id]); return; }
     txCoppia = null;
-    $('tx-etichetta').hidden = false; $('tx-ant-et').hidden = false; $('tx-ant').hidden = false;
+    $('tx-etichetta').hidden = false; $('tx-ant-et').hidden = false; $('tx-ant').hidden = true; $('tx-viste').hidden = false;
     txAperto = testi.filter(function (v) { return v.id === id; })[0]; if (!txAperto) return;
     var semplice = txAperto.tipo === 'semplice', link = 'link' in txAperto;
     $('tx-t').textContent = txAperto.descrizione;
@@ -1971,12 +1988,103 @@ input[type=text],input[type=password]{border-radius:3px;background:#fff;border-c
     $('tx-campo-link').hidden = !link; $('tx-link').value = link ? txAperto.link : '';
     $('err-tx').textContent = ''; anteprimaTesto();
     dtx.showModal(); txEd.primo.focus();
+    vtApri(txAperto);
   }
   function anteprimaTesto() {
     if (txCoppia || !txAperto || !txEd) return;
     var r = txEd.valore();
     $('tx-ant').innerHTML = r.testo ? htmlTesto(r.testo, txAperto.tipo !== 'semplice' && !('link' in txAperto)) : '<span class="vuoto">(vuoto)</span>';
+    clearTimeout(vtT); vtT = setTimeout(vtAggiorna, 120);
   }
+
+  /* ---------- testi: anteprima come sul sito, sul computer e sul telefono (come per le foto) ----------
+     La pagina vera si apre in due finestre, larga 1440 px (Computer) e 390 px (Telefono), rimpicciolite
+     nella scheda: il testo che si scrive prende il posto di quello del sito (con le stesse regole del
+     generatore), è contornato e la vista si centra su di lui. Le finestre restano aperte finché si
+     modificano testi della stessa pagina, così l'anteprima della volta dopo è subito pronta. */
+  var vtFin = [].slice.call(document.querySelectorAll('#tx-viste .vt-fin')), vtStato = [], vtT = 0, vtVoce = null;
+  var VT_ALTO = [900, 844];
+  function vtMsg(k, t, guasto) { var f = vtFin[k]; f.classList.remove('pronta'); f.querySelector('.vt-msg').textContent = t; if (vtStato[k]) vtStato[k].guasto = !!guasto; vtRiserva(); }
+  function vtPagina(k, pagina) { // apre (o riusa) la pagina vera nella finestra k
+    var c = vtStato[k];
+    if (c && c.pagina === pagina) return c.pronta;
+    if (c) c.f.remove();
+    var f = document.createElement('iframe');
+    f.tabIndex = -1; f.setAttribute('aria-hidden', 'true'); f.title = 'Anteprima';
+    f.style.width = VISTE[k].w + 'px'; f.style.height = VT_ALTO[k] + 'px';
+    c = vtStato[k] = { pagina: pagina, f: f, el: null };
+    c.pronta = new Promise(function (ok) {
+      var fatto = false;
+      function fine(d) { if (fatto) return; fatto = true; if (!d) c.pagina = null; ok(d); }
+      setTimeout(function () { fine(null); }, 20000);
+      f.onload = function () {
+        try {
+          var d = f.contentDocument, st = d.createElement('style');
+          // niente animazioni d'entrata, niente barra dei cookie, scorrimento immediato
+          st.textContent = 'html{scroll-behavior:auto!important}#ck-banner{display:none!important}.rv{opacity:1!important;transform:none!important}';
+          d.head.appendChild(st);
+          [].forEach.call(d.querySelectorAll('.rv'), function (e) { e.classList.remove('rv', 'in'); });
+          [].forEach.call(d.querySelectorAll('video'), function (v) { try { v.autoplay = false; v.pause(); } catch (er) {} });
+          setTimeout(function () { fine(d); }, 300);
+        } catch (er) { fine(null); }
+      };
+    });
+    f.src = new URL(pagina, location.href).href;
+    vtFin[k].appendChild(f);
+    return c.pronta;
+  }
+  function vtApri(v) {
+    vtVoce = v;
+    vtFin.forEach(function (fin, k) {
+      if (vtStato[k]) vtStato[k].guasto = false;
+      vtMsg(k, 'Preparazione dell\'anteprima…');
+      vtPagina(k, v.pagina).then(function (d) {
+        if (vtVoce !== v || !dtx.open) return;
+        var c = vtStato[k];
+        if (c.el) { c.el.innerHTML = c.el._vtOrig; c.el.style.outline = ''; c.el.style.outlineOffset = ''; c.el = null; }
+        var el = d && d.querySelector('[data-testo="' + v.id + '"]');
+        if (!el) { vtMsg(k, d ? 'Questo testo non si trova nella pagina.' : 'Anteprima non disponibile: controlla la connessione.', true); return; }
+        if (el._vtOrig == null) el._vtOrig = el.innerHTML;
+        for (var p = el; p; p = p.parentElement) if (p.tagName === 'DETAILS') p.open = true; // domande chiuse: si aprono
+        c.el = el; vtScrivi(k);
+        if (d.fonts && d.fonts.ready) d.fonts.ready.then(function () { vtCentra(k); });
+        setTimeout(function () { vtCentra(k); }, 800); // foto e caratteri arrivati
+      });
+    });
+  }
+  function vtRiserva() { // se nessuna delle due finestre funziona resta l'anteprima semplice di prima
+    $('tx-ant').hidden = !(vtStato.length === vtFin.length && vtStato.every(function (c) { return c && c.guasto; }));
+  }
+  function vtTesto() { var r = txEd && txEd.valore(); return r && r.testo != null ? r.testo : null; }
+  function vtScrivi(k) {
+    var c = vtStato[k]; if (!c || !c.el || !vtVoce) return;
+    var el = c.el, t = vtTesto(); if (t == null) return; // con un errore (es. simboli tolti) resta l'ultima versione giusta
+    if (vtVoce.tipo === 'semplice') { // come il generatore: cambia solo il pezzo di testo diretto, le parti fisse restano
+      el.innerHTML = el._vtOrig;
+      var n = [].filter.call(el.childNodes, function (x) { return x.nodeType === 3 && x.nodeValue.trim(); });
+      if (n.length === 1) { var m = n[0].nodeValue.match(/^(\s*)[\s\S]*?(\s*)$/); n[0].nodeValue = m[1] + t.replace(/\s+/g, ' ') + m[2]; }
+    } else el.innerHTML = htmlTesto(t, el.tagName !== 'A');
+    vtCentra(k);
+  }
+  function vtAggiorna() { if (dtx.open && !txCoppia) vtFin.forEach(function (f, k) { vtScrivi(k); }); }
+  function vtCentra(k) {
+    var c = vtStato[k], fin = vtFin[k]; if (!c || !c.el || !dtx.open) return;
+    var w = c.f.contentWindow, el = c.el, W = fin.clientWidth, H = fin.clientHeight, vw = VISTE[k].w, vh = VT_ALTO[k];
+    var r = el.getBoundingClientRect();
+    if (!W || !H) return;
+    if (!r.width || !r.height) { vtMsg(k, 'Su questo schermo questo testo non si vede.'); return; }
+    w.scrollTo(0, Math.max(0, r.top + w.scrollY + r.height / 2 - vh / 2)); r = el.getBoundingClientRect();
+    // telefono: tutta la larghezza; computer: abbastanza vicino da leggere il testo, mai oltre la grandezza vera
+    var s = k ? W / vw : Math.max(W / vw, Math.min(.6, W / (r.width + 80)));
+    var x = Math.min(0, Math.max(W - vw * s, W / 2 - (r.left + r.width / 2) * s));
+    var y = r.height * s > H - 24 ? 12 - r.top * s : H / 2 - (r.top + r.height / 2) * s;
+    y = Math.min(0, Math.max(H - vh * s, y));
+    el.style.outline = Math.max(2, Math.round(2 / s)) + 'px dashed ' + (getComputedStyle(document.documentElement).getPropertyValue('--acc').trim() || '#c4372a');
+    el.style.outlineOffset = Math.round(6 / s) + 'px';
+    c.f.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + s + ')';
+    fin.classList.add('pronta'); c.guasto = false; vtRiserva();
+  }
+  window.addEventListener('resize', function () { if (dtx.open) vtFin.forEach(function (f, k) { vtCentra(k); }); });
   $('tx-annulla').onclick = function () { dtx.close(); };
   $('f-testo').onsubmit = function (e) {
     e.preventDefault();

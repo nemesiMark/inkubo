@@ -794,3 +794,13 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    avanti, e i nomi (Italia, Marche, ..., Montelupone) scorrono e crescono in modo
                    continuo, non più a scatti di un pixel. Il nome «Montelupone» resta in vista
                    3 secondi (prima 4); la discesa dura circa 14 s (js/mappa.js; mappa.js?v=13).
+6.24 (20/11/2026)  Area riservata, testi: nella finestra di un testo l'anteprima «Come si vedrà sul
+                   sito» non è più un riquadro con le sole parole, ma la pagina vera in piccolo,
+                   come per le foto: a sinistra sul computer, a destra (sotto, su schermi stretti)
+                   sul telefono. Mentre si scrive, il testo nuovo prende il posto di quello del
+                   sito, contornato da un tratteggio rosso, e la vista si centra su di lui; le
+                   domande delle FAQ si aprono da sole; se un testo su uno schermo non compare
+                   (es. «Scorri verso il basso» sul telefono) lo dice. Se la pagina non si apre
+                   resta il riquadro semplice di prima. Guida: rifatte le schermate «testo-modifica»
+                   e «testo-link» con le nuove anteprime e aggiornati i punti che lampeggiano
+                   (area-riservata.html, images/guida/). Stessa novità aggiunta alla skill area-ris.
