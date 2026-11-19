@@ -163,6 +163,9 @@ con una password. La pagina di accesso dice «Entra per:» foto e video · testi
   orizzontale 16:10) e l'anteprima con la stessa forma; avviso giallo se la forma è diversa
   (oltre il 3%) o la foto più piccola; rifiutate sotto 500 px, oltre 30 MB, HEIC/WebP/GIF.
   Nel browser: lato lungo 1600 px, JPEG 85, senza EXIF/GPS, PNG trasparenti su bianco.
+  Se la forma è diversa la foto si trascina dentro l'anteprima (dito, mouse o frecce,
+  scritta «↔/↕ Trascina la foto») e al salvataggio si taglia come si vede (inquadra,
+  ritaglia, tagliaPrima in area-riservata.html); il sito riceve la foto già tagliata.
   Le misure stanno in FORME/formaDi(id) di area-riservata.html.
 - Testi (data/testi.json, 155 testi): per pagina e per sezione; ogni scheda dice dove si
   vede («Computer, tablet e telefono»; «Scorri verso il basso» solo «Computer e tablet»,
@@ -184,9 +187,13 @@ con una password. La pagina di accesso dice «Entra per:» foto e video · testi
   (accesso o password attuale) l'area si blocca per tutti per 15 minuti, anche con la
   password giusta; dopo il 3° e il 4° errore il messaggio dice quanti tentativi restano.
 - Guida: pulsante «Guida» in alto; si apre da sola al primo accesso da un dispositivo.
-  Sezioni Aggiungere, Video, Riordinare, Rinominare, Eliminare, Foto fisse, Testi, Formati
-  e misure; schermate in images/guida/ (1280×800 → JPEG 1600×1000, anelli viola; le
-  posizioni dei punti che lampeggiano sono in data-punti, in % della schermata).
+  In alto tre schede Foto | Video | Testi (restano in vista scorrendo), sotto gli argomenti
+  della scheda (Foto: Aggiungere, Riordinare, Modificare, Eliminare, Foto fisse, Formati e
+  misure; Video: Aggiungere, Riordinare, Modificare, Eliminare, Formati e durata; Testi:
+  Modificare, Pulsanti e link, Cosa non si cambia); indicazioni generali in fondo.
+  Schermate in images/guida/ (1280×800 → JPEG 1600×1000, anelli viola disegnati); i punti
+  che lampeggiano (data-punti, in % della schermata) devono coincidere con gli anelli:
+  si calcolano dalle schermate con lo strumento riquadri.py della skill crea-area-riservata.
 - Nel browser si ricordano accesso, scheda, Foto/Testi e guida vista con il prefisso
   «inkubo-» (con l'aggiornamento 6.6 il cliente rientra una volta con la password).
 File:
