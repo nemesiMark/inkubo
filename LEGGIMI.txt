@@ -781,3 +781,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    descrizione e numero (es. «03 / 09»): al computer nella colonna a destra della
                    foto, sul telefono insieme alla scritta. Nei video non compare
                    (style.css?v=83, script.js?v=28, home.js?v=15).
+6.22 (19/11/2026)  Navbar (tutte le pagine): «Contattaci» non è più il pulsante rosso a destra ma
+                   una voce come le altre, tra «Cura del tatuaggio» e «Dove siamo» (anche nel menu
+                   del telefono, dove prima era il pulsante rosso in fondo). Il quadratino del
+                   lucchetto dell'area riservata ora è rosso in rilievo, come era «Contattaci»,
+                   con il lucchetto bianco (style.css?v=84).
