@@ -701,3 +701,9 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    discesa continua dallo spazio allo studio, senza fermate; rallenta su ogni nome
                    (Italia, Marche, Provincia di Macerata 1,5 s ciascuno, Montelupone 2,5 s) e
                    accelera nei tratti in mezzo, circa 14 s in tutto. «Rivedi» riparte da capo.
+6.9  (19/11/2026)  Area riservata, guida: i riquadri viola lampeggianti sulle schermate ingrandite
+                   non erano allineati a quelli disegnati (finivano più in basso e si
+                   sovrapponevano): posizioni ricalcolate dalle schermate.
+                   Nuova foto e Cambia foto: se la foto ha una forma diversa dal posto, si trascina
+                   dentro l'anteprima (col dito, col mouse o con le frecce) per scegliere la parte
+                   che si vede; al salvataggio viene tagliata esattamente così.
