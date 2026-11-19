@@ -748,3 +748,6 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    sfarfalla da sola; un riflesso rosso sulla foto segue l'insegna. Con «riduci
                    movimento» resta accesa e ferma (css/style.css, sotto .hero-sub; style.css?v=78).
                    La pubblicazione esclude anche CLAUDE.md (note per Claude, non fanno parte del sito).
+6.16 (19/11/2026)  Home: la frase sotto RAIN INK si legge meglio: ora è avorio (non più grigia) con
+                   un'ombra scura morbida, e il riflesso rosso del neon sta dietro la scritta e non
+                   più dietro la frase (style.css?v=79).
