@@ -136,7 +136,33 @@ function fuoriSchermo(el) {
     lb.querySelector('figcaption span').textContent = f.dataset.name;
     lb.querySelector('.lb-desc').textContent = f.dataset.desc || DESC_FOTO;
     lb.querySelector('small').textContent = pad(i + 1) + ' / ' + pad(N) + (f.dataset.title ? ' · ' + f.dataset.title : '');
+    vetro.style.backgroundImage = 'url("' + im.src + '")'; vetro.classList.remove('su');
   }
+  /* LENTE: come nelle altre gallerie; interruttore in alto a sinistra, acceso compare un cerchio che
+     ingrandisce i dettagli (col mouse passandoci sopra, col dito tenendolo sulla foto). Scelta ricordata. */
+  var sw = lb.querySelector('.lb-lente'), vetro = lb.querySelector('.lb-vetro'), aiuto = lb.querySelector('.lb-aiuto'), LZ = 2.6, lenteOn = false;
+  try { lenteOn = localStorage.getItem('rainink-lente') === '1'; } catch (e) {}
+  function lente(on) {
+    lenteOn = on; sw.setAttribute('aria-checked', on); lb.classList.toggle('lente-on', on); vetro.classList.remove('su');
+    try { localStorage.setItem('rainink-lente', on ? '1' : '0'); } catch (e) {}
+    aiuto.textContent = on ? (matchMedia('(pointer: coarse)').matches ? 'Tieni il dito sulla foto e muovilo per guardarla da vicino.' : 'Passa il mouse sulla foto per guardarla da vicino.') : '';
+  }
+  function muovi(e) {
+    if (!lenteOn) return;
+    var r = lbImg.getBoundingClientRect(), f = lbImg.parentNode.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    if (x < 0 || y < 0 || x > r.width || y > r.height) { vetro.classList.remove('su'); return; }
+    var m = vetro.offsetWidth / 2;
+    vetro.classList.add('su');
+    vetro.style.left = (r.left - f.left + x) + 'px'; vetro.style.top = (r.top - f.top + y) + 'px';
+    vetro.style.backgroundSize = (r.width * LZ) + 'px ' + (r.height * LZ) + 'px';
+    vetro.style.backgroundPosition = (-x * LZ + m) + 'px ' + (-y * LZ + m) + 'px';
+  }
+  sw.addEventListener('click', function () { lente(!lenteOn); });
+  lbImg.addEventListener('pointermove', muovi);
+  lbImg.addEventListener('pointerdown', function (e) { if (lenteOn) { e.preventDefault(); lbImg.setPointerCapture(e.pointerId); muovi(e); } });
+  lbImg.addEventListener('pointerleave', function () { vetro.classList.remove('su'); });
+  lbImg.addEventListener('pointerup', function (e) { if (e.pointerType !== 'mouse') vetro.classList.remove('su'); });
+  lente(lenteOn);
   function openLb(i) {
     lbIdx = i; fill(i); lbBack = document.activeElement; lb.hidden = false; lbOpen = true;
     document.documentElement.style.overflow = 'hidden';
@@ -167,6 +193,7 @@ function fuoriSchermo(el) {
     if (e.key === 'Escape') closeLb();
     if (e.key === 'ArrowRight') lbStep(1);
     if (e.key === 'ArrowLeft') lbStep(-1);
+    if (e.key === 'l' || e.key === 'L') lente(!lenteOn);
     if (e.key === 'Tab') {
       var b = [].slice.call(lb.querySelectorAll('button:not([hidden])')), i = b.indexOf(document.activeElement);
       e.preventDefault(); b[((i + (e.shiftKey ? -1 : 1)) % b.length + b.length) % b.length].focus();
@@ -174,7 +201,7 @@ function fuoriSchermo(el) {
   });
   var lsx = 0;
   lb.addEventListener('touchstart', function (e) { lsx = e.touches[0].clientX; }, { passive: true });
-  lb.addEventListener('touchend', function (e) { var dx = e.changedTouches[0].clientX - lsx; if (Math.abs(dx) > 50) lbStep(dx < 0 ? 1 : -1); });
+  lb.addEventListener('touchend', function (e) { if (lenteOn && e.target === lbImg) return; var dx = e.changedTouches[0].clientX - lsx; if (Math.abs(dx) > 50) lbStep(dx < 0 ? 1 : -1); });
 
   /* si ferma solo se la ruota ha il fuoco da tastiera: dopo un clic o dopo la chiusura dello zoom col mouse riparte */
   function tastiera() { if (document.activeElement !== wheel) return false; try { return wheel.matches(':focus-visible'); } catch (e) { return true; } }

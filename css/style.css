@@ -282,29 +282,30 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 .lb figcaption small { display: block; font-weight: 400; color: var(--mute); }
 
 /* frecce tonde in rilievo (portfolio, ruota della home) */
-.arrow, .lb button { width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line); cursor: pointer; color: var(--txt); font-size: 20px; line-height: 1;
+.arrow, .lb button, .lb3d .lb-lente { width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line); cursor: pointer; color: var(--txt); font-size: 20px; line-height: 1;
   background: linear-gradient(180deg, #26262c, #141418); box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 5px 0 #050506;
   transition: transform 140ms var(--ease), box-shadow 140ms var(--ease); }
-.arrow:active, .lb button:active { transform: translateY(4px); box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 1px 0 #050506; }
+.arrow:active, .lb button:active, .lb3d .lb-lente:active { transform: translateY(4px); box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 1px 0 #050506; }
 @media (hover: hover) and (pointer: fine) {
-  .arrow:hover, .lb button:hover { transform: translateY(-2px); box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 7px 0 #050506; }
+  .arrow:hover, .lb button:hover, .lb3d .lb-lente:hover { transform: translateY(-2px); box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 7px 0 #050506; }
 }
 .lb button { position: absolute; }
 .lb .lb-x { top: 1.2rem; right: 1.2rem; }
 /* interruttore «Lente» nella foto a schermo intero (spento di partenza, la scelta resta ricordata) */
-.lb .lb-lente { top: 1.2rem; left: 1.2rem; width: auto; height: 44px; padding: 0 14px 0 7px; border-radius: 999px; display: inline-flex; align-items: center; gap: 10px; font: 600 14px var(--body); }
-.lb .lb-lente[hidden] { display: none; }
+.lb .lb-lente, .lb3d .lb-lente { position: absolute; top: 1.2rem; left: 1.2rem; width: auto; height: 44px; padding: 0 14px 0 7px; border-radius: 999px; display: inline-flex; align-items: center; gap: 10px; font: 600 14px var(--body); }
+.lb .lb-lente[hidden], .lb3d .lb-lente[hidden] { display: none; }
 .lb-lente i { position: relative; width: 44px; height: 26px; border-radius: 999px; background: #3a3a42; transition: background 200ms; }
 .lb-lente i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 200ms var(--ease); }
 .lb-lente[aria-checked="true"] i { background: var(--red); }
 .lb-lente[aria-checked="true"] i::after { transform: translateX(18px); }
 .lb figure { position: relative; }
-.lb.lente-on img { cursor: none; touch-action: none; }
+.lb.lente-on img, .lb3d.lente-on img { cursor: none; touch-action: none; }
 .lb-vetro { position: absolute; z-index: 2; width: 220px; height: 220px; margin: -110px 0 0 -110px; border-radius: 50%; border: 3px solid #fff; pointer-events: none;
   box-shadow: 0 12px 40px rgba(0, 0, 0, .7), 0 0 0 1px rgba(214, 52, 44, .6); background-repeat: no-repeat; opacity: 0; transition: opacity 150ms; }
-.lb.lente-on .lb-vetro.su { opacity: 1; }
+.lb.lente-on .lb-vetro.su, .lb3d.lente-on .lb-vetro.su { opacity: 1; }
 .lb-aiuto { margin-top: .6rem; font: 400 13px var(--body); color: rgba(255, 255, 255, .6); text-align: center; }
 .lb-aiuto:empty { display: none; }
+.lb3d .lb-aiuto { align-self: center; }
 @media (max-width: 700px) { .lb-vetro { width: 160px; height: 160px; margin: -80px 0 0 -80px; } }
 .lb .lb-p { left: 1.4rem; top: 50%; margin-top: -26px; }
 .lb .lb-n { right: 1.4rem; top: 50%; margin-top: -26px; }
