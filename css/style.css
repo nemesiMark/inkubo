@@ -205,11 +205,15 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 
 .works { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.8rem 1.4rem; }
 .work button { display: block; width: 100%; padding: 0; border: 0; background: none; text-align: left; cursor: zoom-in; }
-.work .ph { aspect-ratio: 4 / 5; transition: transform 300ms var(--ease); }
-.work .ph img { transition: transform 600ms var(--ease); }
+.work .ph { aspect-ratio: 4 / 5; transition: transform 400ms var(--ease), box-shadow 400ms var(--ease), filter 900ms var(--ease); }
+.work .ph img { transition: transform 700ms var(--ease); }
+/* PARETE AL NEON: le foto si accendono una alla volta quando arrivano in vista, con il bagliore
+   rosso della scritta Rain Ink; col mouse sopra la foto si ingrandisce e il neon si accende di più */
+.work.acceso .ph, html:not(.js) .work .ph { box-shadow: 0 0 0 1px rgba(214, 52, 44, .75), 0 0 26px rgba(214, 52, 44, .4), 0 0 70px rgba(214, 52, 44, .15), 0 30px 60px -24px rgba(0, 0, 0, .9); }
+.js .work:not(.acceso) .ph { filter: brightness(.25) saturate(0); box-shadow: 0 0 0 1px rgba(214, 52, 44, 0), 0 30px 60px -24px rgba(0, 0, 0, .9); }
 @media (hover: hover) and (pointer: fine) {
-  .work button:hover .ph { transform: translateY(-4px); }
-  .work button:hover .ph img { transform: scale(1.04); }
+  .work button:hover .ph { transform: scale(1.035); box-shadow: 0 0 0 2px #ff4a3d, 0 0 34px rgba(255, 74, 61, .7), 0 0 110px rgba(214, 52, 44, .35), 0 30px 60px -24px rgba(0, 0, 0, .9); }
+  .work button:hover .ph img { transform: scale(1.14); }
 }
 /* il titolo sta dentro la foto, in basso, su una sfumatura scura (come i video della Home) */
 .work { position: relative; }
@@ -218,7 +222,8 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 .work figcaption { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem;
   padding: 0 1.1rem 1rem; font-size: .92rem; color: rgba(255, 255, 255, .78); text-shadow: 0 1px 6px #000; pointer-events: none; transition: transform 300ms var(--ease); }
 .work figcaption b { color: #fff; font-weight: 600; }
-@media (hover: hover) and (pointer: fine) { .work button:hover + figcaption { transform: translateY(-4px); } }
+.work figcaption { transform-origin: 50% 100%; }
+@media (hover: hover) and (pointer: fine) { .work button:hover + figcaption { transform: scale(1.035); } }
 .work.is-video button { cursor: pointer; }
 /* pulsante play sulle copertine dei video */
 .play { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
@@ -283,6 +288,21 @@ section { padding: clamp(5rem, 10vw, 7.5rem) 0; }
 }
 .lb button { position: absolute; }
 .lb .lb-x { top: 1.2rem; right: 1.2rem; }
+/* interruttore «Lente» nella foto a schermo intero (spento di partenza, la scelta resta ricordata) */
+.lb .lb-lente { top: 1.2rem; left: 1.2rem; width: auto; height: 44px; padding: 0 14px 0 7px; border-radius: 999px; display: inline-flex; align-items: center; gap: 10px; font: 600 14px var(--body); }
+.lb .lb-lente[hidden] { display: none; }
+.lb-lente i { position: relative; width: 44px; height: 26px; border-radius: 999px; background: #3a3a42; transition: background 200ms; }
+.lb-lente i::after { content: ""; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 200ms var(--ease); }
+.lb-lente[aria-checked="true"] i { background: var(--red); }
+.lb-lente[aria-checked="true"] i::after { transform: translateX(18px); }
+.lb figure { position: relative; }
+.lb.lente-on img { cursor: none; touch-action: none; }
+.lb-vetro { position: absolute; z-index: 2; width: 220px; height: 220px; margin: -110px 0 0 -110px; border-radius: 50%; border: 3px solid #fff; pointer-events: none;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .7), 0 0 0 1px rgba(214, 52, 44, .6); background-repeat: no-repeat; opacity: 0; transition: opacity 150ms; }
+.lb.lente-on .lb-vetro.su { opacity: 1; }
+.lb-aiuto { margin-top: .6rem; font: 400 13px var(--body); color: rgba(255, 255, 255, .6); text-align: center; }
+.lb-aiuto:empty { display: none; }
+@media (max-width: 700px) { .lb-vetro { width: 160px; height: 160px; margin: -80px 0 0 -80px; } }
 .lb .lb-p { left: 1.4rem; top: 50%; margin-top: -26px; }
 .lb .lb-n { right: 1.4rem; top: 50%; margin-top: -26px; }
 

@@ -149,13 +149,52 @@ function portfolio() {
 
   works.forEach(function (w) { var bt = w.querySelector('button'); if (bt) bt.addEventListener('click', function () { openLb(w); }); });
 
+  // parete al neon: ogni foto si accende quando arriva in vista, una dopo l'altra
+  if (!canAnimate || !('IntersectionObserver' in window)) works.forEach(function (w) { w.classList.add('acceso'); });
+  else {
+    var neon = new IntersectionObserver(function (es) {
+      var k = 0;
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        neon.unobserve(e.target);
+        setTimeout(function () { e.target.classList.add('acceso'); }, Math.min(k++, 5) * 120 + 150);
+      });
+    }, { threshold: .25 });
+    works.forEach(function (w) { neon.observe(w); });
+  }
+
   function openLb(w) {
     var list = works.filter(function (x) { return !x.hidden; }), i = list.indexOf(w), last = document.activeElement;
     var lb = document.createElement('div');
     lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Foto e video a schermo intero');
-    lb.innerHTML = '<figure><img alt=""><video controls playsinline preload="auto" hidden></video><figcaption><span></span><p class="lb-desc"></p><small></small></figcaption></figure><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Precedente">←</button><button class="lb-n" type="button" aria-label="Successivo">→</button>';
+    lb.innerHTML = '<figure><img alt=""><span class="lb-vetro" aria-hidden="true"></span><video controls playsinline preload="auto" hidden></video><figcaption><span></span><p class="lb-desc"></p><small></small></figcaption><p class="lb-aiuto"></p></figure><button class="lb-lente" type="button" role="switch" aria-checked="false"><i aria-hidden="true"></i>Lente</button><button class="lb-x" type="button" aria-label="Chiudi">✕</button><button class="lb-p" type="button" aria-label="Precedente">←</button><button class="lb-n" type="button" aria-label="Successivo">→</button>';
     var im = lb.querySelector('img'), vd = lb.querySelector('video'), cap = lb.querySelector('figcaption span'), sub = lb.querySelector('figcaption small');
     function media() { return vd.hidden ? im : vd; }
+    /* LENTE: interruttore in alto a sinistra; acceso, sulla foto compare un cerchio che ingrandisce
+       i dettagli (col mouse passandoci sopra, col dito tenendolo sulla foto). Scelta ricordata. */
+    var sw = lb.querySelector('.lb-lente'), vetro = lb.querySelector('.lb-vetro'), aiuto = lb.querySelector('.lb-aiuto'), LZ = 2.6, lenteOn = false;
+    try { lenteOn = localStorage.getItem('rainink-lente') === '1'; } catch (e) {}
+    function lente(on) {
+      lenteOn = on; sw.setAttribute('aria-checked', on); lb.classList.toggle('lente-on', on); vetro.classList.remove('su');
+      try { localStorage.setItem('rainink-lente', on ? '1' : '0'); } catch (e) {}
+      aiuto.textContent = on ? (matchMedia('(pointer: coarse)').matches ? 'Tieni il dito sulla foto e muovilo per guardarla da vicino.' : 'Passa il mouse sulla foto per guardarla da vicino.') : '';
+    }
+    function muovi(e) {
+      if (!lenteOn || im.hidden) return;
+      var r = im.getBoundingClientRect(), f = im.parentNode.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      if (x < 0 || y < 0 || x > r.width || y > r.height) { vetro.classList.remove('su'); return; }
+      var m = vetro.offsetWidth / 2;
+      vetro.classList.add('su');
+      vetro.style.left = (r.left - f.left + x) + 'px'; vetro.style.top = (r.top - f.top + y) + 'px';
+      vetro.style.backgroundSize = (r.width * LZ) + 'px ' + (r.height * LZ) + 'px';
+      vetro.style.backgroundPosition = (-x * LZ + m) + 'px ' + (-y * LZ + m) + 'px';
+    }
+    sw.addEventListener('click', function () { lente(!lenteOn); });
+    im.addEventListener('pointermove', muovi);
+    im.addEventListener('pointerdown', function (e) { if (lenteOn) { e.preventDefault(); im.setPointerCapture(e.pointerId); muovi(e); } });
+    im.addEventListener('pointerleave', function () { vetro.classList.remove('su'); });
+    im.addEventListener('pointerup', function (e) { if (e.pointerType !== 'mouse') vetro.classList.remove('su'); });
+    lente(lenteOn);
     function fill(n) {
       i = (n + list.length) % list.length;
       var it = list[i], src = it.querySelector('img'), fc = it.querySelector('figcaption'), v = it.getAttribute('data-video');
@@ -168,6 +207,7 @@ function portfolio() {
         vd.hidden = true; vd.removeAttribute('src'); vd.load(); im.hidden = false;
         im.src = src.getAttribute('src'); im.alt = src.alt;
       }
+      sw.hidden = !!v; vetro.style.backgroundImage = v ? '' : 'url("' + src.getAttribute('src') + '")'; vetro.classList.remove('su');
       cap.textContent = fc.querySelector('b').textContent;
       var s2 = fc.querySelector('span'); sub.textContent = s2 ? s2.textContent : '';
       // descrizione provvisoria, uguale per tutti finché non se ne scrive una propria in data-desc
@@ -189,8 +229,9 @@ function portfolio() {
       if (e.key === 'Escape') close();
       else if (e.key === 'ArrowLeft') show(i - 1, -1);
       else if (e.key === 'ArrowRight') show(i + 1, 1);
+      else if ((e.key === 'l' || e.key === 'L') && !sw.hidden) lente(!lenteOn);
       else if (e.key === 'Tab') {
-        var f = all('button, video:not([hidden])', lb), a = f.indexOf(document.activeElement);
+        var f = all('button:not([hidden]), video:not([hidden])', lb), a = f.indexOf(document.activeElement);
         e.preventDefault(); f[(a + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
       }
     }
@@ -208,7 +249,7 @@ function portfolio() {
     lb.addEventListener('click', function (e) { if (e.target === lb || e.target.tagName === 'FIGURE') close(); });
     var sx = 0;
     lb.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
-    lb.addEventListener('touchend', function (e) { var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); });
+    lb.addEventListener('touchend', function (e) { if (lenteOn && e.target === im) return; var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1); });
     document.addEventListener('keydown', key);
     fill(i);
     document.body.appendChild(lb); document.body.style.overflow = 'hidden';

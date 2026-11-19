@@ -731,3 +731,10 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
 6.12 (19/11/2026)  Portfolio: il titolo di ogni foto e video sta dentro la foto, in basso a sinistra,
                    su una sfumatura scura (come i video della Home); col mouse sopra sale con la
                    foto. style.css?v=76.
+6.13 (19/11/2026)  Portfolio a «parete al neon»: ogni foto si accende quando arriva in vista, una dopo
+                   l'altra, con il bagliore rosso della scritta Rain Ink (classe .acceso); col mouse
+                   sopra la foto si ingrandisce e il neon si accende di più. Foto a schermo intero:
+                   interruttore «Lente» in alto a sinistra (spento di partenza, scelta ricordata nel
+                   browser, tasto L): acceso, sulla foto compare un cerchio che ingrandisce i
+                   dettagli 2,6 volte (col mouse passando sopra, col dito tenendolo sulla foto);
+                   nei video l'interruttore non c'è. style.css?v=77, script.js?v=26.
