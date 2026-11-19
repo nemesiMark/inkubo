@@ -707,3 +707,8 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    Nuova foto e Cambia foto: se la foto ha una forma diversa dal posto, si trascina
                    dentro l'anteprima (col dito, col mouse o con le frecce) per scegliere la parte
                    che si vede; al salvataggio viene tagliata esattamente così.
+6.10 (19/11/2026)  Area riservata, guida riordinata: in alto tre schede Foto | Video | Testi (restano
+                   in vista scorrendo); sotto, gli argomenti di quella scheda (Foto: Aggiungere,
+                   Riordinare, Modificare, Eliminare, Foto fisse, Formati e misure; Video: Aggiungere,
+                   Riordinare, Modificare, Eliminare, Formati e durata; Testi: Modificare, Pulsanti e
+                   link, Cosa non si cambia). Le indicazioni generali sono in fondo.
