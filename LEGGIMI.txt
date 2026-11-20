@@ -804,3 +804,7 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    resta il riquadro semplice di prima. Guida: rifatte le schermate «testo-modifica»
                    e «testo-link» con le nuove anteprime e aggiornati i punti che lampeggiano
                    (area-riservata.html, images/guida/). Stessa novità aggiunta alla skill area-ris.
+6.25 (20/11/2026)  Area riservata, finestra dei testi: la frase d'aiuto sotto il campo ora dice solo
+                   «Puoi cambiare solo le parole. Per andare a capo premi Invio.» (non nomina più
+                   grassetto, parti evidenziate e testi cliccabili, che non hanno pulsanti). Rifatte
+                   le schermate della guida «testo-modifica» e «testo-link» con la frase nuova.
