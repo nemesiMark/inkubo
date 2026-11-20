@@ -552,10 +552,19 @@ animation:insegna 7s infinite steps(1,end)}
 .map-anim.is-ok .map-ok { opacity: 0; visibility: hidden; transition: opacity .6s, visibility 0s .6s; }
 .map-replay { position: absolute; right: 16px; top: 16px; z-index: 2; font: 600 13px var(--body); color: var(--txt); background: rgba(18, 18, 22, .9); border: 1px solid var(--line); border-radius: 999px; padding: 9px 15px; cursor: pointer; }
 .map-anim:not(.is-ok) .map-replay { display: none; }
-/* nomi delle aree su telefono (js/mappa.js, nomiStretti) */
-.map-nome { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; opacity: 0; max-width: 72%; will-change: transform, opacity;
-  font: 700 18px/1.1 var(--head); letter-spacing: -.02em; text-align: center; color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, .9), 0 2px 18px rgba(0, 0, 0, .75); }
+/* leggera ombra ai bordi del riquadro della mappa */
+.map-anim::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 80% 85% at 50% 50%, transparent 58%, rgba(3, 4, 8, .45) 100%); }
+/* nomi delle aree durante la discesa (js/mappa.js): al centro e fermi; sopra il livello (Nazione, Regione…)
+   in rosso, sotto il nome in avorio, con un'ombra scura morbida al posto della targhetta */
+.map-nome { position: absolute; left: 50%; top: 50%; z-index: 2; pointer-events: none; opacity: 0; visibility: hidden;
+  display: flex; flex-direction: column; align-items: center; gap: .3rem; text-align: center; white-space: nowrap;
+  transform: translate(-50%, -50%); will-change: transform, opacity; }
+.map-liv { font: 600 14px/1.2 var(--body); color: var(--red2); letter-spacing: .01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .95), 0 0 12px rgba(0, 0, 0, .85); }
+.map-tit { font: 700 36px/1 var(--head); color: var(--txt); letter-spacing: -.02em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .9), 0 0 20px rgba(0, 0, 0, .7), 0 0 44px rgba(0, 0, 0, .45); }
+@media (max-width: 640px) { .map-liv { font-size: 12px; } .map-tit { font-size: 26px; } }
 .map-pin { position: relative; width: 22px; height: 22px; }
 .map-pin-in { position: absolute; inset: 0; opacity: 0; transition: opacity .5s; }
 .map-pin.is-on .map-pin-in { opacity: 1; }

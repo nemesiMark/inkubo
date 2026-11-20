@@ -108,11 +108,16 @@ DOVE SIAMO (MAPPA ANIMATA, COME IN OLIMP)
 -----------------------------------------
 Nella home: a sinistra il titolo e la frase su Montelupone, a destra indirizzo (che apre
 Google Maps) con «Ottieni indicazioni», cellulare e orari; sotto,
-la mappa animata ripresa dal sito Olimp (js/mappa.js). Si parte dalla Terra vista dallo
-spazio e si scende fino allo studio su foto satellitari scurite; scendendo si
-illuminano in rosso, col loro nome, Italia, Marche, provincia di Macerata e il comune
-di Montelupone; all'arrivo il segnaposto «RAIN INK» con l'indirizzo, che apre Google
-Maps. Pulsante «Rivedi» per ripartire. Alla fine la mappa si può muovere (Ctrl/⌘ +
+la mappa animata ripresa dal sito Olimp e ridisegnata nella 6.26 (js/mappa.js). Si parte
+dalla Terra vista dallo spazio e si scende in circa 14 secondi fino allo studio, su foto
+satellitari; scendendo si accendono una dopo l'altra Italia, Marche, provincia di Macerata
+e il comune di Montelupone: l'area del momento resta illuminata, con il contorno al neon
+come l'insegna RAIN INK della prima schermata, e tutto il resto va in ombra. Il nome
+dell'area compare al centro, fermo, con sopra il livello (Nazione, Regione, Provincia,
+Comune), mentre la mappa rallenta, e se ne va quando riaccelera; all'arrivo il segnaposto
+«RAIN INK» con l'indirizzo, che apre Google Maps. Tappe, nomi, secondi sui nomi e colori
+si cambiano in cima a js/mappa.js (TAPPE, DURATA, NEON); i nomi in css/style.css
+(.map-nome). Pulsante «Rivedi» per ripartire. Alla fine la mappa si può muovere (Ctrl/⌘ +
 rotellina o due dita per ingrandire). Con «riduci movimento» si vede subito l'arrivo.
 Privacy: la mappa scarica le foto da Esri (servizio esterno); i nomi sulla mappa
 sono scritte del sito (carattere Inter Tight), non caratteri scaricati,
@@ -808,3 +813,18 @@ Ogni modifica al sito viene annotata qui con numero di versione e descrizione.
                    «Puoi cambiare solo le parole. Per andare a capo premi Invio.» (non nomina più
                    grassetto, parti evidenziate e testi cliccabili, che non hanno pulsanti). Rifatte
                    le schermate della guida «testo-modifica» e «testo-link» con la frase nuova.
+6.26 (20/11/2026)  Mappa di «Dove siamo» ridisegnata (con la skill mappa-uni, rifatta): l'area del
+                   momento resta illuminata con il contorno al neon come l'insegna RAIN INK e tutto
+                   il resto va in ombra (tolto il velo rosso che la tingeva di marrone), con una
+                   leggera ombra ai bordi del riquadro. I nomi compaiono al centro e fermi, con sopra
+                   il livello in rosso (Nazione, Regione, Provincia, Comune; «Provincia di Macerata»
+                   diventa «Provincia» + «Macerata»): entrano in 0,3 s, restano 1,6 s (Montelupone
+                   3 s) e quando la mappa riparte se ne vanno ingrandendosi un poco; mai due nomi
+                   insieme, e un nome compare solo quando l'area è abbastanza larga da contenerlo.
+                   La discesa alterna soste (vista ferma sull'area, zoom lento e costante) e voli che
+                   accelerano e frenano in modo morbido, tutti con la stessa dolcezza: scossoni
+                   4 volte più piccoli, durata sempre di circa 14 s. Ogni area è inquadrata allo
+                   stesso modo su computer e telefono (prima sul telefono Italia e provincia uscivano
+                   dal riquadro). Dopo l'arrivo, muovendo la mappa a mano, il nome compare solo se si
+                   guarda dentro quell'area (js/mappa.js, css/style.css; mappa.js?v=14,
+                   style.css?v=85 in tutte le pagine).
